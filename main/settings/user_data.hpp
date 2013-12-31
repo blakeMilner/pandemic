@@ -7,16 +7,13 @@
 #include <getopt.h>
 #include <string>
 
-using namespace std;
-
-class User_data{
-public:
-	static bool gui_wanted;
-	static bool listen_mode;
-	static bool connect_to_slave;
-
-	User_data(){}
-};
+namespace User_data{
+	static bool gui_wanted = true;
+	static bool listen_mode = false;
+	static bool connect_to_slave = false;
+	static bool print_to_cmd = false;
+	static bool user_iterate = true;
+	static int num_iter = 100;
 
 /* command line options for getopt() */
 const static struct option options[] =
@@ -25,9 +22,13 @@ const static struct option options[] =
 		{ "listen",		no_argument,		NULL,					'l' },
 		{ "connect",	optional_argument,	NULL,					'c' },
 		{ "port", 		required_argument,	NULL,					'p' },
+		{ "printmap",	no_argument,		NULL,					'm' },
+		{ "frames",		required_argument,	NULL,					'f' },
 		{ 0,			0,					0,						0	}
 };
 
-const static char* options_string = "nlcp:";
+const static char* options_string = "nlcp:mf:";
+
+};
 
 #endif

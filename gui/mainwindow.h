@@ -22,6 +22,6 @@ private:
     Ui::MainWindow *ui;
 };
 
-void start_engine();
+void setup();
 
 #endif // MAINWINDOW_H

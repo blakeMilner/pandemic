@@ -1,18 +1,5 @@
 #include "networking.hpp"
 
-int Networking::sockfd = -1;
-int Networking::clisockfd = -1;
-int Networking::portno = DEFAULT_PORTNO;
-int Networking::num_read = 0;
-bool Networking::is_connected = false;
-socklen_t Networking::clilen = 0;
-sockaddr_in Networking::cli_addr;
-sockaddr_in Networking::serv_addr;
-hostent* Networking::server;
-char Networking::buffer[] = {0};
-string Networking::slave_ip = string(DEFAULT_SLAVE_IP);
-
-
 void Networking::init_slave() throw(){
 	sockfd = socket(AF_INET, SOCK_STREAM, 0);
 	if(sockfd < 0){

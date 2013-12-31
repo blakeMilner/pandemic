@@ -4,62 +4,77 @@
 #include <getopt.h>
 #include <string>
 #include <exception>
+#include <ctime>
 
-#include "user_data.hpp"
-#include "networking.hpp"
-
-using namespace std;
+#include "settings/user_data.hpp"
+#include "networking/networking.hpp"
+#include "supervisor/supervisor.hpp"
 
 #ifdef GUI
 #include <QtGui/QApplication>
 #include "gui/mainwindow.h"
 #endif
 
-static User_data user_data;
-static Networking networking;
+
+using namespace std;
+
+namespace UD = User_data;
+namespace NET = Networking;
+
+Supervisor* simulation = NULL;
+
+// need to add SYMBOLS to a namespace
+
 
 int main(int argc, char **argv){
 	char ch;
 
-	while ((ch = getopt_long(argc, argv, options_string, options, NULL)) != EOF){
+	while ((ch = getopt_long(argc, argv, UD::options_string, UD::options, NULL)) != EOF){
 		try{
 			switch (ch) {
 			 case 'n':
-				 user_data.gui_wanted = false;
+				 UD::gui_wanted = false;
 				 break;
 			 case 'l':
-				 user_data.gui_wanted = false;
-				 user_data.listen_mode = true;
+				 UD::gui_wanted = false;
+				 UD::listen_mode = true;
 				 break;
 			 case 'c':
-				 user_data.connect_to_slave = true;
+				 UD::connect_to_slave = true;
 				 if(optarg)
-					 networking.slave_ip = optarg;
+					 NET::slave_ip = optarg;
 				 break;
 			 case 'p':
-				 networking.portno = (unsigned short) atoi(optarg);
+				 NET::portno = (unsigned short) atoi(optarg);
+				 break;
+			 case 'm':
+				 UD::print_to_cmd = true;
+				 break;
+			 case 'f':
+				 UD::user_iterate = false;
+				 if(optarg)
+					 UD::num_iter = atoi(optarg);
 				 break;
 			}
 		}
 		catch(exception e){
-			cerr << "Whoops, something you input caused pandemic to fail" << endl;
+			cerr << "Whoops, one of your inputs caused pandemic to fail." << endl;
 		};
 	}
 
-
 	#ifdef GUI
-	if(user_data.gui_wanted){
+	if(UD::gui_wanted){
 		QApplication a(argc, argv);
 		MainWindow w;
 		w.show();
 		a.exec();
 	}
 	else{
-		start_engine();
+		setup();
 	}
 	#else
 	// this function call is within MainWindow otherwise
-	start_engine();
+		setup();
 	#endif
 
 	return EXIT_SUCCESS;
@@ -67,31 +82,52 @@ int main(int argc, char **argv){
 }
 
 // CONTROL GOES BACK TO MAINWINDOW AFTER THIS FUNCTION ENDS
-void start_engine(){
+void setup(){
+	srand(time(NULL));
+
 	try{
 		// wait until remote computer connects to proceed
-		if(user_data.listen_mode){
-			networking.init_slave();
-			networking.slave_listen();
-			networking.slave_listen();
+		if(UD::listen_mode){
+			NET::init_slave();
+			NET::slave_listen();
+			NET::slave_listen();
 
-			networking.is_connected = true;
+			NET::is_connected = true;
 		}
 		// wait until we connect with remote computer
-		else if(user_data.connect_to_slave){
-			networking.init_master();
-			networking.master_send();
-			networking.master_send();
+		else if(UD::connect_to_slave){
+			NET::init_master();
+			NET::master_send();
+			NET::master_send();
 
-			networking.is_connected = true;
+			NET::is_connected = true;
 		}
 	}catch(exception e){
 		cerr << "Network connection failed." << endl;
-		networking.is_connected = false;
+		NET::is_connected = false;
 	}
 
-	if(networking.is_connected){
-		cout << "DOING STUFF" << endl;
+
+	simulation = new Supervisor();
+	simulation->create_map();
+
+	cout << "Time to generate: " << simulation->last_run_epoch() << " sec" << endl;
+	simulation->reset_clock();
+
+	if(UD::user_iterate and UD::print_to_cmd){
+		while(simulation->is_running()){
+			cout << endl << "Press Enter for next iteration." << endl;
+			cin.ignore();
+			simulation->print_map();
+			simulation->iterate();
+		}
+	}
+	else{
+		simulation->iterate(UD::num_iter);
+
+		if(UD::print_to_cmd) simulation->print_map();
+		cout << "Total time: " << simulation->last_run_epoch() << " sec" << endl;
 	}
 
+	delete simulation;
 }

@@ -15,5 +15,8 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_pushButton_clicked()
 {
-    start_engine();
+    setup();
+    //for(;;){
+    //
+    //}
 }

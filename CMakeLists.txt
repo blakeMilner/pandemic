@@ -7,8 +7,10 @@ INCLUDE_DIRECTORIES(${CMAKE_CURENT_BINARY_DIR})
 OPTION(CMAKE_VERBOSE_MAKEFILE "if all commands will be echoed to the console during the make" ON)
 MARK_AS_ADVANCED(CLEAR CMAKE_VERBOSE_MAKEFILE)
 
+
 ## GUI ##
 OPTION(ENABLE_GUI "enable GUI option" ON)
+
 IF(ENABLE_GUI)
 	FIND_PACKAGE(Qt4 REQUIRED)
 	SET (OPT_FLAGS "-DGUI")
@@ -23,11 +25,37 @@ IF(ENABLE_GUI)
 	SET(GUI_LIBRARIES ${GUI_LIBRARIES} ${QT_LIBRARIES})
 ENDIF()
 
+
 SET(PANDEMIC_SOURCES 
 
+
 main/main.cpp 
-main/user_data.cpp
-main/networking.cpp
+
+main/containers/containers.cpp
+
+main/enums/object_enums.cpp
+
+main/helpers/rng.cpp
+
+main/mapping/map.cpp
+main/mapping/map_attributes.cpp
+main/mapping/mRegion.cpp
+main/mapping/map_server.cpp
+
+main/networking/networking.cpp
+
+main/objects/character.cpp
+main/objects/obstacle.cpp
+main/objects/Building.cpp
+main/objects/Human.cpp
+main/objects/Zombie.cpp
+main/objects/objects.cpp
+main/objects/attributes.cpp
+
+main/settings/character_stats.cpp
+
+main/supervisor/supervisor.cpp
+
 
 )
 
