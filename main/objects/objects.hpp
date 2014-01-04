@@ -13,12 +13,12 @@ using namespace std;
 
 class pObject{
 public:
-	pObject(Pair = Pair(-1,-1), Map_symbol = OBJECT);
-	Pair get_coor();
-	void set_coor(Pair);
+	pObject(Pair<int> = Pair<int>(-1,-1), Map_symbol = OBJECT);
+	Pair<int> get_coor();
+	void set_coor(Pair<int>);
 	Map_symbol get_symbol();
 protected:
-	Pair coor;
+	Pair<int> coor;
 	Map_symbol SYMBOL;
 };
 

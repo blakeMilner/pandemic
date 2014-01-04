@@ -46,16 +46,16 @@ private:
 	int num_x_regions, num_y_regions;
 
 	Map_symbol get_symbol(int, int);
-	Map_symbol get_symbol(Pair);
+	Map_symbol get_symbol(Pair<int>);
 	int get_ID(int, int);
-	int get_ID(Pair);
+	int get_ID(Pair<int>);
 	void add_character(Character*);
 	void delete_character(Character*, int);
 	void add_obstacle(Obstacle*);
-	Pair find_region(Pair);
-	bool regional_bounds_check(Pair);
+	Pair<int> find_region(Pair<int>);
+	bool regional_bounds_check(Pair<int>);
 	bool regional_bounds_check(int, int);
-	bool overall_bounds_check(Pair);
+	bool overall_bounds_check(Pair<int>);
 	bool overall_bounds_check(int, int);
 
 	// TERRAIN GENERATION
@@ -63,15 +63,15 @@ private:
 	void populate();
 	void make_buildings();
 	void make_characters();
-	Pair find_empty_path(int, int, int, int);
-	bool placement_is_clear(Pair, Pair);
-	void remove_corners(Pair&, queue<Pair>&);
-	void trace_outline(Pair&, queue<Pair>&);
-	void turn_left(queue<Pair>&, Pair&, Pair&);
-	void turn_right(queue<Pair>&, Pair&, Pair&);
+	Pair<int> find_empty_path(int, int, int, int);
+	bool placement_is_clear(Pair<int>, Pair<int>);
+	void remove_corners(Pair<int>&, queue<Pair<int> >&);
+	void trace_outline(Pair<int>&, queue<Pair<int> >&);
+	void turn_left(queue<Pair<int> >&, Pair<int>&, Pair<int>&);
+	void turn_right(queue<Pair<int> >&, Pair<int>&, Pair<int>&);
 
 	// functions meant for MapServer
-	void move_character(Character*, Pair&);
+	void move_character(Character*, Pair<int>&);
 	void infect_player(int ID);
 };
 
@@ -80,9 +80,9 @@ public:
 	friend class Map;
 	static Map_symbol get_symbol(int, int);
 	static int get_ID(int, int);
-	static void copy_field(Map_symbol**, Pair, Pair);
+	static void copy_field(Map_symbol**, Pair<int>, Pair<int>);
 	static void move_character(Character*, Nav_symbol);
-	static void bite_player(Pair);
+	static void bite_player(Pair<int>);
 private:
 	static Map* currmap;
 };
@@ -90,8 +90,8 @@ private:
 // to sort by area
 struct Dimension_cmp {
     bool operator()(Building* a, Building* b) const {
-    	Pair adim = a->get_dimensions();
-    	Pair bdim = b->get_dimensions();
+    	Pair<int> adim = a->get_dimensions();
+    	Pair<int> bdim = b->get_dimensions();
         return (adim.x*adim.y < bdim.x*bdim.y);
     }
 };

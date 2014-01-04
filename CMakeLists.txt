@@ -31,8 +31,6 @@ SET(PANDEMIC_SOURCES
 
 main/main.cpp 
 
-main/containers/containers.cpp
-
 main/enums/object_enums.cpp
 
 main/helpers/rng.cpp

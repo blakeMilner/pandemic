@@ -6,7 +6,7 @@
 // 		IF A NEW CHARACTER NEEDS TO BE ADDED AND EXECUTED, PUT IT AT THE END;
 
 mRegion::mRegion(int regionlen, int x, int y) :
-coor(Pair(x, y)),
+coor(Pair<int>(x, y)),
 len(regionlen)
 {
 }
@@ -32,7 +32,7 @@ void mRegion::remove_obstacle(Obstacle* o){
 	obstacles.remove(o);
 }
 
-Pair mRegion::get_coor(){
+Pair<int> mRegion::get_coor(){
 	return(coor);
 }
 

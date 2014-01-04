@@ -8,7 +8,7 @@ using namespace std;
 
 class Human : public Character{
 public:
-	Human(Pair = Pair(-1,-1));
+	Human(Pair<int> = Pair<int>(-1,-1));
 	void exec();
 private:
 	virtual void init_stats();

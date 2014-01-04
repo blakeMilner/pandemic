@@ -11,7 +11,7 @@ class Building : public Obstacle {
 public:
 	Building();
 	Building(const Building&);
-	Building(Pair, Pair, queue<Pair>&);
+	Building(Pair<int>, Pair<int>, queue<Pair<int> >&);
 private:
 
 };

@@ -19,16 +19,16 @@ dimensions(f.dimensions)
 	}
 }
 
-Footprint::Footprint(queue<Pair>& ver, Pair dims):
+Footprint::Footprint(queue<Pair<int> >& ver, Pair<int> dims):
 dimensions(dims)
 {
 	alloc_footprint(dims);
 
-	Pair direction, pos;
-	Pair it;
+	Pair<int> direction, pos;
+	Pair<int> it;
 
 	ver.push(ver.front());
-	Pair prev_vert = ver.front();
+	Pair<int> prev_vert = ver.front();
 	ver.pop();
 
 	while(!ver.empty()){
@@ -90,7 +90,7 @@ void Footprint::copy_footprint(int** foot){
 	}
 }
 
-void Footprint::alloc_footprint(Pair dims){
+void Footprint::alloc_footprint(Pair<int> dims){
 	footprint = new int*[dims.x];
 	for (int i = 0; i < dims.x; i++){
 		footprint[i] = new int[dims.y]();

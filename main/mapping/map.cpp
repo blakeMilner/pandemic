@@ -7,7 +7,7 @@ Map::Map(){
 
 	newID = 0;
 
-	empty_object = pObject(Pair(-1,-1));
+	empty_object = pObject(Pair<int>(-1,-1));
 	EMPTY_BLOCK = ObjectBlock(EMPTY_TYPE_ID, EMPTY);
 	IDhash[EMPTY_TYPE_ID] = &empty_object;
 	newID = EMPTY_TYPE_ID + 1;
@@ -57,7 +57,7 @@ void Map::iterate(){
 		(*it)->exec();
 }
 
-Map_symbol Map::get_symbol(Pair coor){ return get_symbol(coor.x, coor.y); }
+Map_symbol Map::get_symbol(Pair<int> coor){ return get_symbol(coor.x, coor.y); }
 Map_symbol Map::get_symbol(int xcoor, int ycoor){
 	if(overall_bounds_check(xcoor, ycoor)){
 		return(blockmap[xcoor][ycoor]->symbol);
@@ -66,12 +66,12 @@ Map_symbol Map::get_symbol(int xcoor, int ycoor){
 	return(INVALID);
 }
 
-int Map::get_ID(Pair coor){ return (blockmap[coor.x][coor.y]->ID); }
+int Map::get_ID(Pair<int> coor){ return (blockmap[coor.x][coor.y]->ID); }
 int Map::get_ID(int xcoor, int ycoor){ return (blockmap[xcoor][ycoor]->ID); }
 
 void Map::add_character(Character *c){
-	Pair coor = c->get_coor();
-	Pair reg_coor = find_region(coor);
+	Pair<int> coor = c->get_coor();
+	Pair<int> reg_coor = find_region(coor);
 
 	if(overall_bounds_check(coor) && regional_bounds_check(reg_coor)){
 		blockmap[coor.x][coor.y] = new_object_block(newID, c->get_symbol());
@@ -83,8 +83,8 @@ void Map::add_character(Character *c){
 }
 
 void Map::delete_character(Character* c, int ID){
-	Pair coor = c->get_coor();
-	Pair reg_coor = find_region(coor);
+	Pair<int> coor = c->get_coor();
+	Pair<int> reg_coor = find_region(coor);
 
 	regions[reg_coor.x][reg_coor.y]->remove_character(c);
 	// should this stuff be in its own function?
@@ -98,16 +98,16 @@ void Map::delete_character(Character* c, int ID){
 }
 
 void Map::add_obstacle(Obstacle *o){
-	Pair coor = o->get_coor();
-	Pair dimens = o->get_dimensions();
-	Pair reg_coor = find_region(coor);
+	Pair<int> coor = o->get_coor();
+	Pair<int> dimens = o->get_dimensions();
+	Pair<int> reg_coor = find_region(coor);
 	// newblock is a wall that refers to the parent obstacle, same newblock
 	// symbol at different places in the map
 	ObjectBlock* newblock = new_object_block(newID, o->get_symbol());
 
 	for(int x = 0; x < dimens.x; x++){
 	for(int y = 0; y < dimens.y; y++){
-		if(o->get_footprint(x,y) && overall_bounds_check(coor + Pair(x,y))){
+		if(o->get_footprint(x,y) && overall_bounds_check(coor + Pair<int>(x,y))){
 			blockmap[coor.x + x][coor.y + y] = newblock;
 		}
 	}
@@ -127,11 +127,11 @@ ObjectBlock* Map::new_object_block(int ID, Map_symbol sym){
 	return(newobj);
 }
 
-Pair Map::find_region(Pair coor){
-	return Pair(coor.x / MS::region_len, coor.y / MS::region_len);
+Pair<int> Map::find_region(Pair<int> coor){
+	return Pair<int>(coor.x / MS::region_len, coor.y / MS::region_len);
 }
 
-bool Map::overall_bounds_check(Pair p){ return overall_bounds_check(p.x, p.y); }
+bool Map::overall_bounds_check(Pair<int> p){ return overall_bounds_check(p.x, p.y); }
 bool Map::overall_bounds_check(int x, int y){
 	if(x < 0 || y < 0 || x >= xmap_len || y >= ymap_len){
 		return false;
@@ -140,7 +140,7 @@ bool Map::overall_bounds_check(int x, int y){
 	return true;
 }
 
-bool Map::regional_bounds_check(Pair p){ return regional_bounds_check(p.x, p.y); }
+bool Map::regional_bounds_check(Pair<int> p){ return regional_bounds_check(p.x, p.y); }
 bool Map::regional_bounds_check(int x, int y){
 	if(x < 0 || y < 0 || x >= num_x_regions || y >= num_y_regions){
 		return false;
@@ -199,8 +199,8 @@ void Map::make_buildings(){
 list<Building*> poss_build;
 list<Building*>::iterator itc;
 
-queue<Pair> vertices;
-Pair ran_dims, ran_coor, build_dims, reg_coor;
+queue<Pair<int> > vertices;
+Pair<int> ran_dims, ran_coor, build_dims, reg_coor;
 int num_buildings_region;
 
 int min_len = MS::min_building_len;
@@ -212,7 +212,7 @@ int tryc;
 for(int x = 0; x < num_x_regions; x++){
 for(int y = 0; y < num_y_regions; y++){
 	num_buildings_region = RNG::random_num(MS::min_building_density, MS::max_building_density);
-	reg_coor = Pair(x,y) * Pair(MS::region_len, MS::region_len);
+	reg_coor = Pair<int>(x,y) * Pair<int>(MS::region_len, MS::region_len);
 
 	// make dimensions and shapes of new buildings
 	poss_build.clear();
@@ -220,17 +220,15 @@ for(int y = 0; y < num_y_regions; y++){
 		// temporary
 		ran_dims = RNG::random_pair(min_len, max_len, min_len, max_len);
 
-		vertices.push(Pair(0,0));
-		vertices.push(Pair(ran_dims.x-1,0));
-		vertices.push(Pair(ran_dims.x-1,ran_dims.y-1));
-		vertices.push(Pair(0,ran_dims.y-1));
+		vertices.push(Pair<int>(0,0));
+		vertices.push(Pair<int>(ran_dims.x-1,0));
+		vertices.push(Pair<int>(ran_dims.x-1,ran_dims.y-1));
+		vertices.push(Pair<int>(0,ran_dims.y-1));
 		//trace_outline(ran_dims, vertices);
-
-		//door_edge = RNG::random_pair(0,2, 0,2);
 
 		poss_build.push_front(new Building(reg_coor, ran_dims, vertices));
 
-		vertices = queue<Pair>(); // empty queue
+		vertices = queue<Pair<int> >(); // empty queue
 	}
 
 	poss_build.sort(Dimension_cmp()); // sort by area
@@ -253,7 +251,7 @@ for(int y = 0; y < num_y_regions; y++){
 }
 
 void Map::make_characters(){
-	Pair ran_coor, reg_coor;
+	Pair<int> ran_coor, reg_coor;
 	int num_hum, num_zom;
 
 	int reg_len = MS::region_len;
@@ -262,7 +260,7 @@ void Map::make_characters(){
 	for(int y = 0; y < num_y_regions; y++){
 		num_hum = RNG::random_num(MS::min_human_density, MS::max_human_density);
 		num_zom = RNG::random_num(MS::min_zombie_density, MS::max_zombie_density);
-		reg_coor = Pair(x,y) * Pair(MS::region_len, MS::region_len);
+		reg_coor = Pair<int>(x,y) * Pair<int>(MS::region_len, MS::region_len);
 
 		// get random coordinate for human and try and fit him in
 		for(int i = 0; i < num_hum + num_zom; i++){
@@ -271,11 +269,11 @@ void Map::make_characters(){
 			if(get_symbol(ran_coor) != EMPTY){ // chosen coordinate isn't empty
 				for(int x = -3; x < 3; x++){
 				for(int y = -3; y < 3; y++){ // find nearby locations that may be empty
-					if(get_symbol(ran_coor + Pair(x,y)) == EMPTY)
+					if(get_symbol(ran_coor + Pair<int>(x,y)) == EMPTY)
 					if(i < num_zom){
-						add_character(new Zombie(ran_coor + Pair(x,y)));
+						add_character(new Zombie(ran_coor + Pair<int>(x,y)));
 					}else{
-						add_character(new Human(ran_coor + Pair(x,y)));
+						add_character(new Human(ran_coor + Pair<int>(x,y)));
 					}
 					x = y = 3;
 					}
@@ -291,7 +289,7 @@ void Map::make_characters(){
 
 }
 
-void Map::remove_corners(Pair& ran_dims, queue<Pair>& vertices){
+void Map::remove_corners(Pair<int>& ran_dims, queue<Pair<int> >& vertices){
 
 //	vertices.push()
 //	for(int i = 0; i < 4; i++){
@@ -303,7 +301,7 @@ void Map::remove_corners(Pair& ran_dims, queue<Pair>& vertices){
 //	}
 }
 
-void Map::trace_outline(Pair& ran_dims, queue<Pair>& vertices){
+void Map::trace_outline(Pair<int>& ran_dims, queue<Pair<int> >& vertices){
 	float turn_chance = (ran_dims.x < ran_dims.y) ? ran_dims.x : ran_dims.y;
 	turn_chance = 3 / turn_chance;
 
@@ -312,48 +310,38 @@ void Map::trace_outline(Pair& ran_dims, queue<Pair>& vertices){
 	turns.push_front(RIGHT), turns.push_front(LEFT);
 	list<Nav_symbol>::iterator turn = turns.begin();
 
-	Pair limit(ran_dims.x - 1, ran_dims.y - 1);
+	Pair<int> limit(ran_dims.x - 1, ran_dims.y - 1);
 
-	Pair null_pair = Pair(0,0);
+	Pair<int> null_pair = Pair<int>(0,0);
 	vertices.push(null_pair);
-	Pair change(0,1), position(0,0);
+	Pair<int> change(0,1), position(0,0);
 
 	int num_turns = 0;
-cout << limit << endl;
 
 	while(true){
-		cout << position << endl << change << endl << endl;
 		position += change;
 
 		if((position.x < null_pair.x) && (num_turns == 3)){ // if we've arrived back at origin
 			break;
 		}
 		else if((position.y > limit.y) || (position.x > limit.x) || (position.x < null_pair.x) || (position.y < null_pair.y)){ // we've hit the border - always turn left
-			cout << "LIMIT" << endl;
 			position -= change;
 			turn_left(vertices, position, change);
 			turn = turns.begin();
 			num_turns++;
 			while((position.y < limit.y) && (position.x < limit.x) && (position.x > null_pair.x) && (position.y > null_pair.y)){
-				cout << "pos" << position << "   lim" << limit << endl;
-//					cout << position << "  " << change << endl;
 				position += change;
 			}
 		}
 		else if(RNG::yes_or_no(turn_chance)){ // choose to turn by chance
 			if(*turn == LEFT){
-				cout << "LEFT" << endl;
 				turn_left(vertices, position, change);
 			}else{
-				cout << "RIGHT" << endl;
 				turn_right(vertices, position, change);
 			}
 
 			if(turn == turns.end()){ // advance us if done turning
-				cout << "CONTINUING" << endl;
 				while((position.y < limit.y) && (position.x < limit.x) && (position.x > null_pair.x) && (position.y > null_pair.y)){
-					cout << "pos" << position << "   lim" << limit << endl;
-//					cout << position << "  " << change << endl;
 					position += change;
 				}
 				turn_left(vertices, position, change);
@@ -368,7 +356,7 @@ cout << limit << endl;
 	}
 }
 
-void Map::turn_left(queue<Pair>& vertices, Pair& pos, Pair& change){
+void Map::turn_left(queue<Pair<int> >& vertices, Pair<int>& pos, Pair<int>& change){
 	vertices.push(pos);
 
 	if(change.x == 1) change.set(0,-1);
@@ -377,7 +365,7 @@ void Map::turn_left(queue<Pair>& vertices, Pair& pos, Pair& change){
 	else if(change.y == -1) change.set(-1,0);
 }
 
-void Map::turn_right(queue<Pair>& vertices, Pair& pos, Pair& change){
+void Map::turn_right(queue<Pair<int> >& vertices, Pair<int>& pos, Pair<int>& change){
 	vertices.push(pos);
 
 	if(change.x == 1) change.set(0,1);
@@ -386,8 +374,8 @@ void Map::turn_right(queue<Pair>& vertices, Pair& pos, Pair& change){
 	else if(change.y == -1) change.set(1,0);
 }
 
-Pair Map::find_empty_path(int x_search, int y_search, int xincr, int yincr){
-	Pair empty = Pair(0,0);
+Pair<int> Map::find_empty_path(int x_search, int y_search, int xincr, int yincr){
+	Pair<int> empty = Pair<int>(0,0);
 //	int i = 0;
 //
 //	while(poss_coors[MS::region_len + x_search + i*xincr][MS::region_len + y_search + i*yincr] != INVALID_COOR){
@@ -402,7 +390,7 @@ Pair Map::find_empty_path(int x_search, int y_search, int xincr, int yincr){
 
 }
 
-bool Map::placement_is_clear(Pair dims, Pair coor){
+bool Map::placement_is_clear(Pair<int> dims, Pair<int> coor){
 	for(int x = 0; x < dims.x; x++){
 		for(int y = 0; y < dims.y; y++){
 			if(get_symbol(coor.x + x, coor.y + y) != EMPTY)
@@ -418,10 +406,10 @@ bool Map::placement_is_clear(Pair dims, Pair coor){
 // FUNCTIONS FOR MAPSERVER WRAPPER
 //
 
-void Map::move_character(Character* this_ptr, Pair& new_loc){
-	Pair curr = this_ptr->get_coor();
-	Pair curr_reg = find_region(curr);
-	Pair new_reg = find_region(new_loc);
+void Map::move_character(Character* this_ptr, Pair<int>& new_loc){
+	Pair<int> curr = this_ptr->get_coor();
+	Pair<int> curr_reg = find_region(curr);
+	Pair<int> new_reg = find_region(new_loc);
 
 	if( overall_bounds_check(new_loc) && regional_bounds_check(new_reg)){
 	if(blockmap[new_loc.x][new_loc.y]->symbol == EMPTY){
@@ -444,7 +432,7 @@ void Map::infect_player(int ID){
 
 	// only execute if ID was found and if it was a human
 	if(it != IDhash.end() and inf_obj->get_symbol() == HUMAN){
-		Pair coor = inf_obj->get_coor();
+		Pair<int> coor = inf_obj->get_coor();
 
 		delete_character(static_cast<Character*>(inf_obj), ID);
 		add_character(new Zombie(coor));

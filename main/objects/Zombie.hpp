@@ -9,9 +9,9 @@ using namespace std;
 
 class Zombie : public Character{
 public:
-	Zombie(Pair = Pair(-1,-1));
+	Zombie(Pair<int> = Pair<int>(-1,-1));
 	void exec();
-	void bite(Pair);
+	void bite(Pair<int>);
 private:
 	virtual void init_stats();
 };

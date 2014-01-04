@@ -31,15 +31,18 @@ enum Nav_symbol {
 	NONE = 0
 };
 
+
+int sgn(float);
+
 // navigation helpers
 class NAV{
 public:
 	static Nav_symbol get_poss_dir(int);
 	static const int NUM_POSS_DIR = 8;
 
-	static bool apply_direction(Pair&, Nav_symbol);
-	static Pair get_direction(Nav_symbol);
-	static Nav_symbol get_direction(Pair);
+	static bool apply_direction(Pair<int>&, Nav_symbol);
+	static Pair<int> get_direction(Nav_symbol);
+	static Nav_symbol get_direction(Pair<int>);
 	static Nav_symbol get_left(Nav_symbol);
 	static Nav_symbol get_right(Nav_symbol);
 	static bool is_occluded(Map_symbol);

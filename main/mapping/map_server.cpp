@@ -1,6 +1,5 @@
 #include "map.hpp"
 
-
 Map* MapServer::currmap = NULL;
 
 Map_symbol MapServer::get_symbol(int x, int y){
@@ -21,8 +20,8 @@ int MapServer::get_ID(int x, int y){
 	}
 }
 
-void MapServer::copy_field(Map_symbol** o, Pair coor, Pair vis_rad){
-	Pair dims = 2*vis_rad + 1;
+void MapServer::copy_field(Map_symbol** o, Pair<int> coor, Pair<int> vis_rad){
+	Pair<int> dims = 2*vis_rad + 1;
 
 	for(int x = 0; x < dims.x; x++){
 	for(int y = 0; y < dims.y; y++){
@@ -65,13 +64,13 @@ void MapServer::copy_field(Map_symbol** o, Pair coor, Pair vis_rad){
 }
 
 void MapServer::move_character(Character* this_ptr, Nav_symbol dir){
-	Pair a = this_ptr->get_coor() + NAV::get_direction(dir);
+	Pair<int> a = this_ptr->get_coor() + NAV::get_direction(dir);
 	if(currmap != NULL){
 		currmap->move_character(this_ptr, a);
 	}
 }
 
-void MapServer::bite_player(Pair pos){
+void MapServer::bite_player(Pair<int> pos){
 	if(currmap->get_symbol(pos) == HUMAN){
 		currmap->infect_player(currmap->get_ID(pos));
 	}

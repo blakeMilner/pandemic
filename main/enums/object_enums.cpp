@@ -10,6 +10,8 @@ const Nav_symbol NAV::POSS_DIR[NUM_POSS_DIR	] = {
 	WEST,
 	NORTHW };
 
+int sgn(float x){ return (x > 0) - (x < 0); }
+
 Nav_symbol NAV::get_poss_dir(int i){
 	if( i >= 0 && i < NUM_POSS_DIR)	return(POSS_DIR[i]);
 	else							return(NONE);
@@ -27,7 +29,7 @@ Nav_symbol NAV::get_right(Nav_symbol n){
 	else							return (NONE);
 }
 
-bool NAV::apply_direction(Pair& index, Nav_symbol dir){
+bool NAV::apply_direction(Pair<int>& index, Nav_symbol dir){
 	switch(dir){
 	case(NORTH): 	index.y -= 1; break;
 	case(NORTHE): 	index.x += 1, index.y -= 1; break;
@@ -43,22 +45,22 @@ bool NAV::apply_direction(Pair& index, Nav_symbol dir){
 	return true;
 }
 
-Pair NAV::get_direction(Nav_symbol dir){
+Pair<int> NAV::get_direction(Nav_symbol dir){
 	switch(dir){
-	case(NORTH): 	return Pair(0,-1); break;
-	case(NORTHE): 	return Pair(1,-1); break;
-	case(EAST): 	return Pair(1,0); break;
-	case(SOUTHE): 	return Pair(1,1); break;
-	case(SOUTH): 	return Pair(0,1); break;
-	case(SOUTHW):	return Pair(-1,1); break;
-	case(WEST): 	return Pair(-1,0); break;
-	case(NORTHW): 	return Pair(-1,-1); break;
+	case(NORTH): 	return Pair<int>(0,-1); break;
+	case(NORTHE): 	return Pair<int>(1,-1); break;
+	case(EAST): 	return Pair<int>(1,0); break;
+	case(SOUTHE): 	return Pair<int>(1,1); break;
+	case(SOUTH): 	return Pair<int>(0,1); break;
+	case(SOUTHW):	return Pair<int>(-1,1); break;
+	case(WEST): 	return Pair<int>(-1,0); break;
+	case(NORTHW): 	return Pair<int>(-1,-1); break;
 	}
 
-	return Pair(0,0);
+	return Pair<int>(0,0);
 }
 
-Nav_symbol NAV::get_direction(Pair dir){
+Nav_symbol NAV::get_direction(Pair<int> dir){
 	if(dir.x == 0 and dir.y == -1) 	return NORTH;
 	if(dir.x == 1 and dir.y == -1) return NORTHE;
 	if(dir.x == 1 and dir.y == 0) return EAST;

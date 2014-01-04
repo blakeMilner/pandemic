@@ -1,13 +1,13 @@
 #include "rng.hpp"
 
-Pair RNG::random_pair(int xstart, int xend, int ystart, int yend){
+Pair<int> RNG::random_pair(int xstart, int xend, int ystart, int yend){
 	int xran = xstart + (int) (rand() % (xend - xstart));
 	int yran = ystart + (int) (rand() % (yend - ystart));
 
-	return(Pair(xran, yran));
+	return(Pair<int>(xran, yran));
 }
 
-Pair RNG::random_pair(Pair start, Pair end){
+Pair<int> RNG::random_pair(Pair<int> start, Pair<int> end){
 	return(random_pair(start.x, end.x, start.y, end.y));
 }
 

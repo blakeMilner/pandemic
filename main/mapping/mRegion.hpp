@@ -17,10 +17,10 @@ public:
 	void insert_obstacle(Obstacle*);
 	void remove_character(Character*);
 	void remove_obstacle(Obstacle*);
-	Pair get_coor();
+	Pair<int> get_coor();
 	int get_length();
 private:
-	Pair coor;
+	Pair<int> coor;
 	list<Obstacle*> obstacles;
 	list<Character*> characters;
 	int len;

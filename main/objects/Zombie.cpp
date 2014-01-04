@@ -1,13 +1,13 @@
 #include "Zombie.hpp"
 
-Zombie::Zombie(Pair coor):
+Zombie::Zombie(Pair<int> coor):
 Character(coor, ZOMBIE)
 {
 	Zombie::init_stats();
 }
 
 void Zombie::exec(){
-	Pair pos;
+	Pair<int> pos;
 
 	Character::exec();
 
@@ -22,8 +22,8 @@ void Zombie::exec(){
 		Character::random_walk();
 }
 
-void Zombie::bite(Pair pos){
-	MapServer::bite_player(pos + coor - stats.VIS_RAD);
+void Zombie::bite(Pair<int> pos){
+	MapServer::bite_player(pos + coor);
 }
 
 void Zombie::init_stats(){

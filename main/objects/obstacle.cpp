@@ -2,7 +2,7 @@
 #include <iostream>
 
 Obstacle::Obstacle(Map_symbol sym):
-pObject(pObject(Pair(-1,-1), sym)),
+pObject(pObject(Pair<int>(-1,-1), sym)),
 footprint(Footprint())
 {}
 
@@ -11,7 +11,7 @@ pObject(o),
 footprint(o.footprint){
 }
 
-Obstacle::Obstacle(Pair coor, Pair dimens, queue<Pair>& vertices, Map_symbol sym):
+Obstacle::Obstacle(Pair<int> coor, Pair<int> dimens, queue<Pair<int> >& vertices, Map_symbol sym):
 pObject(coor, sym),
 footprint(Footprint(vertices, dimens))
 {
@@ -28,6 +28,6 @@ int Obstacle::get_footprint(int x, int y){
 	}
 }
 
-Pair Obstacle::get_dimensions(){
+Pair<int> Obstacle::get_dimensions(){
 	return(footprint.dimensions);
 }

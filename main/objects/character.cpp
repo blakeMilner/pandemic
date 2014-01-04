@@ -4,7 +4,7 @@
  // pulls in map server
 #include "../mapping/map.hpp"
 
-Character::Character(Pair coor, Map_symbol sym):
+Character::Character(Pair<int> coor, Map_symbol sym):
 pObject(coor, sym)
 {
 	vision_len = 2*(stats.VIS_RAD) + 1;
@@ -31,16 +31,14 @@ void Character::exec(){
 	int vision_rad = stats.VIS_RAD;
 	int vision_len = 2*vision_rad + 1;
 
-	MapServer::copy_field(vision_field, coor - vision_rad, Pair(stats.VIS_RAD));
+	MapServer::copy_field(vision_field, coor - vision_rad, Pair<int>(stats.VIS_RAD));
 //	Character::print_vision();
-	//Character::random_walk();
-
 }
 
 ///// THIS SHOUDL ALL PROBABLY GO IN SEPARATE NAVIGATION/FINDING FILE LATER...
 
 Map_symbol Character::get_direction(Nav_symbol dir){
-	Pair vis_index(stats.VIS_RAD);
+	Pair<int> vis_index(stats.VIS_RAD);
 
 	if(!NAV::apply_direction(vis_index, dir))
 		return(INVALID);
@@ -71,10 +69,13 @@ void Character::random_walk(){
 	}
 }
 
-void Character::go_towards(Pair pos){
-	pos -= stats.VIS_RAD; // adjust to cartesian
-	flPair unit = pos.unit_v();
-	Pair dir(0,0);
+void Character::go_away_from(Pair<int> pos){
+	go_towards(-pos);
+}
+
+void Character::go_towards(Pair<int> pos){
+	Pair<float> unit = pos.unit_v();
+	Pair<int> dir(0,0);
 
 	if(abs(unit.x) > UNIT_BOUND) dir.x = sgn(unit.x);
 	if(abs(unit.y) > UNIT_BOUND) dir.y = sgn(unit.y);
@@ -89,19 +90,19 @@ void Character::go_towards(Pair pos){
 		MapServer::move_character(this, NAV::get_right(direc));
 }
 
-bool Character::find_nearest(Pair& pos, Map_symbol sym){
+bool Character::find_nearest(Pair<int>& pos, Map_symbol sym){
 	float dist = vision_len;
 	float min_dist = vision_len;
 	bool found = false;
 
-	for(int x = 0; x < vision_len; x++){
-		for(int y = 0; y < vision_len; y++){
-			if(vision_field[x][y] == sym){
+	for(int x = -stats.VIS_RAD; x < stats.VIS_RAD; x++){
+		for(int y = -stats.VIS_RAD; y < stats.VIS_RAD; y++){
+			if(vision_field[x + stats.VIS_RAD][y + stats.VIS_RAD] == sym){
 
-				if((dist = sqrt(pow(x - stats.VIS_RAD, 2) + pow(y - stats.VIS_RAD, 2))) < min_dist){
+				if((dist = sqrt(pow(x, 2) + pow(y, 2))) < min_dist){
 					found = true;
 					min_dist = dist;
-					pos = Pair(x,y);
+					pos = Pair<int>(x,y);
 				}
 			}
 	}}
@@ -109,17 +110,21 @@ bool Character::find_nearest(Pair& pos, Map_symbol sym){
 	return(found);
 }
 
-bool Character::is_adjacent(Pair& pos){
-	return (abs(pos.x - stats.VIS_RAD) <= 1 and abs(pos.y - stats.VIS_RAD) <= 1);
+bool Character::is_adjacent(Pair<int>& pos){
+	return abs(pos.x) <= 1 and abs(pos.y) <= 1;
 }
 
 void Character::print_vision(){
-	cout << "=====================" << endl;
+	for(int x = 0; x < vision_len; x++) 	cout << "=";
+	cout << endl;
+
 	for(int x = 0; x < vision_len; x++){
 	for(int y = 0; y < vision_len; y++){
 		cout << (char) vision_field[y][x];
 	}
-	cout << endl;
+	cout << "|" << endl;
 	}
-	cout << "=====================" << endl;
+
+	for(int x = 0; x < vision_len; x++) 	cout << "=";
+	cout << endl;
 }

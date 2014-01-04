@@ -13,10 +13,10 @@ class Obstacle : public pObject{
 public:
 	Obstacle(Map_symbol = OBSTACLE);
 	Obstacle(const Obstacle&);
-	Obstacle(Pair, Pair, queue<Pair>&, Map_symbol = OBSTACLE);
+	Obstacle(Pair<int>, Pair<int>, queue<Pair<int> >&, Map_symbol = OBSTACLE);
 	virtual ~Obstacle();
 	int get_footprint(int, int);
-	Pair get_dimensions();
+	Pair<int> get_dimensions();
 private:
 	Footprint footprint;
 };
