@@ -52,6 +52,9 @@ Map::~Map(){
 	}
 }
 
+// game is running only if there are more than 0 humans left
+bool Map::check_game(){ return map_stats.num_humans; }
+
 void Map::iterate(){
 	for(list<Character*>::iterator it = characters.begin(); it != characters.end(); it++)
 		(*it)->exec();
@@ -69,6 +72,16 @@ Map_symbol Map::get_symbol(int xcoor, int ycoor){
 int Map::get_ID(Pair<int> coor){ return (blockmap[coor.x][coor.y]->ID); }
 int Map::get_ID(int xcoor, int ycoor){ return (blockmap[xcoor][ycoor]->ID); }
 
+void Map::add_zombie(Pair<int> coor){
+	add_character(new Zombie(coor));
+	map_stats.num_zombies++;
+}
+
+void Map::add_human(Pair<int> coor){
+	add_character(new Human(coor));
+	map_stats.num_humans++;
+}
+
 void Map::add_character(Character *c){
 	Pair<int> coor = c->get_coor();
 	Pair<int> reg_coor = find_region(coor);
@@ -80,6 +93,11 @@ void Map::add_character(Character *c){
 
 	IDhash[newID++] = c;
 	characters.push_front(c);
+}
+
+void Map::delete_human(pObject* dead_obj, int ID){
+	delete_character(static_cast<Character*>(dead_obj), ID);
+	map_stats.num_humans--;
 }
 
 void Map::delete_character(Character* c, int ID){
@@ -271,18 +289,18 @@ void Map::make_characters(){
 				for(int y = -3; y < 3; y++){ // find nearby locations that may be empty
 					if(get_symbol(ran_coor + Pair<int>(x,y)) == EMPTY)
 					if(i < num_zom){
-						add_character(new Zombie(ran_coor + Pair<int>(x,y)));
+						add_zombie(ran_coor + Pair<int>(x,y));
 					}else{
-						add_character(new Human(ran_coor + Pair<int>(x,y)));
+						add_human(ran_coor + Pair<int>(x,y));
 					}
 					x = y = 3;
 					}
 				}
 			}
 			else if(i < num_zom){
-				add_character(new Zombie(ran_coor));
+				add_zombie(ran_coor);
 			}else{
-				add_character(new Human(ran_coor));
+				add_human(ran_coor);
 			}
 		}
 	}}
@@ -434,7 +452,7 @@ void Map::infect_player(int ID){
 	if(it != IDhash.end() and inf_obj->get_symbol() == HUMAN){
 		Pair<int> coor = inf_obj->get_coor();
 
-		delete_character(static_cast<Character*>(inf_obj), ID);
-		add_character(new Zombie(coor));
+		delete_human(inf_obj, ID);
+		add_zombie(coor);
 	}
 }

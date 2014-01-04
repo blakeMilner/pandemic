@@ -22,6 +22,17 @@ using namespace std;
 
 #define MAX_TRIES 100
 
+
+class MapStats{
+public:
+	int num_humans;
+	int num_zombies;
+
+	MapStats():
+		num_humans(0), num_zombies(0) {}
+};
+
+
 class Map{
 public:
 	friend class MapServer;
@@ -30,6 +41,8 @@ public:
 	~Map();
 	void iterate();
 	void print_map();
+	bool check_game();
+
 private:
 	int xmap_len, ymap_len;
 	ObjectBlock*** blockmap;
@@ -45,11 +58,16 @@ private:
 	mRegion*** regions;
 	int num_x_regions, num_y_regions;
 
+	MapStats map_stats;
+
 	Map_symbol get_symbol(int, int);
 	Map_symbol get_symbol(Pair<int>);
 	int get_ID(int, int);
 	int get_ID(Pair<int>);
+	void add_zombie(Pair<int>);
+	void add_human(Pair<int>);
 	void add_character(Character*);
+	void delete_human(pObject*, int);
 	void delete_character(Character*, int);
 	void add_obstacle(Obstacle*);
 	Pair<int> find_region(Pair<int>);
@@ -95,6 +113,5 @@ struct Dimension_cmp {
         return (adim.x*adim.y < bdim.x*bdim.y);
     }
 };
-
 
 #endif

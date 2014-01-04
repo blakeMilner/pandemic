@@ -26,13 +26,16 @@ bool Supervisor::is_running(){
 }
 
 void Supervisor::iterate(int frames){
-	tick();
-	for(int i = 0; i < frames; i++) map->iterate();
-	tock();
+	if (game_is_running){
+		tick();
+		for(int i = 0; i < frames; i++) map->iterate();
+		tock();
+	}
 }
 
 void Supervisor::iterate(){
 	iterate(1); // do it like this so we can time any epoch
+	game_is_running = map->check_game(); // check if game is still running
 }
 
 double Supervisor::last_run_epoch(){ return(last_epoch); }
