@@ -47,3 +47,7 @@ void Supervisor::tock(){
 	last_epoch = double(clock() - beg)/CLOCKS_PER_SEC;
 	time_running += beg;
 }
+
+void Supervisor::copy_ROI(Map_symbol** buf, Pair<int> x, Pair<int> y){
+	map->copy_ROI(buf, x, y);
+}

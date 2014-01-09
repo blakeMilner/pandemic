@@ -27,9 +27,11 @@ class MapStats{
 public:
 	int num_humans;
 	int num_zombies;
+	int num_bites;
 
 	MapStats():
-		num_humans(0), num_zombies(0) {}
+		num_humans(0), num_zombies(0),
+		num_bites(0) {}
 };
 
 
@@ -42,6 +44,8 @@ public:
 	void iterate();
 	void print_map();
 	bool check_game();
+	void copy_ROI(Map_symbol**, Pair<int>, Pair<int>);
+
 
 private:
 	int xmap_len, ymap_len;

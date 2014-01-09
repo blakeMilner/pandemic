@@ -24,6 +24,7 @@ public:
 	void tock();
 
 	void print_map();
+	void copy_ROI(Map_symbol**, Pair<int>, Pair<int>);
 private:
 	clock_t beg;
 	double last_epoch;

@@ -454,5 +454,15 @@ void Map::infect_player(int ID){
 
 		delete_human(inf_obj, ID);
 		add_zombie(coor);
+		map_stats.num_bites++;
+	}
+}
+
+void Map::copy_ROI(Map_symbol** buf, Pair<int> start_coor, Pair<int> end_coor){
+	if(overall_bounds_check(start_coor) and overall_bounds_check(end_coor)){
+		for(int x = start_coor.x; x < end_coor.x; x++){
+		for(int y = start_coor.y; y < end_coor.y; y++){
+			buf[x][y] = blockmap[x][y]->get_symbol();
+		}}
 	}
 }

@@ -14,8 +14,10 @@ OPTION(ENABLE_GUI "enable GUI option" ON)
 IF(ENABLE_GUI)
 	FIND_PACKAGE(Qt4 REQUIRED)
 	SET (OPT_FLAGS "-DGUI")
-	SET(GUI_SOURCES gui/mainwindow.cpp)
-	SET(GUI_HEADERS gui/mainwindow.h)
+	SET(GUI_SOURCES 
+	    gui/mainwindow.cpp gui/iterator.cpp)
+	SET(GUI_HEADERS 
+	    gui/mainwindow.h)
 	QT4_WRAP_CPP(HEADERS_MOC ${GUI_HEADERS})
 	SET(FORMS gui/mainwindow.ui)
 	QT4_WRAP_UI(FORMS_HEADERS ${FORMS})
