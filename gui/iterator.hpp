@@ -18,6 +18,8 @@ private:
 
 public:
     Game_iterator(Supervisor*, QGraphicsScene*);
+    void unpause_game();
+    void pause_game();
     void set_ROI_coors(Pair<int>);
     void set_ROI_dims(Pair<int>);
     void run();

@@ -16,9 +16,12 @@ void Game_iterator::run(){
     for(;;){
         if(this->is_running){
             simulation->iterate();
-            simulation->copy_ROI(buffer, ROI_coors, ROI_dims);
+           // simulation->copy_ROI(buffer, ROI_coors, ROI_dims);
 
             // transform to pixmap
         }
     }
 }
+
+void Game_iterator::unpause_game(){    is_running = true; }
+void Game_iterator::pause_game(){    is_running = false; }

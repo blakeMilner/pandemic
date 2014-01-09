@@ -104,8 +104,10 @@ void Map::delete_character(Character* c, int ID){
 	Pair<int> coor = c->get_coor();
 	Pair<int> reg_coor = find_region(coor);
 
+	// this remove takes O(n), can we make this better?
+	characters.remove(c);
+
 	regions[reg_coor.x][reg_coor.y]->remove_character(c);
-	// should this stuff be in its own function?
 	IDhash.erase(ID);
 
 	all_object_blocks.remove(blockmap[coor.x][coor.y]);

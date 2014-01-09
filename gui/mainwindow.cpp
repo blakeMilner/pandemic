@@ -21,6 +21,9 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_pushButton_clicked()
 {
+    game_iter.unpause_game();
+
+
     QPixmap* a = new QPixmap(100,100);
     a->fill(Qt::black);
 
