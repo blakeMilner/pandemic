@@ -17,6 +17,7 @@
 #include "../settings/map_settings.hpp"
 #include "../helpers/rng.hpp"
 #include "../enums/object_enum.hpp"
+#include "../../gui/gui_settings.hpp"
 
 using namespace std;
 

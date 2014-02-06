@@ -2,7 +2,7 @@
 #define MAP_SETTINGS_HPP
 
 namespace Map_settings{
-	static int map_len[2] = {30, 30};
+	static int map_len[2] = {90, 90};
 	static int region_len = 30;
 
 	static int min_human_density = 4;

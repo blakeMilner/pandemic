@@ -85,6 +85,11 @@ public:
 	bool operator!= (const Pair& p){
 		return((this->x != p.x) || (this->y != p.y));
 	}
+	// WARNING: THIS OPERATOR RETURNS TRUE IF CONDITION IS MET FOR BOTH X AND Y
+	bool operator<= (const Pair& p){
+		return((this->x <= p.x) and (this->y <= p.y));
+	}
+
 	void set(T nx, T ny){
 		x = nx;
 		y = ny;
@@ -107,6 +112,7 @@ Pair<T> operator* (float a, Pair<T>& v){
 	p.y *= a;
     return(p);
 }
+
 template<typename T>
 ostream& operator<< (ostream &os, Pair<T>& p){
 	return(os << "(" << p.x << "\t,  " << p.y << "\t)");

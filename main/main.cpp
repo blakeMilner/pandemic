@@ -64,13 +64,27 @@ void run_from_cmd(){
     }
 }
 
+void run_gui(int argc, char** argv){
+    QApplication a(argc, argv);
+
+    MainWindow* w = new MainWindow(simulation);
+
+	w->show();
+	a.exec();
+
+
+	delete w;
+}
+
 void setup(){
     srand(time(NULL));
 
     simulation = new Supervisor();
 	simulation->create_map();
 
-	cout << "Time to generate: " << simulation->last_run_epoch() << " sec" << endl;
+    if(UD::print_to_cmd) simulation->print_map();
+		cout << "Time to generate: " << simulation->last_run_epoch() << " sec" << endl;
+
 	simulation->reset_clock();
 }
 
@@ -115,13 +129,10 @@ int main(int argc, char **argv){
 
 
 #ifdef GUI
-	if(UD::gui_wanted){
-        QApplication a(argc, argv);
-        MainWindow w(simulation);
-		w.show();
-		a.exec();
-    }
-	else run_from_cmd();
+	if(UD::gui_wanted)
+		run_gui(argc, argv);
+	else
+		run_from_cmd();
 #else
 	run_from_cmd();
 #endif

@@ -15,7 +15,7 @@ IF(ENABLE_GUI)
 	FIND_PACKAGE(Qt4 REQUIRED)
 	SET (OPT_FLAGS "-DGUI")
 	SET(GUI_SOURCES 
-	    gui/mainwindow.cpp gui/iterator.cpp)
+	    gui/mainwindow.cpp)
 	SET(GUI_HEADERS 
 	    gui/mainwindow.h)
 	QT4_WRAP_CPP(HEADERS_MOC ${GUI_HEADERS})

@@ -130,9 +130,7 @@ void Map::add_obstacle(Obstacle *o){
 		if(o->get_footprint(x,y) && overall_bounds_check(coor + Pair<int>(x,y))){
 			blockmap[coor.x + x][coor.y + y] = newblock;
 		}
-	}
-	}
-
+	}}
 
 	IDhash[newID++] = o;
 
@@ -421,6 +419,16 @@ bool Map::placement_is_clear(Pair<int> dims, Pair<int> coor){
 	return true;
 }
 
+void Map::copy_ROI(Map_symbol** buf, Pair<int> start_coor, Pair<int> length){
+	Pair<int> end_coor = start_coor + length;
+
+	if(overall_bounds_check(start_coor) and overall_bounds_check(end_coor) and (length <= GUI_settings::MAX_ROI_DIMS)){
+		for(int x = start_coor.x; x < end_coor.x; x++){
+		for(int y = start_coor.y; y < end_coor.y; y++){
+			buf[x][y] = blockmap[x][y]->get_symbol();
+		}}
+	}
+}
 
 //
 // FUNCTIONS FOR MAPSERVER WRAPPER
@@ -457,14 +465,5 @@ void Map::infect_player(int ID){
 		delete_human(inf_obj, ID);
 		add_zombie(coor);
 		map_stats.num_bites++;
-	}
-}
-
-void Map::copy_ROI(Map_symbol** buf, Pair<int> start_coor, Pair<int> end_coor){
-	if(overall_bounds_check(start_coor) and overall_bounds_check(end_coor)){
-		for(int x = start_coor.x; x < end_coor.x; x++){
-		for(int y = start_coor.y; y < end_coor.y; y++){
-			buf[x][y] = blockmap[x][y]->get_symbol();
-		}}
 	}
 }
