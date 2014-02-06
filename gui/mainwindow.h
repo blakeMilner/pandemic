@@ -11,7 +11,7 @@
 #include "../main/enums/object_enum.hpp"
 
 namespace Ui {
-class MainWindow;
+	class MainWindow;
 }
 
 class MainWindow : public QMainWindow
@@ -40,7 +40,6 @@ private:
 
     Map_symbol** symbol_buffer;
     QImage* frame_buffer;
-    Pair<int> ROI_coors, ROI_dims;
 
     bool paused;
     void unpause_game();
