@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>726</width>
-    <height>461</height>
+    <width>845</width>
+    <height>628</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,14 +17,14 @@
    <widget class="QPushButton" name="pushButton">
     <property name="geometry">
      <rect>
-      <x>580</x>
+      <x>630</x>
       <y>360</y>
-      <width>111</width>
-      <height>27</height>
+      <width>31</width>
+      <height>31</height>
      </rect>
     </property>
     <property name="text">
-     <string>Run Simulation</string>
+     <string/>
     </property>
    </widget>
    <widget class="QGraphicsView" name="graphicsView">
@@ -32,8 +32,70 @@
      <rect>
       <x>20</x>
       <y>20</y>
-      <width>681</width>
-      <height>331</height>
+      <width>425</width>
+      <height>425</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QSlider" name="horizontalSlider">
+    <property name="geometry">
+     <rect>
+      <x>570</x>
+      <y>300</y>
+      <width>160</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>520</x>
+      <y>300</y>
+      <width>41</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Zoom</string>
+    </property>
+   </widget>
+   <widget class="QSlider" name="horizontalSlider_2">
+    <property name="geometry">
+     <rect>
+      <x>570</x>
+      <y>270</y>
+      <width>160</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>490</x>
+      <y>270</y>
+      <width>71</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Framerate</string>
+    </property>
+   </widget>
+   <widget class="QLineEdit" name="lineEdit">
+    <property name="geometry">
+     <rect>
+      <x>750</x>
+      <y>270</y>
+      <width>31</width>
+      <height>27</height>
      </rect>
     </property>
    </widget>
@@ -43,7 +105,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>726</width>
+     <width>845</width>
      <height>25</height>
     </rect>
    </property>

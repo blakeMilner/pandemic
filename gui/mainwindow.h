@@ -26,17 +26,25 @@ public:
     ~MainWindow();
 
     bool is_paused();
-    
-    QTimer* frame_timer;
 
 private slots:
     void on_pushButton_clicked();
+
+    void on_horizontalSlider_valueChanged(int value);
+
+    void on_horizontalSlider_2_valueChanged(int value);
+
+    void on_lineEdit_textChanged(const QString &arg1);
+
+    void on_lineEdit_lostFocus();
 
 private:
     Ui::MainWindow *ui;
     QGraphicsScene* scene;
 
     Supervisor* supervisor;
+
+    QTimer* frame_timer;
 
     Map_symbol** symbol_buffer;
     QImage* frame_buffer;
@@ -46,6 +54,8 @@ private:
     void pause_game();
 
     void colorize_ROI();
+
+    void update_fps(int value);
 };
 
 
