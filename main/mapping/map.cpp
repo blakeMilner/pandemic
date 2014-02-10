@@ -12,8 +12,8 @@ Map::Map(){
 	IDhash[EMPTY_TYPE_ID] = &empty_object;
 	newID = EMPTY_TYPE_ID + 1;
 
-	xmap_len = MS::map_len[0];
-	ymap_len = MS::map_len[1];
+	xmap_len = MS::map_len.x;
+	ymap_len = MS::map_len.y;
 
 	blockmap = new ObjectBlock**[xmap_len];
 	for(int i = 0; i < xmap_len; i++){
@@ -169,21 +169,21 @@ bool Map::regional_bounds_check(int x, int y){
 
 void Map::print_map(){
 	cout << '#';
-	for(int x = 0; x < MS::map_len[0]; x++){
+	for(int x = 0; x < MS::map_len.y; x++){
 		cout << '-';
 	}
 	cout << '#' << endl;
 
-	for(int y = 0; y < MS::map_len[1]; y++){
+	for(int y = 0; y < MS::map_len.x; y++){
 		cout << '|';
-		for(int x = 0; x < MS::map_len[0]; x++){
+		for(int x = 0; x < MS::map_len.y; x++){
 			cout << (char) blockmap[x][y]->symbol;
 		}
 		cout << '|' << endl;
 	}
 
 	cout << '#';
-	for(int x = 0; x < MS::map_len[0]; x++){
+	for(int x = 0; x < MS::map_len.y; x++){
 		cout << '-';
 	}
 	cout << '#' << endl;
@@ -422,7 +422,7 @@ bool Map::placement_is_clear(Pair<int> dims, Pair<int> coor){
 void Map::copy_ROI(Map_symbol** buf, Pair<int> start_coor, Pair<int> length){
 	Pair<int> end_coor = start_coor + length;
 
-	if(overall_bounds_check(start_coor) and overall_bounds_check(end_coor) and (length <= GUI_settings::MAX_ROI_DIMS)){
+	if(overall_bounds_check(start_coor) and overall_bounds_check(end_coor)){
 		for(int x = start_coor.x; x < end_coor.x; x++){
 		for(int y = start_coor.y; y < end_coor.y; y++){
 			buf[x][y] = blockmap[x][y]->get_symbol();

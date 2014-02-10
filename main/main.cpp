@@ -70,8 +70,9 @@ void run_gui(int argc, char** argv){
     MainWindow* w = new MainWindow(simulation);
 
 	w->show();
-	a.exec();
+	w->extract_window_info();
 
+	a.exec();
 
 	delete w;
 }
