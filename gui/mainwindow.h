@@ -4,6 +4,9 @@
 #include <QMainWindow>
 #include <QGraphicsScene>
 #include <QTimer>
+#include <QGraphicsItem>
+
+
 
 #include "../main/supervisor/supervisor.hpp"
 #include "gui_settings.hpp"
@@ -38,6 +41,7 @@ private slots:
 private:
     Ui::MainWindow *ui;
     QGraphicsScene* scene;
+    QGraphicsItem *scene_item;
 
     Supervisor* supervisor;
 
@@ -49,8 +53,6 @@ private:
     QImage* frame_buffer;
     bool buffer_allocated;
 
-    QGraphicsItem* item;
-
     const QIcon pause_icon, play_icon;
 
     bool paused;
@@ -60,6 +62,8 @@ private:
     void update_buffer();
     void get_window_size();
     void bound_zoom();
+    void reset_scene_size();
+
     void paint_ROI();
     void colorize_ROI();
 

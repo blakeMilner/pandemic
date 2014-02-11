@@ -15,7 +15,7 @@ MainWindow::MainWindow(Supervisor* s, QWidget *parent) :
     frame_timer(new QTimer(this)),
     pause_icon(QIcon(GS::pause_icon_path)),
     play_icon(QIcon(GS::play_icon_path)),
-    lineEdit_userset(true)
+    lineEdit_userset(true), scene_item(0)
 {
     frame_buffer = new QImage(GS::ROI_dims.x, GS::ROI_dims.y, QImage::Format_RGB32);
 
@@ -31,15 +31,15 @@ MainWindow::MainWindow(Supervisor* s, QWidget *parent) :
 		symbol_buffer[i] = new Map_symbol[GS::MAX_ROI_DIMS.y];
     }
 
-    // initialize button icons
+    // initialize play/pause button icons
     ui->pushButton->setIcon(play_icon);
     ui->pushButton->setIconSize(QSize(25,25));
 
-    // set slider step - value indicates pixels per symbol
+    // set zoom slider step - value indicates pixels per symbol
     ui->horizontalSlider->setMinimum(GS::MIN_pix_per_symbol);
     ui->horizontalSlider->setMaximum(GS::MAX_pix_per_symbol);
 
-    // set slider step - value indicates framerate (fps)
+    // set fps slider step - value indicates framerate (fps)
     ui->horizontalSlider_2->setMinimum(GS::MIN_FPS);
     ui->horizontalSlider_2->setMaximum(GS::MAX_FPS);
     ui->lineEdit->setValidator(new QIntValidator(GS::MIN_FPS, GS::MAX_FPS, this)); // only accept numbers
@@ -62,6 +62,9 @@ void MainWindow::get_window_size(){
     // minus 2 to fit within margins
     GS::ROI_dims.x = ui->graphicsView->width() - 2;
     GS::ROI_dims.y = ui->graphicsView->height() - 2;
+
+    cout << ui->graphicsView->width() << endl;
+    cout << scene->width() << endl << endl;
 }
 
 void MainWindow::extract_window_info()
@@ -71,7 +74,6 @@ void MainWindow::extract_window_info()
 }
 
 void MainWindow::update_buffer(){
-    scene->clear();
     delete frame_buffer;
 
     frame_buffer = new QImage(GS::ROI_dims.x, GS::ROI_dims.y, QImage::Format_RGB32);
@@ -85,11 +87,19 @@ void MainWindow::bound_zoom(){
     ui->horizontalSlider->setValue(GS::pix_per_symbol);
 }
 
+// need to fix this
+void MainWindow::reset_scene_size(){
+    if(scene->width() > ui->graphicsView->width()){
+        scene->setSceneRect(ui->graphicsView->geometry().x(), ui->graphicsView->geometry().y(),
+                            ui->graphicsView->width() - 2, ui->graphicsView->height() - 2);
+    }
+}
+
 void MainWindow::resizeEvent ( QResizeEvent * event ){
     get_window_size();
     update_buffer();
     bound_zoom();
-    // need to set scene size back...
+    reset_scene_size();
 }
 
 void MainWindow::on_pushButton_clicked()
@@ -115,12 +125,12 @@ void MainWindow::pause_game(){
     frame_timer->stop();
 }
 
+// expand symbols to multiple pixels and interpret as color
 void MainWindow::colorize_ROI(){
     int x, y;
     int xoffset, yoffset;
     QRgb next_pix;
 
-    // put ROI stuff in GUI
     for(x = 0; x < GS::ROI_dims.x / GS::pix_per_symbol; x++){
     xoffset = x * GS::pix_per_symbol;
 
@@ -194,12 +204,14 @@ void MainWindow::colorize_ROI(){
 // option to focus on character of choice?
 
 void MainWindow::paint_ROI(){
+    if(scene_item) delete scene_item;
+
     supervisor->copy_ROI(symbol_buffer, GS::ROI_coors, (GS::ROI_dims / GS::pix_per_symbol) + 1);
     colorize_ROI();
 
     QPixmap im = QPixmap::fromImage(*frame_buffer);
 
-    scene->addPixmap(im);
+    scene_item = scene->addPixmap(im);
 }
 
 void MainWindow::update_ROI(){
