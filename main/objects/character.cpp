@@ -65,7 +65,7 @@ void Character::random_walk(){
 	}
 
 	if(poss_dir.size() > 0){
-		move_direction( poss_dir.at(RNG::random_num(0, poss_dir.size())) );
+		move_direction( poss_dir.at(RNG::random_num(0, poss_dir.size() - 1)) );
 	}
 }
 

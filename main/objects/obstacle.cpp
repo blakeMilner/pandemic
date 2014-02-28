@@ -11,9 +11,9 @@ pObject(o),
 footprint(o.footprint){
 }
 
-Obstacle::Obstacle(Pair<int> coor, Pair<int> dimens, queue<Pair<int> >& vertices, Map_symbol sym):
+Obstacle::Obstacle(Pair<int> coor, Pair<int> dimens, Map_symbol sym):
 pObject(coor, sym),
-footprint(Footprint(vertices, dimens))
+footprint(Footprint(dimens))
 {
 }
 

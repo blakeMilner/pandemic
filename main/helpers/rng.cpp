@@ -1,10 +1,16 @@
 #include "rng.hpp"
 
 Pair<int> RNG::random_pair(int xstart, int xend, int ystart, int yend){
-	int xran = xstart + (int) (rand() % (xend - xstart));
-	int yran = ystart + (int) (rand() % (yend - ystart));
+	if(xstart > xend or ystart > yend){
+		cout << "WARNING: invalid random number range specified" << endl;
+		return(0);
+	}
+	else{
+		int xran = xstart + (int) (rand() % (xend - xstart));
+		int yran = ystart + (int) (rand() % (yend - ystart));
 
-	return(Pair<int>(xran, yran));
+		return(Pair<int>(xran, yran));
+	}
 }
 
 Pair<int> RNG::random_pair(Pair<int> start, Pair<int> end){
@@ -12,7 +18,13 @@ Pair<int> RNG::random_pair(Pair<int> start, Pair<int> end){
 }
 
 int RNG::random_num(int start, int end){
-	return(start + (int) (rand() % (end - start)));
+	if(start > end){
+		cout << "WARNING: invalid random number range specified" << endl;
+		return(0);
+	}
+	else{
+		return(start + (int) (rand() % (1 + end - start)));
+	}
 }
 
 bool RNG::yes_or_no(float chance){

@@ -3,6 +3,7 @@
 Map* MapServer::currmap = NULL;
 
 Map_symbol MapServer::get_symbol(int x, int y){
+	// is this hurting performance?
 	if(currmap != NULL){
 		return(currmap->get_symbol(x,y));
 	}
@@ -27,6 +28,26 @@ void MapServer::copy_field(Map_symbol** o, Pair<int> coor, Pair<int> vis_rad){
 	for(int y = 0; y < dims.y; y++){
 		o[x][y] = MapServer::get_symbol(coor.x + x, coor.y + y);
 	}}
+
+/*
+	  note : z-depth and z-buffer(x,y) is positive........
+	           z-buffer(x,y)=max depth; and
+	           COLOR(x,y)=background color.
+	Begin:
+	      for(each polygon P in the polygon list)
+	      do{
+	          for(each pixel(x,y) that intersects P)
+	          do{
+	               Calculate z-depth of P at (x,y)
+	               If (z-depth < z-buffer[x,y])
+	               then{
+	                      z-buffer[x,y]=z-depth;
+	                      COLOR(x,y)=Intensity of P at(x,y);
+	                   }
+	            }
+	        }
+	  display COLOR array.
+*/
 
 //	Map_symbol next_sym;
 //	flPair fl_pos, change;

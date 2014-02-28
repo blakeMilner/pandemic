@@ -16,6 +16,7 @@ void Human::exec(){
 	}
 	else
 		Character::random_walk();
+
 }
 
 void Human::init_stats(){

@@ -86,12 +86,7 @@ private:
 	void populate();
 	void make_buildings();
 	void make_characters();
-	Pair<int> find_empty_path(int, int, int, int);
 	bool placement_is_clear(Pair<int>, Pair<int>);
-	void remove_corners(Pair<int>&, queue<Pair<int> >&);
-	void trace_outline(Pair<int>&, queue<Pair<int> >&);
-	void turn_left(queue<Pair<int> >&, Pair<int>&, Pair<int>&);
-	void turn_right(queue<Pair<int> >&, Pair<int>&, Pair<int>&);
 
 	// functions meant for MapServer
 	void move_character(Character*, Pair<int>&);
@@ -108,15 +103,6 @@ public:
 	static void bite_player(Pair<int>);
 private:
 	static Map* currmap;
-};
-
-// to sort by area
-struct Dimension_cmp {
-    bool operator()(Building* a, Building* b) const {
-    	Pair<int> adim = a->get_dimensions();
-    	Pair<int> bdim = b->get_dimensions();
-        return (adim.x*adim.y < bdim.x*bdim.y);
-    }
 };
 
 #endif

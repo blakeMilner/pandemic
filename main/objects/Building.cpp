@@ -11,8 +11,8 @@ Obstacle(b)
 {
 }
 
-Building::Building(Pair<int> coor, Pair<int> dimens, queue<Pair<int> >& vertices):
-Obstacle(coor, dimens, vertices, BUILDING)
+Building::Building(Pair<int> coor, Pair<int> dimens):
+Obstacle(coor, dimens, BUILDING)
 {
 
 }

@@ -97,6 +97,9 @@ public:
 	bool within(const Pair& p1, const Pair& p2){
 		return(p1.x <= x and x <= p2.x and p1.y <= y and y <= p2.y);
 	}
+	bool outside(const Pair& p1, const Pair& p2){
+		return(p1.x > x or x > p2.x or p1.y > y or y > p2.y);
+	}
 	float mag(){ return sqrt(pow(x,2) + pow(y,2)); }
 	float angle() { return atan2(y, x); }
 	Pair<int> sgn(){ return Pair((x > 0) - (x < 0), (y > 0) - (y < 0)); }
@@ -117,6 +120,14 @@ template<typename T>
 ostream& operator<< (ostream &os, Pair<T>& p){
 	return(os << "(" << p.x << "\t,  " << p.y << "\t)");
 }
+
+// to sort by area
+template<typename T>
+struct Dimension_cmp {
+    bool operator()(Pair<T> a, Pair<T> b) const {
+        return (a.x*a.y < b.x*b.y);
+    }
+};
 
 #endif
 

@@ -214,56 +214,44 @@ void Map::populate(){
 
 
 void Map::make_buildings(){
-list<Building*> poss_build;
-list<Building*>::iterator itc;
+// list of possible buildings we can place
+list<Pair<int> > poss_build;
+list<Pair<int> >::iterator itc;
 
+// vertices of buildings and basic attributes
 queue<Pair<int> > vertices;
 Pair<int> ran_dims, ran_coor, build_dims, reg_coor;
 int num_buildings_region;
 
-int min_len = MS::min_building_len;
-int max_len = MS::max_building_len;
+int min_len = MS::min_footprint_len;
+int max_len = MS::max_footprint_len;
 int reg_len = MS::region_len;
 
-int tryc;
+int tryc; // number of times we've tried to place building
 
 for(int x = 0; x < num_x_regions; x++){
 for(int y = 0; y < num_y_regions; y++){
 	num_buildings_region = RNG::random_num(MS::min_building_density, MS::max_building_density);
-	reg_coor = Pair<int>(x,y) * Pair<int>(MS::region_len, MS::region_len);
+	reg_coor = Pair<int>(x,y) * reg_len;
 
-	// make dimensions and shapes of new buildings
 	poss_build.clear();
 	for(int i = 0; i < num_buildings_region; i++){
-		// temporary
-		ran_dims = RNG::random_pair(min_len, max_len, min_len, max_len);
-
-		vertices.push(Pair<int>(0,0));
-		vertices.push(Pair<int>(ran_dims.x-1,0));
-		vertices.push(Pair<int>(ran_dims.x-1,ran_dims.y-1));
-		vertices.push(Pair<int>(0,ran_dims.y-1));
-		//trace_outline(ran_dims, vertices);
-
-		poss_build.push_front(new Building(reg_coor, ran_dims, vertices));
-
-		vertices = queue<Pair<int> >(); // empty queue
+		poss_build.push_front(RNG::random_pair(min_len, max_len, min_len, max_len));
 	}
-
-	poss_build.sort(Dimension_cmp()); // sort by area
+	poss_build.sort(Dimension_cmp<int>()); // sort by size, try to place largest first
 
 	// try to fit bulding in by guessing random coordinates to place it
 	for(itc = poss_build.begin(); itc != poss_build.end(); itc++){
-		build_dims = (*itc)->get_dimensions();
 		for(tryc = 0; tryc < MAX_TRIES; tryc++){
 			ran_coor = RNG::random_pair(reg_coor, reg_coor + reg_len);
-			if(placement_is_clear(build_dims, ran_coor)){
-				(*itc)->set_coor(ran_coor);
-				add_obstacle(*itc);
+
+			if(placement_is_clear(*itc, ran_coor)){
+				add_obstacle(new Building(ran_coor, *itc));
 				break;
 			}
 		}
-		if(tryc == MAX_TRIES){ delete *itc; }// delete if no place found
 	}
+
 }}
 
 }
@@ -289,11 +277,11 @@ void Map::make_characters(){
 				for(int y = -3; y < 3; y++){ // find nearby locations that may be empty
 					if(get_symbol(ran_coor + Pair<int>(x,y)) == EMPTY)
 					if(i < num_zom){
-						add_zombie(ran_coor + Pair<int>(x,y));
+						add_zombie(ran_coor + Pair<int>(x,y)); // change this to input only character name
 					}else{
 						add_human(ran_coor + Pair<int>(x,y));
 					}
-					x = y = 3;
+					x = y = 3; // end both for loops
 					}
 				}
 			}
@@ -304,107 +292,6 @@ void Map::make_characters(){
 			}
 		}
 	}}
-
-}
-
-void Map::remove_corners(Pair<int>& ran_dims, queue<Pair<int> >& vertices){
-
-//	vertices.push()
-//	for(int i = 0; i < 4; i++){
-//	if(RNG::yes_or_no(0.25)){
-//		for(list<Pair>::iterator it = sqrs.begin(); it != sqrs.end(); it++){
-//			if(it->x ) {}
-//		}
-//	}
-//	}
-}
-
-void Map::trace_outline(Pair<int>& ran_dims, queue<Pair<int> >& vertices){
-	float turn_chance = (ran_dims.x < ran_dims.y) ? ran_dims.x : ran_dims.y;
-	turn_chance = 3 / turn_chance;
-
-	list<Nav_symbol> turns;
-	turns.push_front(LEFT), turns.push_front(RIGHT);
-	turns.push_front(RIGHT), turns.push_front(LEFT);
-	list<Nav_symbol>::iterator turn = turns.begin();
-
-	Pair<int> limit(ran_dims.x - 1, ran_dims.y - 1);
-
-	Pair<int> null_pair = Pair<int>(0,0);
-	vertices.push(null_pair);
-	Pair<int> change(0,1), position(0,0);
-
-	int num_turns = 0;
-
-	while(true){
-		position += change;
-
-		if((position.x < null_pair.x) && (num_turns == 3)){ // if we've arrived back at origin
-			break;
-		}
-		else if((position.y > limit.y) || (position.x > limit.x) || (position.x < null_pair.x) || (position.y < null_pair.y)){ // we've hit the border - always turn left
-			position -= change;
-			turn_left(vertices, position, change);
-			turn = turns.begin();
-			num_turns++;
-			while((position.y < limit.y) && (position.x < limit.x) && (position.x > null_pair.x) && (position.y > null_pair.y)){
-				position += change;
-			}
-		}
-		else if(RNG::yes_or_no(turn_chance)){ // choose to turn by chance
-			if(*turn == LEFT){
-				turn_left(vertices, position, change);
-			}else{
-				turn_right(vertices, position, change);
-			}
-
-			if(turn == turns.end()){ // advance us if done turning
-				while((position.y < limit.y) && (position.x < limit.x) && (position.x > null_pair.x) && (position.y > null_pair.y)){
-					position += change;
-				}
-				turn_left(vertices, position, change);
-				turn = turns.begin();
-				num_turns++;
-			}
-			else{
-				turn++;
-			}
-		}
-
-	}
-}
-
-void Map::turn_left(queue<Pair<int> >& vertices, Pair<int>& pos, Pair<int>& change){
-	vertices.push(pos);
-
-	if(change.x == 1) change.set(0,-1);
-	else if(change.x == -1) change.set(0,1);
-	else if(change.y == 1) change.set(1,0);
-	else if(change.y == -1) change.set(-1,0);
-}
-
-void Map::turn_right(queue<Pair<int> >& vertices, Pair<int>& pos, Pair<int>& change){
-	vertices.push(pos);
-
-	if(change.x == 1) change.set(0,1);
-	else if(change.x == -1) change.set(0,-1);
-	else if(change.y == 1) change.set(-1,0);
-	else if(change.y == -1) change.set(1,0);
-}
-
-Pair<int> Map::find_empty_path(int x_search, int y_search, int xincr, int yincr){
-	Pair<int> empty = Pair<int>(0,0);
-//	int i = 0;
-//
-//	while(poss_coors[MS::region_len + x_search + i*xincr][MS::region_len + y_search + i*yincr] != INVALID_COOR){
-//		empty.x += xincr;
-//		empty.y += yincr;
-//
-//		empty++;
-//		i++;
-//	}
-//
-	return(empty);
 
 }
 
