@@ -77,6 +77,7 @@ dimensions(dims)
 	Pair<int> corner, dimen;
 	bool hit_block = false; // whether we will be overlapping existing block
 	bool door_found = false;
+	float door_chance = Map_settings::door_chance;
 	int num_poss_doors = 0;
 	int max_x, max_y; // max length in direction
 	vector<Pair<int> > borders;
@@ -152,40 +153,44 @@ dimensions(dims)
 		}
 	}
 
-	// select and carve out door
-	for(vector<Pair<int> >::iterator it = borders.begin(); it != borders.end(); it++){
-			// check if this is our door by chance and if we're not on the footprint border
-			if(RNG::yes_or_no(Map_settings::door_chance) and
-					(*it).x >= 0 and (*it).x < dims.x and (*it).y >= 0 and (*it).y < dims.y){
-
-				door_found = false;
-
-				// door is on straight edge
-				if(footprint[(*it).x - 1][(*it).y] == 1 and
-					footprint[(*it).x + 1][(*it).y] == 1 and
-					footprint[(*it).x - 1][(*it).y - 1] == 0 and
-					footprint[(*it).x + 1][(*it).y + 1] == 0 and
-					footprint[(*it).x][(*it).y - 1] == 0 and
-					footprint[(*it).x][(*it).y + 1] == 0){
-						door_found = true;
-				}
-				// door is on other straight edge
-				else if(footprint[(*it).x][(*it).y - 1] == 1 and
-					footprint[(*it).x][(*it).y + 1] == 1 and
-					footprint[(*it).x - 1][(*it).y - 1] == 0 and
-					footprint[(*it).x + 1][(*it).y + 1] == 0 and
-					footprint[(*it).x - 1][(*it).y] == 0 and
-					footprint[(*it).x + 1][(*it).y] == 0){
-						door_found = true;
-				}
-			}
-
-			// carve door and exit if found
-			if(door_found){
-				footprint[(*it).x][(*it).y] = 0;
-				break;
-			}
-	}
+//	// select and carve out door, keep trying and updating door chance if not found
+//	while(!door_found){
+//		for(vector<Pair<int> >::iterator it = borders.begin(); it != borders.end(); it++){
+//			// check if this is our door by chance and if we're not on the footprint border
+//			if(RNG::yes_or_no(door_chance) and
+//					(*it).x >= 0 and (*it).x < dims.x and (*it).y >= 0 and (*it).y < dims.y){
+//
+//				door_found = false;
+//
+//				// door is on straight edge
+//				if(!footprint[(*it).x - 1][(*it).y] and
+//					!footprint[(*it).x + 1][(*it).y] and
+//					footprint[(*it).x - 1][(*it).y - 1] == 0 and
+//					footprint[(*it).x + 1][(*it).y + 1] == 0 and
+//					footprint[(*it).x][(*it).y - 1] == 0 and
+//					footprint[(*it).x][(*it).y + 1] == 0){
+//						door_found = true;
+//				}
+//				// door is on other straight edge
+//				else if(!footprint[(*it).x][(*it).y - 1] and
+//					!footprint[(*it).x][(*it).y + 1] and
+//					footprint[(*it).x - 1][(*it).y - 1] == 0 and
+//					footprint[(*it).x + 1][(*it).y + 1] == 0 and
+//					footprint[(*it).x - 1][(*it).y] == 0 and
+//					footprint[(*it).x + 1][(*it).y] == 0){
+//						door_found = true;
+//				}
+//			}
+//
+//			// carve door and exit if found
+//			if(door_found){
+//				footprint[(*it).x][(*it).y] = 0;
+//				break;
+//			}
+//		}
+//
+//		door_chance += 0.05;
+//	}
 
 
 //	// generate random rectangle to push in, start/end coordinates and push length

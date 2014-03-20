@@ -22,66 +22,68 @@ int MapServer::get_ID(int x, int y){
 }
 
 void MapServer::copy_field(Map_symbol** o, Pair<int> coor, Pair<int> vis_rad){
+	// TODO: perhaps replace corner/angle computation with LUT?
+
+
+
+	// compute blocks that a block will occlude beforehand
 	Pair<int> dims = 2*vis_rad + 1;
 
-	for(int x = 0; x < dims.x; x++){
 	for(int y = 0; y < dims.y; y++){
+	for(int x = 0; x < dims.x; x++){
 		o[x][y] = MapServer::get_symbol(coor.x + x, coor.y + y);
 	}}
 
-/*
-	  note : z-depth and z-buffer(x,y) is positive........
-	           z-buffer(x,y)=max depth; and
-	           COLOR(x,y)=background color.
-	Begin:
-	      for(each polygon P in the polygon list)
-	      do{
-	          for(each pixel(x,y) that intersects P)
-	          do{
-	               Calculate z-depth of P at (x,y)
-	               If (z-depth < z-buffer[x,y])
-	               then{
-	                      z-buffer[x,y]=z-depth;
-	                      COLOR(x,y)=Intensity of P at(x,y);
-	                   }
-	            }
-	        }
-	  display COLOR array.
-*/
+	Map_symbol next_sym;
+	Pair<float> corners[4];
+	float diff, max_diff;
+	Pair<int> max_pair;
+	Pair<float> block; // blocks that might be occluded
+	float block_dist;
 
-//	Map_symbol next_sym;
-//	flPair fl_pos, change;
-//	Pair cartes_pos, pos, rnd_coor;
-//	Pair dims = 2*vis_rad + 1;
-//
-//	for(int x = 0; x < dims.x; x++){
-//	for(int y = 0; y < dims.y; y++){
-//		next_sym = MapServer::get_symbol(coor.x + x, coor.y + y);
-//
-//		// skip if it has already been marked occluded
-//		if(o[x][y] != OCCLUDED){
-//			o[x][y] = next_sym;
-//		}
-//		// remove occluded blocks if next symbol causes occlusion
-//		if(NAV::is_occluded(next_sym)){
-//			// find unit vector so we know what direction
-//			fl_pos = pos = Pair(x,y);
-//			cartes_pos = pos - vis_rad;
-//			change = cartes_pos.unit_v() / 10;
-//
-//			// get ourselves up to the next block so we don't occlude the parent
-//			while(fl_pos.round() == pos){
-//				fl_pos.x += change.x; fl_pos.y -= change.y;
-//			}
-//
-//			// trace out along direction and occlude blocks that we find
-//			while(fl_pos.within(Pair(0,0), dims - 1)){
-//				rnd_coor = fl_pos.round();
-//				o[rnd_coor.x][rnd_coor.y] = OCCLUDED;
-//				fl_pos.x += change.x; fl_pos.y -= change.y;
-//			}
-//		}
-//	}}
+	// loop through each block, marking out blocks it occludes
+	for(int x = -vis_rad.x; x <= vis_rad.x; x++){
+	for(int y = -vis_rad.y; y <= vis_rad.y; y++){
+		next_sym = MapServer::get_symbol(coor.x + x + vis_rad.x, coor.y + y + vis_rad.y);
+		block_dist = Pair<float>(x, y).mag();
+
+		// if this block is occluded then find other blocks it occludes
+		// TODO: replace is_occluded with has_type(next_sym, BLOCKING)
+		if(NAV::is_occluded(next_sym)){
+			corners[0] = Pair<float>(x - 0.5, y - 0.5);
+			corners[1] = Pair<float>(x + 0.5, y - 0.5);
+			corners[2] = Pair<float>(x - 0.5, y + 0.5);
+			corners[3] = Pair<float>(x + 0.5, y + 0.5);
+
+			// compute all combos
+			max_diff = 0;
+			max_pair.set(1,2);
+			for(int s = 0; s < 4; s++){
+			for(int e = s + 1; e < 4; e++){
+				diff = corners[s].angle_with(corners[e]);
+				if(diff > max_diff){
+					max_diff = diff;
+					max_pair.set(s,e);
+				}
+			}
+			}
+
+			// loop through all blocks, see if they are within largest vectors
+			for(int xx = -vis_rad.x; xx <= vis_rad.x; xx++){
+			for(int yy = -vis_rad.y; yy <= vis_rad.y; yy++){
+				// don't check if block is already occluded
+				if(o[xx + vis_rad.x][yy + vis_rad.y] == OCCLUDED){
+					continue;
+				}
+
+				block = Pair<float>(xx, yy);
+				if( block.is_between(corners[max_pair.x], corners[max_pair.y]) and block.mag() > block_dist ){
+					o[xx + vis_rad.x][yy + vis_rad.y] = OCCLUDED;
+				}
+			}
+			}
+		}
+	}}
 }
 
 void MapServer::move_character(Character* this_ptr, Nav_symbol dir){

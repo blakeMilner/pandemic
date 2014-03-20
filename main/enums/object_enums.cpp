@@ -74,6 +74,7 @@ Nav_symbol NAV::get_direction(Pair<int> dir){
 }
 
 bool NAV::is_occluded(Map_symbol s){
+	// change this to be a list full of occluded types, search list
 	if(s == OCCLUDED or s == OBSTACLE or s == OBJECT or s == BUILDING or s == INVALID)
 		return true;
 	else
