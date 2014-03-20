@@ -77,17 +77,31 @@ void Character::go_towards(Pair<int> pos){
 	Pair<float> unit = pos.unit_v();
 	Pair<int> dir(0,0);
 
+	// translate position to move to as binary direction change
 	if(abs(unit.x) > UNIT_BOUND) dir.x = sgn(unit.x);
 	if(abs(unit.y) > UNIT_BOUND) dir.y = sgn(unit.y);
 
-	Nav_symbol direc = NAV::get_direction(dir);
+	// move to space if empty, otherwise search for empty spaces in surrounding area
+	Nav_symbol left_direc, right_direc, direc = NAV::get_direction(dir);
 
 	if(block_is(direc, EMPTY))
 		MapServer::move_character(this, direc);
-	else if(block_is(NAV::get_left(direc), EMPTY))
-		MapServer::move_character(this, NAV::get_left(direc));
-	else if(block_is(NAV::get_right(direc), EMPTY))
-		MapServer::move_character(this, NAV::get_right(direc));
+	else{
+		left_direc = right_direc = direc;
+		for(int i = 0; i < 2; i++){
+			left_direc = NAV::get_left(left_direc);
+			right_direc = NAV::get_right(right_direc);
+
+			if(block_is(left_direc, EMPTY)){
+				MapServer::move_character(this, left_direc);
+				return;
+			}
+			else if(block_is(right_direc, EMPTY)){
+				MapServer::move_character(this, right_direc);
+				return;
+			}
+		}
+	}
 }
 
 bool Character::find_nearest(Pair<int>& pos, Map_symbol sym){
