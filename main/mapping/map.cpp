@@ -2,6 +2,13 @@
 
 namespace MS = Map_settings;
 
+
+
+// TODO: possibly change array access to entire pair by itself
+// instead of accessing element-by-element?
+
+
+
 Map::Map(){
 	MapServer::currmap = this;
 
@@ -238,7 +245,7 @@ for(int y = 0; y < num_y_regions; y++){
 	for(int i = 0; i < num_buildings_region; i++){
 		poss_build.push_front(RNG::random_pair(min_len, max_len, min_len, max_len));
 	}
-	poss_build.sort(Dimension_cmp<int>()); // sort by size, try to place largest first
+	poss_build.sort(Rect_area_cmp<int>()); // sort by size, try to place largest first
 
 	// try to fit bulding in by guessing random coordinates to place it
 	for(itc = poss_build.begin(); itc != poss_build.end(); itc++){

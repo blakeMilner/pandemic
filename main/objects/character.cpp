@@ -31,7 +31,7 @@ void Character::exec(){
 	int vision_rad = stats.VIS_RAD;
 	int vision_len = 2*vision_rad + 1;
 
-	MapServer::copy_field(vision_field, coor - vision_rad, Pair<int>(stats.VIS_RAD));
+	MapServer::Instance()->copy_field(vision_field, coor - vision_rad, Pair<int>(stats.VIS_RAD));
 //	Character::print_vision();
 }
 
@@ -51,7 +51,7 @@ bool Character::block_is(Nav_symbol dir, Map_symbol sym){
 }
 
 void Character::move_direction(Nav_symbol dir){
-	MapServer::move_character(this, dir);
+	MapServer::Instance()->move_character(this, dir);
 }
 
 void Character::random_walk(){
@@ -85,7 +85,7 @@ void Character::go_towards(Pair<int> pos){
 	Nav_symbol left_direc, right_direc, direc = NAV::get_direction(dir);
 
 	if(block_is(direc, EMPTY))
-		MapServer::move_character(this, direc);
+		MapServer::Instance()->move_character(this, direc);
 	else{
 		left_direc = right_direc = direc;
 		for(int i = 0; i < 2; i++){
@@ -93,11 +93,11 @@ void Character::go_towards(Pair<int> pos){
 			right_direc = NAV::get_right(right_direc);
 
 			if(block_is(left_direc, EMPTY)){
-				MapServer::move_character(this, left_direc);
+				MapServer::Instance()->move_character(this, left_direc);
 				return;
 			}
 			else if(block_is(right_direc, EMPTY)){
-				MapServer::move_character(this, right_direc);
+				MapServer::Instance()->move_character(this, right_direc);
 				return;
 			}
 		}

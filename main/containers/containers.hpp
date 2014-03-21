@@ -60,14 +60,6 @@ public:
 		return Pair(a + (*this).x, a + (*this).y);
 	}
 
-	Pair operator-(float f){
-		return Pair(this->x - f, this->y - f);
-	}
-
-	Pair operator-(const Pair& p){
-		return Pair(this->x - p.x, this->y - p.y);
-	}
-
 	Pair operator* (const Pair& p){
 		Pair pp = *this;
 		pp.x *= p.x;
@@ -98,9 +90,18 @@ public:
 		return((this->x != p.x) || (this->y != p.y));
 	}
 
-	// WARNING: THIS OPERATOR RETURNS TRUE IF CONDITION IS MET FOR BOTH X AND Y
+	// WARNING: THESE OPERATORS RETURN TRUE IF CONDITION IS MET FOR BOTH X AND Y
 	bool operator<= (const Pair& p){
 		return((this->x <= p.x) and (this->y <= p.y));
+	}
+	bool operator< (const Pair& p){
+		return((this->x < p.x) and (this->y < p.y));
+	}
+	bool operator> (const Pair& p){
+		return((this->x > p.x) and (this->y > p.y));
+	}
+	bool operator>= (const Pair& p){
+		return((this->x >= p.x) and (this->y >= p.y));
 	}
 
 	// set elements
@@ -165,17 +166,42 @@ Pair<T> operator* (float a, Pair<T>& v){
 }
 
 template<typename T>
+Pair<T> operator-(const float f, const Pair<T>& p){
+	return Pair<T>(f - p.x, f - p.y);
+}
+
+template<typename T>
+Pair<T> operator-(const Pair<T>& p, const float f){
+	return Pair<T>(p.x - f, p.y - f);
+}
+
+template<typename T>
+Pair<T> operator-(const Pair<T>& p1, const Pair<T>& p2){
+	return Pair<T>(p1.x - p2.x, p1.y - p2.y);
+}
+
+template<typename T>
 ostream& operator<< (ostream &os, Pair<T>& p){
 	return(os << "(" << p.x << "\t,  " << p.y << "\t)");
 }
 
-// to sort by area
+// to sort by rectangular area
 template<typename T>
-struct Dimension_cmp {
+struct Rect_area_cmp {
     bool operator()(Pair<T> a, Pair<T> b) const {
         return (a.x*a.y < b.x*b.y);
     }
 };
 
+// to sort by maximum magnitude of elements
+template<typename T>
+struct Max_mag_cmp {
+    bool operator()(Pair<T> a, Pair<T> b) const {
+    	int max_a = (abs(a.x) > abs(a.y)) ? abs(a.x) : abs(a.y);
+    	int max_b = (abs(b.x) > abs(b.y)) ? abs(b.x) : abs(b.y);
+
+        return max_a < max_b;
+    }
+};
 #endif
 

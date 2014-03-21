@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <list>
 #include <map>
+#include <vector>
 #include <iostream>
 
 #include "map_attributes.hpp"
@@ -24,6 +25,7 @@ using namespace std;
 #define MAX_TRIES 100
 
 
+
 class MapStats{
 public:
 	int num_humans;
@@ -41,7 +43,7 @@ public:
 	friend class MapServer;
 
 	Map();
-	~Map();
+	virtual ~Map();
 	void iterate();
 	void print_map();
 	bool check_game();
@@ -93,16 +95,26 @@ private:
 	void infect_player(int ID);
 };
 
+// singleton class
 class MapServer{
 public:
 	friend class Map;
-	static Map_symbol get_symbol(int, int);
-	static int get_ID(int, int);
-	static void copy_field(Map_symbol**, Pair<int>, Pair<int>);
-	static void move_character(Character*, Nav_symbol);
-	static void bite_player(Pair<int>);
+
+	static MapServer* Instance(); // returns singleton pointer
+
+	Map_symbol get_symbol(int, int);
+	int get_ID(int, int);
+	void copy_field(Map_symbol**, Pair<int>, Pair<int>);
+	void move_character(Character*, Nav_symbol);
+	void bite_player(Pair<int>);
 private:
+	MapServer();
+	~MapServer();
+
+	static MapServer* p_Instance; // singleton pointer
+
 	static Map* currmap;
+	vector<Pair<int> >** BLOCKS_OCCLUDED; // LUT FOR OCCLUSIONS
 };
 
 #endif

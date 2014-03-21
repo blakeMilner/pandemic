@@ -23,7 +23,7 @@ void Zombie::exec(){
 }
 
 void Zombie::bite(Pair<int> pos){
-	MapServer::bite_player(pos + coor);
+	MapServer::Instance()->bite_player(pos + coor);
 }
 
 void Zombie::init_stats(){
