@@ -71,12 +71,14 @@ void MainWindow::extract_window_info()
 {
     get_window_size();
     update_buffer();
+
 }
 
 void MainWindow::update_buffer(){
     delete frame_buffer;
 
     frame_buffer = new QImage(GS::ROI_dims.x, GS::ROI_dims.y, QImage::Format_RGB32);
+    bound_zoom();
 }
 
 void MainWindow::bound_zoom(){
@@ -98,7 +100,6 @@ void MainWindow::reset_scene_size(){
 void MainWindow::resizeEvent ( QResizeEvent * event ){
     get_window_size();
     update_buffer();
-    bound_zoom();
     reset_scene_size();
 }
 

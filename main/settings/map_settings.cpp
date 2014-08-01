@@ -39,12 +39,12 @@ int Map_settings::max_build_placement_tries = 100;
 float Map_settings::door_probability = 0.05;
 
 bool Map_settings::settings_check(){
-                if( max_footprint_len - min_footprint_len < MAX_LENGTH_DIFF
-                        or max_building_len - min_building_len < MAX_LENGTH_DIFF){
-                                return false;
-                }
+	if( max_footprint_len - min_footprint_len < MAX_LENGTH_DIFF
+			or max_building_len - min_building_len < MAX_LENGTH_DIFF){
+					return false;
+	}
 
-                return true;
+	return true;
 }
 
 
