@@ -1,6 +1,6 @@
 #include "supervisor.hpp"
 
-namespace MS = Map_settings; // TODO: include config header in each source file that enumerates all namespaces
+// TODO: include config header in each source file that enumerates all namespaces
 
 Supervisor::Supervisor() :
 map(NULL),
@@ -32,7 +32,7 @@ void Supervisor::iterate(int frames){
 
 	for(int i = 0; i < frames; i++){
 		if ((game_is_running = map->check_game())){
-			MS::settings_check();
+			Map_settings::settings_check();
 			map->iterate();
 		}
 		else

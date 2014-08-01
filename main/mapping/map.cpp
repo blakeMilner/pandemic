@@ -1,8 +1,5 @@
 #include "map.hpp"
 
-namespace MS = Map_settings;
-
-
 Map::Map(){
 	MapServer::currmap = this;
 
@@ -13,8 +10,8 @@ Map::Map(){
 	IDhash[EMPTY_TYPE_ID] = &empty_object;
 	newID = EMPTY_TYPE_ID + 1;
 
-	xmap_len = MS::map_len.x;
-	ymap_len = MS::map_len.y;
+	xmap_len = Map_settings::map_len.x;
+	ymap_len = Map_settings::map_len.y;
 
 	blockmap = new ObjectBlock**[xmap_len];
 	for(int i = 0; i < xmap_len; i++){
@@ -165,7 +162,7 @@ ObjectBlock* Map::new_object_block(int ID, Map_symbol sym){
 }
 
 Pair<int> Map::find_region(Pair<int> coor){
-	return Pair<int>(coor.x / MS::region_len, coor.y / MS::region_len);
+	return Pair<int>(coor.x / Map_settings::region_len, coor.y / Map_settings::region_len);
 }
 
 bool Map::overall_bounds_check(Pair<int> p){ return overall_bounds_check(p.x, p.y); }
@@ -188,21 +185,21 @@ bool Map::regional_bounds_check(int x, int y){
 
 void Map::print_map(){
 	cout << '#';
-	for(int x = 0; x < MS::map_len.y; x++){
+	for(int x = 0; x < Map_settings::map_len.y; x++){
 		cout << '-';
 	}
 	cout << '#' << endl;
 
-	for(int y = 0; y < MS::map_len.x; y++){
+	for(int y = 0; y < Map_settings::map_len.x; y++){
 		cout << '|';
-		for(int x = 0; x < MS::map_len.y; x++){
+		for(int x = 0; x < Map_settings::map_len.y; x++){
 			cout << (char) blockmap[x][y]->symbol;
 		}
 		cout << '|' << endl;
 	}
 
 	cout << '#';
-	for(int x = 0; x < MS::map_len.y; x++){
+	for(int x = 0; x < Map_settings::map_len.y; x++){
 		cout << '-';
 	}
 	cout << '#' << endl;
@@ -210,7 +207,7 @@ void Map::print_map(){
 
 
 void Map::regionalize(){
-	int region_len = MS::region_len;
+	int region_len = Map_settings::region_len;
 
 	num_x_regions = (xmap_len / region_len);
 	num_y_regions = (ymap_len / region_len);
@@ -242,15 +239,15 @@ queue<Pair<int> > vertices;
 Pair<int> ran_coor, build_dims, reg_coor;
 int num_buildings_region;
 
-int min_len = MS::min_footprint_len;
-int max_len = MS::max_footprint_len;
-int reg_len = MS::region_len;
+int min_len = Map_settings::min_footprint_len;
+int max_len = Map_settings::max_footprint_len;
+int reg_len = Map_settings::region_len;
 
 int tryc; // number of times we've tried to place building
 
 for(int x = 0; x < num_x_regions; x++){
 for(int y = 0; y < num_y_regions; y++){
-	num_buildings_region = RNG::random_num(MS::min_building_density, MS::max_building_density);
+	num_buildings_region = RNG::random_num(Map_settings::min_building_density, Map_settings::max_building_density);
 	reg_coor = Pair<int>(x,y) * reg_len;
 
 	poss_build.clear();
@@ -261,7 +258,7 @@ for(int y = 0; y < num_y_regions; y++){
 
 	// try to fit bulding in by guessing random coordinates to place it
 	for(itc = poss_build.begin(); itc != poss_build.end(); itc++){
-		for(tryc = 0; tryc < MS::max_build_placement_tries; tryc++){
+		for(tryc = 0; tryc < Map_settings::max_build_placement_tries; tryc++){
 			ran_coor = RNG::random_pair(reg_coor, reg_coor + reg_len);
 
 			if(placement_is_clear(*itc, ran_coor)){
@@ -279,17 +276,17 @@ void Map::make_characters(){
 	Pair<int> ran_coor, reg_coor;
 	int num_hum, num_zom;
 
-	int reg_len = MS::region_len;
+	int reg_len = Map_settings::region_len;
 
 	for(int x = 0; x < num_x_regions; x++){
 	for(int y = 0; y < num_y_regions; y++){
-		num_hum = RNG::random_num(MS::min_human_density, MS::max_human_density);
-		num_zom = RNG::random_num(MS::min_zombie_density, MS::max_zombie_density);
-		reg_coor = Pair<int>(x,y) * Pair<int>(MS::region_len, MS::region_len);
+		num_hum = RNG::random_num(Map_settings::min_human_density, Map_settings::max_human_density);
+		num_zom = RNG::random_num(Map_settings::min_zombie_density, Map_settings::max_zombie_density);
+		reg_coor = Pair<int>(x,y) * Pair<int>(Map_settings::region_len, Map_settings::region_len);
 
 		// get random coordinate for human and try and fit him in
 		for(int i = 0; i < num_hum + num_zom; i++){
-			ran_coor = RNG::random_pair(reg_coor, reg_coor + MS::region_len);
+			ran_coor = RNG::random_pair(reg_coor, reg_coor + Map_settings::region_len);
 
 			if(get_symbol(ran_coor) != EMPTY){ // chosen coordinate isn't empty
 				for(int x = -3; x < 3; x++){
