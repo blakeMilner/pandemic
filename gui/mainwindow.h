@@ -27,16 +27,19 @@ public:
     explicit MainWindow(Supervisor*, QWidget *parent = 0);
     ~MainWindow();
 
-    bool is_paused();
     void resizeEvent ( QResizeEvent * event );
+
+    bool is_paused();
     void extract_window_info();
 
 private slots:
     void on_pushButton_clicked();
+    void on_pushButton_2_clicked();
     void on_horizontalSlider_valueChanged(int value);
     void on_horizontalSlider_2_valueChanged(int value);
     void on_lineEdit_textChanged(const QString &arg1);
     void on_lineEdit_lostFocus();
+
 
 private:
     Ui::MainWindow *ui;
@@ -45,7 +48,7 @@ private:
 
     Supervisor* supervisor;
 
-    QTimer* frame_timer;
+    QTimer* next_frame_timer;
 
     bool lineEdit_userset;
 
@@ -53,7 +56,7 @@ private:
     QImage* frame_buffer;
     bool buffer_allocated;
 
-    const QIcon pause_icon, play_icon;
+    const QIcon pause_icon, play_icon, reset_icon;
 
     bool paused;
     void unpause_game();

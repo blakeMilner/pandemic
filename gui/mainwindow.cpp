@@ -12,7 +12,8 @@ MainWindow::MainWindow(Supervisor* s, QWidget *parent) :
     scene(new QGraphicsScene(this)),
     paused(true),
     supervisor(s),
-    frame_timer(new QTimer(this)),
+    next_frame_timer(new QTimer(this)),
+    reset_icon(QIcon(GS::reset_icon_path)),
     pause_icon(QIcon(GS::pause_icon_path)),
     play_icon(QIcon(GS::play_icon_path)),
     lineEdit_userset(true), scene_item(0)
@@ -23,7 +24,7 @@ MainWindow::MainWindow(Supervisor* s, QWidget *parent) :
     ui->graphicsView->setScene(scene);
 
     // connect timer in order to update ROI continuously
-    connect(frame_timer, SIGNAL(timeout()), this, SLOT(update_ROI()));
+    connect(next_frame_timer, SIGNAL(timeout()), this, SLOT(update_ROI()));
 
     // make buffer for raw symbols from map
 	symbol_buffer = new Map_symbol*[GS::MAX_ROI_DIMS.x];
@@ -31,9 +32,11 @@ MainWindow::MainWindow(Supervisor* s, QWidget *parent) :
 		symbol_buffer[i] = new Map_symbol[GS::MAX_ROI_DIMS.y];
     }
 
-    // initialize play/pause button icons
+    // initialize button icons
     ui->pushButton->setIcon(play_icon);
     ui->pushButton->setIconSize(QSize(25,25));
+    ui->pushButton_2->setIcon(reset_icon);
+    ui->pushButton_2->setIconSize(QSize(25,25));
 
     // set zoom slider step - value indicates pixels per symbol
     ui->horizontalSlider->setMinimum(GS::MIN_pix_per_symbol);
@@ -103,27 +106,14 @@ void MainWindow::resizeEvent ( QResizeEvent * event ){
     reset_scene_size();
 }
 
-void MainWindow::on_pushButton_clicked()
-{
-    // pause/unpause game and update icon symbol
-    if(paused){
-        unpause_game();
-        ui->pushButton->setIcon(pause_icon);
-    }
-    else{
-        pause_game();
-        ui->pushButton->setIcon(play_icon);
-    }
-}
-
 bool MainWindow::is_paused(){ return paused; }
 void MainWindow::unpause_game(){
 	paused = false;
-    frame_timer->start(GS::ms_per_frame);
+    next_frame_timer->start(GS::ms_per_frame);
 }
 void MainWindow::pause_game(){
 	paused = true;
-    frame_timer->stop();
+    next_frame_timer->stop();
 }
 
 // expand symbols to multiple pixels and interpret as color
@@ -239,8 +229,8 @@ void MainWindow::update_fps(int value){
 
     // restart timer with new framerate
     if(!paused){
-        frame_timer->stop();
-        frame_timer->start(GS::ms_per_frame);
+        next_frame_timer->stop();
+        next_frame_timer->start(GS::ms_per_frame);
     }
 
     // tell on_lineEdit_textChanged to not iterate
@@ -272,3 +262,26 @@ void MainWindow::on_lineEdit_lostFocus()
     // return current fps to line in case it is blank
     ui->lineEdit->setText(QString::number(GS::fps));
 }
+
+
+void MainWindow::on_pushButton_clicked()
+{
+    // pause/unpause game and update icon symbol
+    if(paused){
+        unpause_game();
+        ui->pushButton->setIcon(pause_icon);
+    }
+    else{
+        pause_game();
+        ui->pushButton->setIcon(play_icon);
+    }
+}
+
+void MainWindow::on_pushButton_2_clicked()
+{
+    paused = true;
+    ui->pushButton->setIcon(play_icon);
+    supervisor->reset_game();
+    update_ROI();
+}
+

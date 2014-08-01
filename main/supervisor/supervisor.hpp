@@ -3,6 +3,7 @@
 
 #include <cstdlib>
 #include <ctime>
+#include "../settings/user_data.hpp"
 #include "../mapping/map.hpp"
 #include "../settings/map_settings.hpp"
 
@@ -13,6 +14,7 @@ public:
 	Supervisor();
 	~Supervisor();
 	void create_map();
+	void reset_game();
 
 	bool is_running();
 	void iterate(int = 1);

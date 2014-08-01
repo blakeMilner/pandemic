@@ -59,9 +59,6 @@ void run_from_cmd(){
     }
     else{
         simulation->iterate(UD::num_iter);
-
-        if(UD::print_to_cmd) simulation->print_map();
-        cout << "Total time: " << simulation->last_run_epoch() << " sec" << endl;
     }
 }
 
