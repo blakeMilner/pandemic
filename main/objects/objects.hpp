@@ -11,12 +11,16 @@
 
 using namespace std;
 
+// TODO: Make this an abstract class
 class pObject{
 public:
 	pObject(Pair<int> = Pair<int>(-1,-1), Map_symbol = OBJECT);
+	virtual ~pObject();
+
 	Pair<int> get_coor();
 	void set_coor(Pair<int>);
 	Map_symbol get_symbol();
+	void change_symbol(Map_symbol);
 protected:
 	Pair<int> coor;
 	Map_symbol SYMBOL;

@@ -8,6 +8,8 @@ SYMBOL(sym)
 
 }
 
+pObject::~pObject(){}
+
 Pair<int> pObject::get_coor(){
 	return(coor);
 }
@@ -18,4 +20,8 @@ void pObject::set_coor(Pair<int> newcoor){
 
 Map_symbol pObject::get_symbol(){
 	return(SYMBOL);
+}
+
+void pObject::change_symbol(Map_symbol newsym){
+	SYMBOL = newsym;
 }

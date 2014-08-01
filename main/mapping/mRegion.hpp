@@ -4,6 +4,7 @@
 #include <list>
 #include <vector>
 #include <map>
+#include <algorithm>
 #include "../objects/character.hpp"
 #include "../objects/obstacle.hpp"
 
@@ -13,10 +14,13 @@ class mRegion{
 public:
 	mRegion(int, int, int);
 	~mRegion();
+
 	void insert_character(Character*);
 	void insert_obstacle(Obstacle*);
 	void remove_character(Character*);
 	void remove_obstacle(Obstacle*);
+	void switch_character(Character*, Character*);
+
 	Pair<int> get_coor();
 	int get_length();
 private:

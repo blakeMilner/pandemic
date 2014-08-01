@@ -30,6 +30,7 @@ namespace GUI_settings{
 
 		color_map[INVALID] 		= qRgb(0,0,0);			// BLACK
 		color_map[HUMAN]		= qRgb(0,128,0);		// GREEN
+		color_map[INFECTED]		= qRgb(255,255,0);		// YELLOW
 		color_map[ZOMBIE]		= qRgb(255,0,0);		// RED
 		color_map[CHARACTER]	= qRgb(0,0,0);
 		color_map[BUILDING]		= qRgb(255,255,255); 	// WHITE

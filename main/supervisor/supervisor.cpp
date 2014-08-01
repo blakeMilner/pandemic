@@ -1,5 +1,7 @@
 #include "supervisor.hpp"
 
+namespace MS = Map_settings; // TODO: include config header in each source file that enumerates all namespaces
+
 Supervisor::Supervisor() :
 map(NULL),
 game_is_running(true),
@@ -26,16 +28,18 @@ bool Supervisor::is_running(){
 }
 
 void Supervisor::iterate(int frames){
-	if (game_is_running){
-		tick();
-		for(int i = 0; i < frames; i++) map->iterate();
-		tock();
-	}
-}
+	tick();
 
-void Supervisor::iterate(){
-	iterate(1); // do it like this so we can time any epoch
-	game_is_running = map->check_game(); // check if game is still running
+	for(int i = 0; i < frames; i++){
+		if ((game_is_running = map->check_game())){
+			MS::settings_check();
+			map->iterate();
+		}
+		else
+			break;
+	}
+
+	tock();
 }
 
 double Supervisor::last_run_epoch(){ return(last_epoch); }

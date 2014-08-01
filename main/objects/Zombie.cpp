@@ -1,9 +1,9 @@
 #include "Zombie.hpp"
 
-Zombie::Zombie(Pair<int> coor):
-Character(coor, ZOMBIE)
+Zombie::Zombie(Pair<int> coor, Map_symbol sym, Stats stats):
+Character(coor, sym, stats)
 {
-	Zombie::init_stats();
+	Zombie::init_stats(stats);
 }
 
 void Zombie::exec(){
@@ -26,6 +26,6 @@ void Zombie::bite(Pair<int> pos){
 	MapServer::Instance()->bite_player(pos + coor);
 }
 
-void Zombie::init_stats(){
+void Zombie::init_stats(Stats stats){
 
 }

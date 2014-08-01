@@ -17,6 +17,7 @@ public:
 	virtual ~ObjectBlock();
 
 	Map_symbol get_symbol();
+	void change_symbol(Map_symbol);
 	int get_ID();
 private:
 	int ID;

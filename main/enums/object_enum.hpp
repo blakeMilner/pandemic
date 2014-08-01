@@ -6,6 +6,7 @@
 enum Map_symbol {
 	INVALID = 'I',
 	HUMAN = 'H',
+	INFECTED = 'N',
 	ZOMBIE = 'Z',
 	CHARACTER = 'C',
 	BUILDING = 'O',

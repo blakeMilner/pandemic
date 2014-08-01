@@ -58,6 +58,7 @@ main/objects/objects.cpp
 main/objects/attributes.cpp
 
 main/settings/character_stats.cpp
+main/settings/map_settings.cpp
 
 main/supervisor/supervisor.cpp
 

@@ -3,12 +3,6 @@
 namespace MS = Map_settings;
 
 
-
-// TODO: possibly change array access to entire pair by itself
-// instead of accessing element-by-element?
-
-
-
 Map::Map(){
 	MapServer::currmap = this;
 
@@ -60,11 +54,23 @@ Map::~Map(){
 }
 
 // game is running only if there are more than 0 humans left
-bool Map::check_game(){ return map_stats.num_humans; }
+bool Map::check_game(){ return( map_stats.num_humans); }
 
+// play out an entire turn in the map
 void Map::iterate(){
-	for(list<Character*>::iterator it = characters.begin(); it != characters.end(); it++)
+	// loop through characters and execute turn actions
+	for(list<Character*>::iterator it = characters.begin(); it != characters.end(); it++){
 		(*it)->exec();
+
+		// convert infected
+		if((*it)->get_symbol() == INFECTED and ((Infected*) *it)->infected_time_over()){
+			Pair<int> coor = (*it)->get_coor();
+			int ID = get_ID(coor);
+
+			delete_human(*(it++), ID); // have to ++ here because we're iterating over the list we're altering
+			add_zombie(coor);
+		}
+	}
 }
 
 Map_symbol Map::get_symbol(Pair<int> coor){ return get_symbol(coor.x, coor.y); }
@@ -102,9 +108,15 @@ void Map::add_character(Character *c){
 	characters.push_front(c);
 }
 
+// TODO: combine add human/zombie
+
 void Map::delete_human(pObject* dead_obj, int ID){
 	delete_character(static_cast<Character*>(dead_obj), ID);
-	map_stats.num_humans--;
+
+	if(dead_obj->get_symbol() == INFECTED)
+		map_stats.num_infected--;
+	else
+		map_stats.num_humans--;
 }
 
 void Map::delete_character(Character* c, int ID){
@@ -227,7 +239,7 @@ list<Pair<int> >::iterator itc;
 
 // vertices of buildings and basic attributes
 queue<Pair<int> > vertices;
-Pair<int> ran_dims, ran_coor, build_dims, reg_coor;
+Pair<int> ran_coor, build_dims, reg_coor;
 int num_buildings_region;
 
 int min_len = MS::min_footprint_len;
@@ -249,7 +261,7 @@ for(int y = 0; y < num_y_regions; y++){
 
 	// try to fit bulding in by guessing random coordinates to place it
 	for(itc = poss_build.begin(); itc != poss_build.end(); itc++){
-		for(tryc = 0; tryc < MAX_TRIES; tryc++){
+		for(tryc = 0; tryc < MS::max_build_placement_tries; tryc++){
 			ran_coor = RNG::random_pair(reg_coor, reg_coor + reg_len);
 
 			if(placement_is_clear(*itc, ran_coor)){
@@ -325,7 +337,7 @@ void Map::copy_ROI(Map_symbol** buf, Pair<int> start_coor, Pair<int> length){
 }
 
 //
-// FUNCTIONS FOR MAPSERVER WRAPPER
+// FUNCTIONS THAT INTERFACE WITH MAPSERVER WRAPPER
 //
 
 void Map::move_character(Character* this_ptr, Pair<int>& new_loc){
@@ -351,13 +363,34 @@ void Map::move_character(Character* this_ptr, Pair<int>& new_loc){
 void Map::infect_player(int ID){
 	map<int, pObject*>::iterator it = IDhash.find(ID);
 	pObject* inf_obj = it->second;
+	Infected* new_obj = NULL;
 
 	// only execute if ID was found and if it was a human
 	if(it != IDhash.end() and inf_obj->get_symbol() == HUMAN){
 		Pair<int> coor = inf_obj->get_coor();
+		Pair<int> reg_coor = find_region(coor);
 
-		delete_human(inf_obj, ID);
-		add_zombie(coor);
+		new_obj = new Infected((Human*) inf_obj);
+
+		// this takes O(n), can we make this better?
+		(*find(characters.begin(), characters.end(), inf_obj)) = new_obj ;
+
+		blockmap[coor.x][coor.y]->change_symbol(INFECTED);
+		IDhash[ blockmap[coor.x][coor.y]->ID ] = new_obj;
+		regions[reg_coor.x][reg_coor.y]->switch_character((Character*) inf_obj, (Character*) new_obj);
+
+		delete inf_obj;
+
 		map_stats.num_bites++;
+		map_stats.num_infected++;
 	}
+}
+
+
+void Map::convert_infected(Infected* infected){
+	Pair<int> coor = infected->get_coor();
+	int ID = get_ID(coor);
+
+	delete_human(infected, ID);
+	add_zombie(coor);
 }

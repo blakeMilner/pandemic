@@ -215,7 +215,7 @@ void MainWindow::paint_ROI(){
 }
 
 void MainWindow::update_ROI(){
-    paint_ROI();
+	paint_ROI();
     supervisor->iterate();
 }
 

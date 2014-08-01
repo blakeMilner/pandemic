@@ -7,6 +7,7 @@ symbol(new_symbol)
 
 ObjectBlock::~ObjectBlock(){}
 
+void ObjectBlock::change_symbol(Map_symbol newsym){	symbol = newsym; }
 
 Map_symbol ObjectBlock::get_symbol(){ return symbol; }
 

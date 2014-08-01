@@ -77,18 +77,17 @@ dimensions(dims)
 	Pair<int> corner, dimen;
 	bool hit_block = false; // whether we will be overlapping existing block
 	bool door_found = false;
-	float door_chance = Map_settings::door_chance;
+	float door_chance = Map_settings::door_probability;
 	int num_poss_doors = 0;
 	int max_x, max_y; // max length in direction
 	vector<Pair<int> > borders;
 
 //TODO: make sure we overlap by more than one square
 
-
 	for(int i = 0; i < Map_settings::blocks_per_building; i++){
 		// make random coordinate
-		corner = RNG::random_pair(1, dims.x - Map_settings::min_building_len - 1,
-								1,	dims.y - Map_settings::min_building_len - 1);
+		corner = RNG::random_pair(1, dims.x - Map_settings::min_building_len,
+								1,	dims.y - Map_settings::min_building_len);
 
 		// clip max dimensions to not go over boundary
 		if(dims.x - 1 - corner.x < Map_settings::max_building_len){

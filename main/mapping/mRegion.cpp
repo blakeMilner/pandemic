@@ -32,6 +32,11 @@ void mRegion::remove_obstacle(Obstacle* o){
 	obstacles.remove(o);
 }
 
+void mRegion::switch_character(Character* cold, Character* cnew){
+	// takes O(n)
+	(*find(characters.begin(), characters.end(), cold)) = cnew ;
+}
+
 Pair<int> mRegion::get_coor(){
 	return(coor);
 }

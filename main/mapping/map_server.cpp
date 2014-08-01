@@ -34,7 +34,7 @@ MapServer::MapServer()
 		corners[2] = Pair<float>(x - 0.5, y + 0.5);
 		corners[3] = Pair<float>(x + 0.5, y + 0.5);
 
-		// compute an compare all combos, find pair with largest angle
+		// compute and compare all combos, find pair with largest angle
 		max_diff = 0;
 		max_pair.set(1,2);
 		for(int s = 0; s < 4; s++){
@@ -142,4 +142,8 @@ void MapServer::bite_player(Pair<int> pos){
 	if(currmap->get_symbol(pos) == HUMAN){
 		currmap->infect_player(currmap->get_ID(pos));
 	}
+}
+
+void MapServer::convert_infected(Infected* infected){
+	currmap->convert_infected(infected);
 }

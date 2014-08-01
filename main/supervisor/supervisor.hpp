@@ -15,8 +15,7 @@ public:
 	void create_map();
 
 	bool is_running();
-	void iterate();
-	void iterate(int);
+	void iterate(int = 1);
 	double last_run_epoch();
 	double total_runtime();
 	void reset_clock();

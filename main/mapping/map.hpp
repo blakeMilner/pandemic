@@ -22,8 +22,8 @@
 
 using namespace std;
 
-#define MAX_TRIES 100
 
+class Infected; // to resolve circular inclusion
 
 
 class MapStats{
@@ -31,10 +31,11 @@ public:
 	int num_humans;
 	int num_zombies;
 	int num_bites;
+	int num_infected;
 
 	MapStats():
 		num_humans(0), num_zombies(0),
-		num_bites(0) {}
+		num_bites(0), num_infected(0) {}
 };
 
 
@@ -93,6 +94,7 @@ private:
 	// functions meant for MapServer
 	void move_character(Character*, Pair<int>&);
 	void infect_player(int ID);
+	void convert_infected(Infected*);
 };
 
 // singleton class
@@ -107,6 +109,7 @@ public:
 	void copy_field(Map_symbol**, Pair<int>, Pair<int>);
 	void move_character(Character*, Nav_symbol);
 	void bite_player(Pair<int>);
+	void convert_infected(Infected*);
 private:
 	MapServer();
 	~MapServer();

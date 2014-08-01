@@ -4,9 +4,11 @@
  // pulls in map server
 #include "../mapping/map.hpp"
 
-Character::Character(Pair<int> coor, Map_symbol sym):
+Character::Character(Pair<int> coor, Map_symbol sym, Stats stats):
 pObject(coor, sym)
 {
+	Character::init_stats(stats);
+
 	vision_len = 2*(stats.VIS_RAD) + 1;
 	// idea: have managed memory such that we have vision fields ready to
 	// go, regardless of threading
@@ -16,15 +18,15 @@ pObject(coor, sym)
 	}
 }
 
-void Character::init_stats(){
-	this->stats.VIS_RAD = 6;
-}
-
 Character::~Character(){
 	for(int x = 0; x < vision_len; x++){
 		delete [] vision_field[x];
 	}
 	delete [] vision_field;
+}
+
+void Character::init_stats(Stats stats){
+	this->stats.VIS_RAD = stats.VIS_RAD;
 }
 
 void Character::exec(){
@@ -35,7 +37,7 @@ void Character::exec(){
 //	Character::print_vision();
 }
 
-///// THIS SHOUDL ALL PROBABLY GO IN SEPARATE NAVIGATION/FINDING FILE LATER...
+///// TODO: THIS SHOULD ALL PROBABLY GO IN SEPARATE NAVIGATION/FINDING FILE LATER...
 
 Map_symbol Character::get_direction(Nav_symbol dir){
 	Pair<int> vis_index(stats.VIS_RAD);

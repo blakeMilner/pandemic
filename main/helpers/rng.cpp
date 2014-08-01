@@ -1,9 +1,9 @@
 #include "rng.hpp"
 
 Pair<int> RNG::random_pair(int xstart, int xend, int ystart, int yend){
-	if(xstart > xend or ystart > yend){
+	if(xstart >= xend or ystart >= yend){
 		cout << "WARNING: invalid random number range specified" << endl;
-		return(0);
+		return(NULL);
 	}
 	else{
 		int xran = xstart + (int) (rand() % (xend - xstart));
