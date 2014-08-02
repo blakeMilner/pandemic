@@ -21,6 +21,7 @@ MainWindow::MainWindow(Supervisor* s, QWidget *parent) :
 
     paused(true),
     frame_timer(new QTimer(this)),
+    frame_clk(Clock()),
 
     reset_icon(QIcon(GS::reset_icon_path)),
     pause_icon(QIcon(GS::pause_icon_path)),
@@ -119,6 +120,14 @@ void MainWindow::bound_zoom(){
     }
 
     ui->zoom_slider->setValue(GS::pix_per_symbol);
+}
+
+// correct fps slider if we're capping out
+void MainWindow::bound_fps(double frm_time){
+    if(GS::fps > 1 / frm_time){
+        GS::fps = 1 / frm_time;
+        ui->user_edit_fps_box->setText(QString::number(GS::fps));
+    }
 }
 
 void MainWindow::resizeEvent ( QResizeEvent * event ){
@@ -228,7 +237,13 @@ void MainWindow::paint_ROI(){
 }
 
 void MainWindow::update_ROI(){
-	paint_ROI();
+
+    paint_ROI();
+    double last_frm_time = frame_clk.tock();
+
+    bound_fps(last_frm_time);
+
+    frame_clk.tick();
     supervisor->iterate();
 }
 

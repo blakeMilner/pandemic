@@ -11,6 +11,7 @@
 #include "../main/supervisor/supervisor.hpp"
 #include "gui_settings.hpp"
 #include "../main/enums/object_enum.hpp"
+#include "../main/helpers/clock.hpp"
 
 namespace Ui {
 	class MainWindow;
@@ -55,6 +56,7 @@ private:
     Supervisor* supervisor;
 
     QTimer* frame_timer;
+    Clock frame_clk;
 
     bool lineEdit_userset;
 
@@ -73,6 +75,7 @@ private:
     void update_buffer();
     void get_window_size();
     void bound_zoom();
+    void bound_fps(double);
 
     void paint_ROI();
     void colorize_ROI();
