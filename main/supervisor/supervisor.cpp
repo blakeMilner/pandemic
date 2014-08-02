@@ -6,7 +6,7 @@ namespace UD = User_data;
 Supervisor::Supervisor() :
 map(NULL),
 game_is_running(true),
-time_running(0), last_epoch(0)
+clk(Clock())
 {
 }
 
@@ -15,12 +15,12 @@ Supervisor::~Supervisor(){
 }
 
 void Supervisor::create_map(){
-	tick();
+	clk.tick();
 	map = new Map();
-	tock();
+	clk.tock();
 
 	if(UD::print_to_cmd)
-		cout << "Total time to generate: " << last_epoch << " sec" << endl;
+		cout << "Total time to generate: " << clk.last_run_epoch() << " sec" << endl;
 
 }
 
@@ -33,7 +33,7 @@ bool Supervisor::is_running(){
 }
 
 void Supervisor::iterate(int frames){
-	tick();
+	clk.tick();
 
 	for(int i = 0; i < frames; i++){
 		if ((game_is_running = map->check_game())){
@@ -44,17 +44,7 @@ void Supervisor::iterate(int frames){
 			break;
 	}
 
-	tock();
-}
-
-double Supervisor::last_run_epoch(){ return(last_epoch); }
-double Supervisor::total_runtime(){ return(time_running); }
-
-void Supervisor::reset_clock(){ time_running = 0, last_epoch = 0; }
-void Supervisor::tick(){	beg = clock(); }
-void Supervisor::tock(){
-	last_epoch = double(clock() - beg)/CLOCKS_PER_SEC;
-	time_running += beg;
+	clk.tock();
 }
 
 void Supervisor::copy_ROI(Map_symbol** buf, Pair<int> x, Pair<int> y){
@@ -62,12 +52,12 @@ void Supervisor::copy_ROI(Map_symbol** buf, Pair<int> x, Pair<int> y){
 }
 
 // TODO: new settings input as optional - can't change overall map size later so how do we deal with that?
-// TODO: make static function print_to_console that contains if(UD//) and passes a specific comment code - put in helpers
+// TODO: make staclk.tic function print_to_console that contains if(UD//) and passes a specific comment code - put in helpers
 void Supervisor::reset_game(){
 	if(UD::print_to_cmd)
-		cout << "Game reset. Total runtime: " << time_running << " sec" << endl;
+		cout << "Game reset. Total runtime: " << clk.last_run_epoch() << " sec" << endl;
 
-	time_running = 0;
+	clk.reset_clock();
 	game_is_running = 0;
 
 	delete map;

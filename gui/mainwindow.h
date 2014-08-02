@@ -53,7 +53,7 @@ private:
 
     Supervisor* supervisor;
 
-    QTimer* next_frame_timer;
+    QTimer* frame_timer;
 
     bool lineEdit_userset;
 

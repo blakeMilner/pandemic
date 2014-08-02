@@ -82,9 +82,9 @@ void setup(){
 	simulation->create_map();
 
     if(UD::print_to_cmd) simulation->print_map();
-		cout << "Time to generate: " << simulation->last_run_epoch() << " sec" << endl;
+		cout << "Time to generate: " << simulation->clk.last_run_epoch() << " sec" << endl;
 
-	simulation->reset_clock();
+	simulation->clk.reset_clock();
 }
 
 int main(int argc, char **argv){

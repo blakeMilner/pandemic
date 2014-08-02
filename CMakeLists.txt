@@ -15,15 +15,23 @@ OPTION(ENABLE_GUI "enable GUI build" ON)
 IF(ENABLE_GUI)
 	FIND_PACKAGE(Qt4 REQUIRED)
 	SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DGUI ")
+	
 	SET(GUI_SOURCES 
 	    gui/mainwindow.cpp
-	    gui/delegate.cpp)
+	    gui/delegate.cpp
+	    )
+	    
 	SET(GUI_HEADERS 
 	    gui/mainwindow.h
-	    gui/delegate.h)
+	    gui/delegate.h
+	    )
+	    
 	QT4_WRAP_CPP(HEADERS_MOC ${GUI_HEADERS})
+	
 	SET(FORMS 
-		gui/mainwindow.ui)
+		gui/mainwindow.ui
+		)
+		
 	QT4_WRAP_UI(FORMS_HEADERS ${FORMS})
 	INCLUDE(${QT_USE_FILE})
 	ADD_DEFINITIONS(${QT_DEFINITIONS})
@@ -43,6 +51,7 @@ main/main.cpp
 main/enums/object_enums.cpp
 
 main/helpers/rng.cpp
+main/helpers/clock.cpp
 
 main/mapping/map.cpp
 main/mapping/map_attributes.cpp
