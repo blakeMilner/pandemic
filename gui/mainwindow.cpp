@@ -6,6 +6,9 @@ namespace GS = GUI_settings;
 // map lenghts are skewed in places
 
 
+// TODO: change linedit back to fps
+
+
 MainWindow::MainWindow(Supervisor* s, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
@@ -24,8 +27,11 @@ MainWindow::MainWindow(Supervisor* s, QWidget *parent) :
     play_icon(QIcon(GS::play_icon_path)),
 
     lineEdit_userset(true),
-    scene_item(0)
+    scene_item(0),
+
+    frame_initialized(false)
 {
+    cout << "HRE1" << endl;
     frame_buffer = new QImage(GS::ROI_dims.x, GS::ROI_dims.y, QImage::Format_RGB32);
 
     ui->setupUi(this);
@@ -47,14 +53,14 @@ MainWindow::MainWindow(Supervisor* s, QWidget *parent) :
     ui->pushButton_2->setIconSize(QSize(25,25));
 
     // set zoom slider step - value indicates pixels per symbol
-    ui->frame_slider->setMinimum(GS::MIN_pix_per_symbol);
-    ui->frame_slider->setMaximum(GS::MAX_pix_per_symbol);
+    ui->zoom_slider->setMinimum(GS::MIN_pix_per_symbol);
+    ui->zoom_slider->setMaximum(GS::MAX_pix_per_symbol);
 
     // set fps slider step - value indicates framerate (fps)
-    ui->zoom_slider->setMinimum(GS::MIN_FPS);
-    ui->zoom_slider->setMaximum(GS::MAX_FPS);
-    ui->lineEdit->setValidator(new QIntValidator(GS::MIN_FPS, GS::MAX_FPS, this)); // only accept numbers
-    ui->lineEdit->setText(QString::number(GS::fps)); // set initial fps in text box
+    ui->frame_slider->setMinimum(GS::MIN_FPS);
+    ui->frame_slider->setMaximum(GS::MAX_FPS);
+    ui->user_edit_fps_box->setValidator(new QIntValidator(GS::MIN_FPS, GS::MAX_FPS, this)); // only accept numbers
+    ui->user_edit_fps_box->setText(QString::number(GS::fps)); // set initial fps in text box
 
     // initialize settings table
     for(int row = 0; row < 4; row++){
@@ -80,20 +86,19 @@ MainWindow::~MainWindow()
 	delete symbol_buffer;
 }
 
+void MainWindow::start(){
+    setVisible(true);
+
+    get_window_size();
+    update_buffer();
+
+    paint_ROI();
+}
+
 void MainWindow::get_window_size(){
     // minus 2 to fit within margins
     GS::ROI_dims.x = ui->graphicsView->width() - 2;
     GS::ROI_dims.y = ui->graphicsView->height() - 2;
-
-    cout << ui->graphicsView->width() << endl;
-    cout << scene->width() << endl << endl;
-}
-
-void MainWindow::extract_window_info()
-{
-    get_window_size();
-    update_buffer();
-
 }
 
 void MainWindow::update_buffer(){
@@ -105,25 +110,20 @@ void MainWindow::update_buffer(){
 
 // correct zoom level such that every sized map would cover the monitor
 void MainWindow::bound_zoom(){
-    while((GS::pix_per_symbol < GS::MAX_pix_per_symbol) and (Map_settings::map_len - 2) <= (GS::ROI_dims / GS::pix_per_symbol)){
+    while((GS::pix_per_symbol <= GS::MAX_pix_per_symbol)
+          and (GS::ROI_dims / GS::pix_per_symbol).not_within(Map_settings::map_len - 2))
+    {
         GS::pix_per_symbol++;
     }
 
-    ui->frame_slider->setValue(GS::pix_per_symbol);
-}
-
-// need to fix this
-void MainWindow::reset_scene_size(){
-    if(scene->width() > ui->graphicsView->width()){
-        scene->setSceneRect(ui->graphicsView->geometry().x(), ui->graphicsView->geometry().y(),
-                            ui->graphicsView->width() - 2, ui->graphicsView->height() - 2);
-    }
+    ui->zoom_slider->setValue(GS::pix_per_symbol);
 }
 
 void MainWindow::resizeEvent ( QResizeEvent * event ){
     get_window_size();
+
     update_buffer();
-    reset_scene_size();
+    paint_ROI();
 }
 
 bool MainWindow::is_paused(){ return paused; }
@@ -230,7 +230,7 @@ void MainWindow::update_ROI(){
     supervisor->iterate();
 }
 
-void MainWindow::on_frame_slider_valueChanged(int value)
+void MainWindow::on_zoom_slider_valueChanged(int value)
 {
     // update ROI view if we're not zoomed to the max
     if((GS::ROI_dims / value) <= (Map_settings::map_len - 2)){
@@ -238,7 +238,7 @@ void MainWindow::on_frame_slider_valueChanged(int value)
         paint_ROI();
     }
     else{      // reset value otherwise
-        ui->frame_slider->setValue(GS::pix_per_symbol);
+        ui->zoom_slider->setValue(GS::pix_per_symbol);
     }
 }
 
@@ -253,18 +253,19 @@ void MainWindow::update_fps(int value){
         frame_timer->start(GS::ms_per_frame);
     }
 
-    // tell on_lineEdit_textChanged to not iterate
+    // tell on_user_edit_fps_box_textChanged to not iterate
+
     lineEdit_userset = false;
-    ui->lineEdit->setText(QString::number(GS::fps));
+    ui->user_edit_fps_box->setText(QString::number(GS::fps));
     lineEdit_userset = true;
 }
 
-void MainWindow::on_zoom_slider_valueChanged(int value)
+void MainWindow::on_frame_slider_valueChanged(int value)
 {
     update_fps(value);
 }
 
-void MainWindow::on_lineEdit_textChanged(const QString &arg1)
+void MainWindow::on_user_edit_fps_box_textChanged(const QString &arg1)
 {
     if(lineEdit_userset){
         static bool conversion_good = false;
@@ -272,15 +273,15 @@ void MainWindow::on_lineEdit_textChanged(const QString &arg1)
 
         if(conversion_good){
             update_fps(user_int);
-            ui->zoom_slider->setValue(GS::fps);
+            ui->frame_slider->setValue(GS::fps);
         }
     }
 }
 
-void MainWindow::on_lineEdit_lostFocus()
+void MainWindow::on_user_edit_fps_box_lostFocus()
 {
     // return current fps to line in case it is blank
-    ui->lineEdit->setText(QString::number(GS::fps));
+    ui->user_edit_fps_box->setText(QString::number(GS::fps));
 }
 
 
@@ -299,7 +300,7 @@ void MainWindow::on_pushButton_clicked()
 
 void MainWindow::on_pushButton_2_clicked()
 {
-    paused = true;
+    pause_game();
     ui->pushButton->setIcon(play_icon);
     supervisor->reset_game();
     update_ROI();

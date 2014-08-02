@@ -64,12 +64,9 @@ void run_from_cmd(){
 
 void run_gui(int argc, char** argv){
     QApplication a(argc, argv);
-
     MainWindow* w = new MainWindow(simulation);
 
-	w->show();
-	w->extract_window_info();
-
+	w->start();
 	a.exec();
 
 	delete w;

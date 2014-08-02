@@ -47,7 +47,7 @@
        <property name="title">
         <string/>
        </property>
-       <widget class="QSlider" name="frame_slider">
+       <widget class="QSlider" name="zoom_slider">
         <property name="geometry">
          <rect>
           <x>90</x>
@@ -73,7 +73,7 @@
          <string>Framerate</string>
         </property>
        </widget>
-       <widget class="QSlider" name="zoom_slider">
+       <widget class="QSlider" name="frame_slider">
         <property name="geometry">
          <rect>
           <x>90</x>
@@ -99,7 +99,7 @@
          <string>Zoom</string>
         </property>
        </widget>
-       <widget class="QLineEdit" name="lineEdit">
+       <widget class="QLineEdit" name="user_edit_fps_box">
         <property name="geometry">
          <rect>
           <x>260</x>

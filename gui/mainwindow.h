@@ -32,6 +32,7 @@ public:
     friend class Delegate;
 
     bool is_paused();
+    void start();
     void extract_window_info();
 
 private slots:
@@ -39,8 +40,8 @@ private slots:
     void on_pushButton_2_clicked();
     void on_frame_slider_valueChanged(int value);
     void on_zoom_slider_valueChanged(int value);
-    void on_lineEdit_textChanged(const QString &arg1);
-    void on_lineEdit_lostFocus();
+    void on_user_edit_fps_box_textChanged(const QString &arg1);
+    void on_user_edit_fps_box_lostFocus();
 
 
 private:
@@ -63,6 +64,8 @@ private:
 
     const QIcon pause_icon, play_icon, reset_icon;
 
+    bool frame_initialized;
+
     void resizeEvent ( QResizeEvent * event );
 
     bool paused;
@@ -72,7 +75,6 @@ private:
     void update_buffer();
     void get_window_size();
     void bound_zoom();
-    void reset_scene_size();
 
     void paint_ROI();
     void colorize_ROI();

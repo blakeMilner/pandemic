@@ -20,7 +20,7 @@ namespace GUI_settings{
 	static const int MAX_FPS = 60;
 
 	static const int MIN_pix_per_symbol = 1;
-	static const int MAX_pix_per_symbol = 7;
+    static const int MAX_pix_per_symbol = 10;
 	static int pix_per_symbol = MAX_pix_per_symbol;
 
 	static map<Map_symbol, QRgb> init_map(){

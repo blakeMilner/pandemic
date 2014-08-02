@@ -115,9 +115,10 @@ public:
 		return(p1.x <= x and x <= p2.x and p1.y <= y and y <= p2.y);
 	}
 
-	// test if any element of x is outside beginning (p1) and end (p2)
-	bool outside(const Pair& p1, const Pair& p2){
-		return(p1.x > x or x > p2.x or p1.y > y or y > p2.y);
+	// same as operator>= except gives false if only one element
+	// is outside
+	bool not_within(const Pair& p){
+		return((this->x >= p.x) or (this->y >= p.y));
 	}
 
 	// scalar magnitude
