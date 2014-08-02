@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>845</width>
+    <width>933</width>
     <height>628</height>
    </rect>
   </property>
@@ -15,7 +15,7 @@
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout_10">
-    <item row="0" column="0">
+    <item row="1" column="0">
      <widget class="QSplitter" name="splitter">
       <property name="enabled">
        <bool>true</bool>
@@ -47,116 +47,139 @@
        <property name="title">
         <string/>
        </property>
-       <widget class="QSlider" name="zoom_slider">
+       <widget class="QTabWidget" name="tabWidget_2">
         <property name="geometry">
          <rect>
-          <x>90</x>
-          <y>10</y>
-          <width>160</width>
-          <height>29</height>
+          <x>0</x>
+          <y>0</y>
+          <width>291</width>
+          <height>551</height>
          </rect>
         </property>
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
+        <property name="currentIndex">
+         <number>0</number>
         </property>
-       </widget>
-       <widget class="QLabel" name="label_2">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>60</y>
-          <width>71</width>
-          <height>31</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Framerate</string>
-        </property>
-       </widget>
-       <widget class="QSlider" name="frame_slider">
-        <property name="geometry">
-         <rect>
-          <x>90</x>
-          <y>60</y>
-          <width>160</width>
-          <height>29</height>
-         </rect>
-        </property>
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
-       <widget class="QLabel" name="label">
-        <property name="geometry">
-         <rect>
-          <x>30</x>
-          <y>10</y>
-          <width>41</width>
-          <height>31</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Zoom</string>
-        </property>
-       </widget>
-       <widget class="QLineEdit" name="user_edit_fps_box">
-        <property name="geometry">
-         <rect>
-          <x>260</x>
-          <y>60</y>
-          <width>31</width>
-          <height>27</height>
-         </rect>
-        </property>
-       </widget>
-       <widget class="QPushButton" name="pushButton">
-        <property name="geometry">
-         <rect>
-          <x>130</x>
-          <y>100</y>
-          <width>31</width>
-          <height>31</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
-       <widget class="QPushButton" name="pushButton_2">
-        <property name="geometry">
-         <rect>
-          <x>170</x>
-          <y>100</y>
-          <width>31</width>
-          <height>31</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
-       <widget class="QLabel" name="label_3">
-        <property name="geometry">
-         <rect>
-          <x>10</x>
-          <y>150</y>
-          <width>101</width>
-          <height>31</height>
-         </rect>
-        </property>
-        <property name="text">
-         <string>Game Settings</string>
-        </property>
-       </widget>
-       <widget class="QTableView" name="tableView">
-        <property name="geometry">
-         <rect>
-          <x>20</x>
-          <y>190</y>
-          <width>256</width>
-          <height>351</height>
-         </rect>
-        </property>
+        <widget class="QWidget" name="main_tab">
+         <attribute name="title">
+          <string>Main</string>
+         </attribute>
+         <widget class="QLabel" name="label">
+          <property name="geometry">
+           <rect>
+            <x>50</x>
+            <y>10</y>
+            <width>41</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Zoom</string>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="pushButton">
+          <property name="geometry">
+           <rect>
+            <x>90</x>
+            <y>90</y>
+            <width>31</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+         <widget class="QLabel" name="label_2">
+          <property name="geometry">
+           <rect>
+            <x>30</x>
+            <y>50</y>
+            <width>71</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Framerate</string>
+          </property>
+         </widget>
+         <widget class="QSlider" name="zoom_slider">
+          <property name="geometry">
+           <rect>
+            <x>110</x>
+            <y>10</y>
+            <width>121</width>
+            <height>29</height>
+           </rect>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="pushButton_2">
+          <property name="geometry">
+           <rect>
+            <x>130</x>
+            <y>90</y>
+            <width>31</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+         <widget class="QLineEdit" name="user_edit_fps_box">
+          <property name="geometry">
+           <rect>
+            <x>240</x>
+            <y>50</y>
+            <width>31</width>
+            <height>27</height>
+           </rect>
+          </property>
+         </widget>
+         <widget class="QSlider" name="frame_slider">
+          <property name="geometry">
+           <rect>
+            <x>110</x>
+            <y>50</y>
+            <width>121</width>
+            <height>29</height>
+           </rect>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </widget>
+        <widget class="QWidget" name="settings_tab">
+         <attribute name="title">
+          <string>Settings</string>
+         </attribute>
+         <widget class="QLabel" name="label_3">
+          <property name="geometry">
+           <rect>
+            <x>30</x>
+            <y>40</y>
+            <width>101</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Game Settings</string>
+          </property>
+         </widget>
+         <widget class="QTableView" name="tableView">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>70</y>
+            <width>221</width>
+            <height>71</height>
+           </rect>
+          </property>
+         </widget>
+        </widget>
        </widget>
       </widget>
      </widget>
@@ -168,7 +191,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>845</width>
+     <width>933</width>
      <height>25</height>
     </rect>
    </property>
