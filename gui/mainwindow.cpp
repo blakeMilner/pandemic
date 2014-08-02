@@ -27,15 +27,16 @@ MainWindow::MainWindow(Supervisor* s, QWidget *parent) :
     play_icon(QIcon(GS::play_icon_path)),
 
     lineEdit_userset(true),
-    scene_item(0),
-
-    frame_initialized(false)
+    scene_item(0)
 {
-    cout << "HRE1" << endl;
     frame_buffer = new QImage(GS::ROI_dims.x, GS::ROI_dims.y, QImage::Format_RGB32);
 
     ui->setupUi(this);
     ui->graphicsView->setScene(scene);
+
+    // set these so that when we go from larger FOV to smaller, the view doesn't have scrollbars
+    ui->graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    ui->graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     // connect timer in order to update ROI continuously
     connect(frame_timer, SIGNAL(timeout()), this, SLOT(update_ROI()));
@@ -86,6 +87,7 @@ MainWindow::~MainWindow()
 	delete symbol_buffer;
 }
 
+// show window, make buffer, and initialize screen
 void MainWindow::start(){
     setVisible(true);
 
@@ -121,7 +123,6 @@ void MainWindow::bound_zoom(){
 
 void MainWindow::resizeEvent ( QResizeEvent * event ){
     get_window_size();
-
     update_buffer();
     paint_ROI();
 }
@@ -214,11 +215,12 @@ void MainWindow::colorize_ROI(){
 
 // option to focus on character of choice?
 
+
 void MainWindow::paint_ROI(){
-    if(scene_item) delete scene_item;
+    if(scene_item) delete scene_item; // why delete sceneitem? reuse it..
 
     supervisor->copy_ROI(symbol_buffer, GS::ROI_coors, (GS::ROI_dims / GS::pix_per_symbol) + 1);
-    colorize_ROI();
+    colorize_ROI(); // transfer symbol_buffer to frame_buffer
 
     QPixmap im = QPixmap::fromImage(*frame_buffer);
 

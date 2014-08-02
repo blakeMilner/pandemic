@@ -64,8 +64,6 @@ private:
 
     const QIcon pause_icon, play_icon, reset_icon;
 
-    bool frame_initialized;
-
     void resizeEvent ( QResizeEvent * event );
 
     bool paused;
