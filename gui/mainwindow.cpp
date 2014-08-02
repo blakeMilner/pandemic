@@ -31,7 +31,7 @@ MainWindow::MainWindow(Supervisor* s, QWidget *parent) :
     lineEdit_userset(true),
     scene_item(0)
 {
-    frame_buffer = new QImage(GS::ROI_dims.x, GS::ROI_dims.y, QImage::Format_RGB32);
+    frame_buffer = new QImage(GS::MAX_ROI_DIMS.x, GS::MAX_ROI_DIMS.y, QImage::Format_RGB32);
 
     ui->setupUi(this);
     ui->graphicsView->setScene(scene);
@@ -96,7 +96,7 @@ void MainWindow::start(){
     setVisible(true);
 
     get_window_size();
-    update_buffer();
+    bound_zoom();
 
     paint_ROI();
 }
@@ -105,13 +105,6 @@ void MainWindow::get_window_size(){
     // minus 2 to fit within margins
     GS::ROI_dims.x = ui->graphicsView->width() - 2;
     GS::ROI_dims.y = ui->graphicsView->height() - 2;
-}
-
-void MainWindow::update_buffer(){
-    delete frame_buffer;
-
-    frame_buffer = new QImage(GS::ROI_dims.x, GS::ROI_dims.y, QImage::Format_RGB32);
-    bound_zoom();
 }
 
 // correct zoom level such that every sized map would cover the monitor
@@ -135,7 +128,7 @@ void MainWindow::bound_fps(double frm_time){
 
 void MainWindow::resizeEvent ( QResizeEvent * event ){
     get_window_size();
-    update_buffer();
+    bound_zoom();
     paint_ROI();
 }
 
