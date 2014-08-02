@@ -46,6 +46,7 @@ namespace GUI_settings{
 	static const char* play_icon_path = "play.bmp";
 	static const char* pause_icon_path = "pause.bmp";
 	static const char* reset_icon_path = "reset.bmp";
-};
+    static const char* next_icon_path = "next.bmp";
+}
 
 #endif

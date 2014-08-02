@@ -26,6 +26,7 @@ MainWindow::MainWindow(Supervisor* s, QWidget *parent) :
     reset_icon(QIcon(GS::reset_icon_path)),
     pause_icon(QIcon(GS::pause_icon_path)),
     play_icon(QIcon(GS::play_icon_path)),
+    next_icon(QIcon(GS::next_icon_path)),
 
     lineEdit_userset(true),
     scene_item(0)
@@ -49,10 +50,12 @@ MainWindow::MainWindow(Supervisor* s, QWidget *parent) :
     }
 
     // initialize button icons
-    ui->pushButton->setIcon(play_icon);
-    ui->pushButton->setIconSize(QSize(25,25));
-    ui->pushButton_2->setIcon(reset_icon);
-    ui->pushButton_2->setIconSize(QSize(25,25));
+    ui->play_button->setIcon(play_icon);
+    ui->play_button->setIconSize(QSize(25,25));
+    ui->reset_button->setIcon(reset_icon);
+    ui->reset_button->setIconSize(QSize(25,25));
+    ui->next_button->setIcon(next_icon);
+    ui->next_button->setIconSize(QSize(25,25));
 
     // set zoom slider step - value indicates pixels per symbol
     ui->zoom_slider->setMinimum(GS::MIN_pix_per_symbol);
@@ -138,10 +141,12 @@ void MainWindow::resizeEvent ( QResizeEvent * event ){
 
 bool MainWindow::is_paused(){ return paused; }
 void MainWindow::unpause_game(){
+    ui->play_button->setIcon(pause_icon);
 	paused = false;
     frame_timer->start(GS::ms_per_frame);
 }
 void MainWindow::pause_game(){
+    ui->play_button->setIcon(play_icon);
 	paused = true;
     frame_timer->stop();
 }
@@ -237,14 +242,14 @@ void MainWindow::paint_ROI(){
 }
 
 void MainWindow::update_ROI(){
-
+    frame_clk.tick();
     paint_ROI();
+
+    supervisor->iterate();
     double last_frm_time = frame_clk.tock();
 
+    // check that the internal fps reflects what fps w'ere actually getting
     bound_fps(last_frm_time);
-
-    frame_clk.tick();
-    supervisor->iterate();
 }
 
 void MainWindow::on_zoom_slider_valueChanged(int value)
@@ -302,24 +307,24 @@ void MainWindow::on_user_edit_fps_box_lostFocus()
 }
 
 
-void MainWindow::on_pushButton_clicked()
+void MainWindow::on_play_button_clicked()
 {
     // pause/unpause game and update icon symbol
-    if(paused){
+    if(paused)
         unpause_game();
-        ui->pushButton->setIcon(pause_icon);
-    }
-    else{
+    else
         pause_game();
-        ui->pushButton->setIcon(play_icon);
-    }
 }
 
-void MainWindow::on_pushButton_2_clicked()
+void MainWindow::on_reset_button_clicked()
 {
     pause_game();
-    ui->pushButton->setIcon(play_icon);
     supervisor->reset_game();
     update_ROI();
 }
 
+void MainWindow::on_next_button_clicked()
+{
+    if(!paused) pause_game();
+   update_ROI();
+}

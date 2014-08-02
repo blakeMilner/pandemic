@@ -37,13 +37,15 @@ public:
     void extract_window_info();
 
 private slots:
-    void on_pushButton_clicked();
-    void on_pushButton_2_clicked();
+    void on_play_button_clicked();
+    void on_reset_button_clicked();
+    void on_next_button_clicked();
+
     void on_frame_slider_valueChanged(int value);
     void on_zoom_slider_valueChanged(int value);
+
     void on_user_edit_fps_box_textChanged(const QString &arg1);
     void on_user_edit_fps_box_lostFocus();
-
 
 private:
     Ui::MainWindow *ui;
@@ -64,7 +66,7 @@ private:
     QImage* frame_buffer;
     bool buffer_allocated;
 
-    const QIcon pause_icon, play_icon, reset_icon;
+    const QIcon pause_icon, play_icon, reset_icon, next_icon;
 
     void resizeEvent ( QResizeEvent * event );
 
