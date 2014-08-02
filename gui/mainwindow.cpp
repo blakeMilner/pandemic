@@ -10,13 +10,21 @@ MainWindow::MainWindow(Supervisor* s, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
     scene(new QGraphicsScene(this)),
-    paused(true),
+
+    settings_table(new QStandardItemModel(10,1,this)),
+    settings_delegate(new Delegate(this)),
+
     supervisor(s),
+
+    paused(true),
     next_frame_timer(new QTimer(this)),
+
     reset_icon(QIcon(GS::reset_icon_path)),
     pause_icon(QIcon(GS::pause_icon_path)),
     play_icon(QIcon(GS::play_icon_path)),
-    lineEdit_userset(true), scene_item(0)
+
+    lineEdit_userset(true),
+    scene_item(0)
 {
     frame_buffer = new QImage(GS::ROI_dims.x, GS::ROI_dims.y, QImage::Format_RGB32);
 
@@ -39,14 +47,25 @@ MainWindow::MainWindow(Supervisor* s, QWidget *parent) :
     ui->pushButton_2->setIconSize(QSize(25,25));
 
     // set zoom slider step - value indicates pixels per symbol
-    ui->horizontalSlider->setMinimum(GS::MIN_pix_per_symbol);
-    ui->horizontalSlider->setMaximum(GS::MAX_pix_per_symbol);
+    ui->frame_slider->setMinimum(GS::MIN_pix_per_symbol);
+    ui->frame_slider->setMaximum(GS::MAX_pix_per_symbol);
 
     // set fps slider step - value indicates framerate (fps)
-    ui->horizontalSlider_2->setMinimum(GS::MIN_FPS);
-    ui->horizontalSlider_2->setMaximum(GS::MAX_FPS);
+    ui->zoom_slider->setMinimum(GS::MIN_FPS);
+    ui->zoom_slider->setMaximum(GS::MAX_FPS);
     ui->lineEdit->setValidator(new QIntValidator(GS::MIN_FPS, GS::MAX_FPS, this)); // only accept numbers
     ui->lineEdit->setText(QString::number(GS::fps)); // set initial fps in text box
+
+    // initialize settings table
+    for(int row = 0; row < 4; row++){
+        for(int col = 0; col < 2; col++){
+            QModelIndex index = settings_table->index(row,col,QModelIndex());
+            settings_table->setData(index, 0);
+        }
+    }
+
+    ui->tableView->setModel(settings_table);
+    ui->tableView->setItemDelegate(settings_delegate);
 }
 
 MainWindow::~MainWindow()
@@ -84,12 +103,13 @@ void MainWindow::update_buffer(){
     bound_zoom();
 }
 
+// correct zoom level such that every sized map would cover the monitor
 void MainWindow::bound_zoom(){
     while((GS::pix_per_symbol < GS::MAX_pix_per_symbol) and (Map_settings::map_len - 2) <= (GS::ROI_dims / GS::pix_per_symbol)){
         GS::pix_per_symbol++;
     }
 
-    ui->horizontalSlider->setValue(GS::pix_per_symbol);
+    ui->frame_slider->setValue(GS::pix_per_symbol);
 }
 
 // need to fix this
@@ -116,7 +136,7 @@ void MainWindow::pause_game(){
     next_frame_timer->stop();
 }
 
-// expand symbols to multiple pixels and interpret as color
+// expand symbols to multiple pixels (from zoom settings) and map to color
 void MainWindow::colorize_ROI(){
     int x, y;
     int xoffset, yoffset;
@@ -210,7 +230,7 @@ void MainWindow::update_ROI(){
     supervisor->iterate();
 }
 
-void MainWindow::on_horizontalSlider_valueChanged(int value)
+void MainWindow::on_frame_slider_valueChanged(int value)
 {
     // update ROI view if we're not zoomed to the max
     if((GS::ROI_dims / value) <= (Map_settings::map_len - 2)){
@@ -218,7 +238,7 @@ void MainWindow::on_horizontalSlider_valueChanged(int value)
         paint_ROI();
     }
     else{      // reset value otherwise
-        ui->horizontalSlider->setValue(GS::pix_per_symbol);
+        ui->frame_slider->setValue(GS::pix_per_symbol);
     }
 }
 
@@ -239,7 +259,7 @@ void MainWindow::update_fps(int value){
     lineEdit_userset = true;
 }
 
-void MainWindow::on_horizontalSlider_2_valueChanged(int value)
+void MainWindow::on_zoom_slider_valueChanged(int value)
 {
     update_fps(value);
 }
@@ -252,7 +272,7 @@ void MainWindow::on_lineEdit_textChanged(const QString &arg1)
 
         if(conversion_good){
             update_fps(user_int);
-            ui->horizontalSlider_2->setValue(GS::fps);
+            ui->zoom_slider->setValue(GS::fps);
         }
     }
 }

@@ -16,9 +16,11 @@ IF(ENABLE_GUI)
 	FIND_PACKAGE(Qt4 REQUIRED)
 	SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DGUI ")
 	SET(GUI_SOURCES 
-	    gui/mainwindow.cpp)
+	    gui/mainwindow.cpp
+	    gui/delegate.cpp)
 	SET(GUI_HEADERS 
-	    gui/mainwindow.h)
+	    gui/mainwindow.h
+	    gui/delegate.h)
 	QT4_WRAP_CPP(HEADERS_MOC ${GUI_HEADERS})
 	SET(FORMS 
 		gui/mainwindow.ui)

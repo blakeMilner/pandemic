@@ -47,7 +47,7 @@
        <property name="title">
         <string/>
        </property>
-       <widget class="QSlider" name="horizontalSlider_2">
+       <widget class="QSlider" name="frame_slider">
         <property name="geometry">
          <rect>
           <x>90</x>
@@ -64,7 +64,7 @@
         <property name="geometry">
          <rect>
           <x>10</x>
-          <y>10</y>
+          <y>60</y>
           <width>71</width>
           <height>31</height>
          </rect>
@@ -73,7 +73,7 @@
          <string>Framerate</string>
         </property>
        </widget>
-       <widget class="QSlider" name="horizontalSlider">
+       <widget class="QSlider" name="zoom_slider">
         <property name="geometry">
          <rect>
           <x>90</x>
@@ -89,8 +89,8 @@
        <widget class="QLabel" name="label">
         <property name="geometry">
          <rect>
-          <x>20</x>
-          <y>50</y>
+          <x>30</x>
+          <y>10</y>
           <width>41</width>
           <height>31</height>
          </rect>
@@ -103,7 +103,7 @@
         <property name="geometry">
          <rect>
           <x>260</x>
-          <y>10</y>
+          <y>60</y>
           <width>31</width>
           <height>27</height>
          </rect>
@@ -133,6 +133,29 @@
         </property>
         <property name="text">
          <string/>
+        </property>
+       </widget>
+       <widget class="QLabel" name="label_3">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>150</y>
+          <width>101</width>
+          <height>31</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Game Settings</string>
+        </property>
+       </widget>
+       <widget class="QTableView" name="tableView">
+        <property name="geometry">
+         <rect>
+          <x>20</x>
+          <y>190</y>
+          <width>256</width>
+          <height>351</height>
+         </rect>
         </property>
        </widget>
       </widget>

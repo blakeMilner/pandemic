@@ -1,12 +1,12 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include <QtGui>
 #include <QMainWindow>
 #include <QGraphicsScene>
 #include <QTimer>
 #include <QGraphicsItem>
-
-
+#include "delegate.h"
 
 #include "../main/supervisor/supervisor.hpp"
 #include "gui_settings.hpp"
@@ -15,6 +15,8 @@
 namespace Ui {
 	class MainWindow;
 }
+
+class Delegate; // to break circular dependency
 
 class MainWindow : public QMainWindow
 {
@@ -27,7 +29,7 @@ public:
     explicit MainWindow(Supervisor*, QWidget *parent = 0);
     ~MainWindow();
 
-    void resizeEvent ( QResizeEvent * event );
+    friend class Delegate;
 
     bool is_paused();
     void extract_window_info();
@@ -35,8 +37,8 @@ public:
 private slots:
     void on_pushButton_clicked();
     void on_pushButton_2_clicked();
-    void on_horizontalSlider_valueChanged(int value);
-    void on_horizontalSlider_2_valueChanged(int value);
+    void on_frame_slider_valueChanged(int value);
+    void on_zoom_slider_valueChanged(int value);
     void on_lineEdit_textChanged(const QString &arg1);
     void on_lineEdit_lostFocus();
 
@@ -45,6 +47,9 @@ private:
     Ui::MainWindow *ui;
     QGraphicsScene* scene;
     QGraphicsItem *scene_item;
+
+    QStandardItemModel *settings_table;
+    Delegate* settings_delegate;
 
     Supervisor* supervisor;
 
@@ -57,6 +62,8 @@ private:
     bool buffer_allocated;
 
     const QIcon pause_icon, play_icon, reset_icon;
+
+    void resizeEvent ( QResizeEvent * event );
 
     bool paused;
     void unpause_game();
