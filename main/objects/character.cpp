@@ -15,6 +15,9 @@ pObject(coor, sym)
 	vision_field = new Map_symbol*[vision_len];
 	for(int x = 0; x < vision_len; x++){
 		vision_field[x] = new Map_symbol[vision_len];
+		for(int y = 0; y < vision_len; y++){
+			vision_field[x][y] = EMPTY;
+		}
 	}
 }
 
@@ -34,7 +37,6 @@ void Character::exec(){
 	int vision_len = 2*vision_rad + 1;
 
 	MapServer::Instance()->copy_field(vision_field, coor - vision_rad, Pair<int>(stats.VIS_RAD));
-//	Character::print_vision();
 }
 
 ///// TODO: THIS SHOULD ALL PROBABLY GO IN SEPARATE NAVIGATION/FINDING FILE LATER...

@@ -100,11 +100,20 @@ int MapServer::get_ID(int x, int y){
 	}
 }
 
+void MapServer::empty_field(Map_symbol** char_vision, Pair<int> dims){
+	for(int y = 0; y < dims.y; y++){
+	for(int x = 0; x < dims.x; x++){
+		char_vision[x][y] = EMPTY;
+	}}
+}
+
 void MapServer::copy_field(Map_symbol** char_vision, Pair<int> coor, Pair<int> vis_rad){
 	Map_symbol next_sym;
 	Pair<int> dims = 2*vis_rad + 1;
 	// offset to disregard precomputed blocks outside current radius
 	Pair<int> offset = CS::MAX_VIS_RAD - vis_rad;
+
+	empty_field(char_vision, dims);
 
 	for(int y = 0; y < dims.y; y++){
 	for(int x = 0; x < dims.x; x++){
@@ -112,21 +121,24 @@ void MapServer::copy_field(Map_symbol** char_vision, Pair<int> coor, Pair<int> v
 		next_sym = MapServer::get_symbol(coor.x + x, coor.y + y);
 
 		// place block if it already hasn't been marked as occluded
-		if(char_vision[x][y] != OCCLUDED)
+		if(char_vision[x][y] != OCCLUDED){
 			char_vision[x][y] = next_sym;
-
-		// mark out occluded blocks if current block is occluded
-		if(NAV::is_occluded(next_sym)){
-			for(vector<Pair<int> >::iterator it = BLOCKS_OCCLUDED[x + offset.x][y + offset.y].begin();
-											it != BLOCKS_OCCLUDED[x + offset.x][y + offset.y].end(); it++){
-
-				// keep removing blocks until we're outside visual radius
-				if(*it + vis_rad < dims and *it + vis_rad >= 0)
-					char_vision[(*it).x + vis_rad.x][(*it).y + vis_rad.y] = OCCLUDED;
-				else
-					break;
-			}
 		}
+
+
+			// mark out occluded blocks if current block is occluded
+			if(NAV::is_occluded(char_vision[x][y])){
+				for(vector<Pair<int> >::iterator it = BLOCKS_OCCLUDED[x + offset.x][y + offset.y].begin();
+												it != BLOCKS_OCCLUDED[x + offset.x][y + offset.y].end(); it++){
+
+					// keep removing blocks until we're outside visual radius
+					if(*it + vis_rad < dims and *it + vis_rad >= 0)
+						char_vision[(*it).x + vis_rad.x][(*it).y + vis_rad.y] = OCCLUDED;
+					else
+						break;
+				}
+			}
+
 	}}
 
 }

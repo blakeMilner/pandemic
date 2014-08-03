@@ -14,12 +14,23 @@ void Zombie::exec(){
 	if(Character::find_nearest(pos, HUMAN)){
 		if(is_adjacent(pos)){
 			Zombie::bite(pos);
+//			cout << "BITING" << endl;
+//			return;
 		}
-		else
+		else{
 			Character::go_towards(pos);
+//			cout << "CHASING" << endl;
+//			return;
+		}
 	}
-	else
+	else{
 		Character::random_walk();
+//		cout << "WALKING" << endl;
+//		return;
+	}
+
+//	cout << "DID NOTHING" << endl;
+
 }
 
 void Zombie::bite(Pair<int> pos){

@@ -106,7 +106,11 @@ public:
 
 	Map_symbol get_symbol(int, int);
 	int get_ID(int, int);
+
+
+	void empty_field(Map_symbol**, Pair<int>);
 	void copy_field(Map_symbol**, Pair<int>, Pair<int>);
+
 	void move_character(Character*, Nav_symbol);
 	void bite_player(Pair<int>);
 	void convert_infected(Infected*);
