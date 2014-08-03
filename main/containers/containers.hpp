@@ -104,6 +104,10 @@ public:
 		return((this->x >= p.x) and (this->y >= p.y));
 	}
 
+	Pair operator% (const int i){
+		return Pair(this->x, this->y);
+	}
+
 	// set elements
 	void set(T nx, T ny){
 		x = nx;
@@ -145,6 +149,11 @@ public:
 	// vector is between two other vectors, testing cross products
 	bool is_between(Pair& p1, Pair& p2){
 		return (p1.cross(*this) * p1.cross(p2) > 0) and (p2.cross(*this) * p2.cross(p1) > 0);
+	}
+
+	bool elements_equal(){
+		if (this->x == this->y) 	return true;
+		else 						return false;
 	}
 
 	// returns sign of each entry
