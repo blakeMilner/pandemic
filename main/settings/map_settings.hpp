@@ -34,6 +34,7 @@ static int max_build_placement_tries;
 static float door_probability;
 
 static bool settings_check();
+static void correct_settings();
 
 	//FOR CMD SMALL SCALE TESTING:
 //	static Pair<int> map_lenPair<int>(10, 10); // put in condition to check that division is even

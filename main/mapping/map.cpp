@@ -5,15 +5,12 @@
 #include "../objects/Infected.hpp"
 
 Map::Map(){
-	MapServer::currmap = this; // TODO: take care of this in mainfile since we may
-	// be connecting/disconnecting different maps to servers
-
-	newID = 0;
+	NEXT_EMPTY_ID = 0;
 
 	empty_object = pObject(Pair<int>(-1,-1));
 	EMPTY_BLOCK = ObjectBlock(EMPTY_TYPE_ID, EMPTY);
 	IDhash[EMPTY_TYPE_ID] = &empty_object;
-	newID = EMPTY_TYPE_ID + 1;
+	NEXT_EMPTY_ID++;
 
 	xmap_len = Map_settings::map_len.x;
 	ymap_len = Map_settings::map_len.y;
@@ -51,7 +48,7 @@ Map::~Map(){
 
 	IDhash.clear();
 	characters.clear();
-	newID = 0;
+	NEXT_EMPTY_ID = 0;
 }
 
 // game is running only if there are more than 0 humans left
@@ -108,12 +105,12 @@ void Map::add_character(Map_symbol type, Pair<int> coor){
 	Pair<int> reg_coor = find_region(coor);
 
 	if(overall_bounds_check(coor) && regional_bounds_check(reg_coor)){
-		blockmap[coor.x][coor.y] = new_object_block(newID, c->get_symbol());
+		blockmap[coor.x][coor.y] = new_object_block(NEXT_EMPTY_ID, c->get_symbol());
 		regions[reg_coor.x][reg_coor.y]->insert_character(c);
 	}
 	// else make a debug printout and print to this...
 
-	IDhash[newID++] = c;
+	IDhash[NEXT_EMPTY_ID++] = c;
 	characters.push_front(c);
 	map_stats.num_characters[type]++;
 }
@@ -144,7 +141,7 @@ void Map::add_obstacle(Obstacle *o){
 	Pair<int> reg_coor = find_region(coor);
 	// newblock is a wall that refers to the parent obstacle, same newblock
 	// symbol at different places in the map
-	ObjectBlock* newblock = new_object_block(newID, o->get_symbol());
+	ObjectBlock* newblock = new_object_block(NEXT_EMPTY_ID, o->get_symbol());
 
 	for(int x = 0; x < dimens.x; x++){
 	for(int y = 0; y < dimens.y; y++){
@@ -153,7 +150,7 @@ void Map::add_obstacle(Obstacle *o){
 		}
 	}}
 
-	IDhash[newID++] = o;
+	IDhash[NEXT_EMPTY_ID++] = o;
 
 	if(regional_bounds_check(reg_coor)){
 		regions[reg_coor.x][reg_coor.y]->insert_obstacle(o);
@@ -161,7 +158,7 @@ void Map::add_obstacle(Obstacle *o){
 }
 
 ObjectBlock* Map::new_object_block(int ID, Map_symbol sym){
-	ObjectBlock* newobj = new ObjectBlock(newID, sym);
+	ObjectBlock* newobj = new ObjectBlock(NEXT_EMPTY_ID, sym);
 	all_object_blocks.push_front(newobj);
 	return(newobj);
 }

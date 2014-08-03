@@ -42,7 +42,7 @@ private:
 	ObjectBlock*** blockmap;
 	map<int, pObject*> IDhash;
 	list<Character*> characters;
-	int newID;
+	int NEXT_EMPTY_ID;
 
 	pObject empty_object;
 	ObjectBlock EMPTY_BLOCK;

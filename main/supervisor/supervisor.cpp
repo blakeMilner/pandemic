@@ -15,6 +15,10 @@ Supervisor::~Supervisor(){
 }
 
 void Supervisor::create_map(){
+	if(!Map_settings::settings_check()){
+		Map_settings::correct_settings();
+	}
+
 	clk.tick();
 	map = new Map();
 	clk.tock();
@@ -22,6 +26,8 @@ void Supervisor::create_map(){
 	if(UD::print_to_cmd)
 		cout << "Total time to generate: " << clk.last_run_epoch() << " sec" << endl;
 
+	// CRITICAL: connect mapserver to our new map so out characters can access it.
+	MapServer::Instance()->set_map(map);
 }
 
 void Supervisor::print_map(){
@@ -37,7 +43,6 @@ void Supervisor::iterate(int frames){
 
 	for(int i = 0; i < frames; i++){
 		if ((game_is_running = map->check_game())){
-			Map_settings::settings_check();
 			map->iterate();
 		}
 		else{

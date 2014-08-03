@@ -81,6 +81,10 @@ MapServer* MapServer::Instance(){
 	return( p_Instance );
 }
 
+void MapServer::set_map(Map* map){
+	currmap = map;
+}
+
 Map_symbol MapServer::get_symbol(int x, int y){
 	// is this hurting performance?
 	if(currmap != NULL){

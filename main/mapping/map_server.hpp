@@ -29,6 +29,7 @@ public:
 	Map_symbol get_symbol(int, int);
 	int get_ID(int, int);
 
+	void set_map(Map* map);
 
 	void empty_field(Map_symbol**, Pair<int>);
 	void copy_field(Map_symbol**, Pair<int>, Pair<int>);

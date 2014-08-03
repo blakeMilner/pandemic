@@ -21,9 +21,7 @@ using namespace std;
 namespace UD = User_data;
 namespace NET = Networking;
 
-Supervisor* simulation = NULL;
-
-
+Supervisor* supervisor = NULL;
 
 void run_from_cmd(){
 //    try{
@@ -50,21 +48,21 @@ void run_from_cmd(){
 
 
     if(UD::user_iterate and UD::print_to_cmd){
-        while(simulation->is_running()){
+        while(supervisor->is_running()){
             cout << endl << "Press Enter for next iteration." << endl;
             cin.ignore();
-            simulation->print_map();
-            simulation->iterate();
+            supervisor->print_map();
+            supervisor->iterate();
         }
     }
     else{
-        simulation->iterate(UD::num_iter);
+        supervisor->iterate(UD::num_iter);
     }
 }
 
 void run_gui(int argc, char** argv){
     QApplication a(argc, argv);
-    MainWindow* w = new MainWindow(simulation);
+    MainWindow* w = new MainWindow(supervisor);
 
 	w->start();
 	a.exec();
@@ -75,13 +73,13 @@ void run_gui(int argc, char** argv){
 void setup(){
     srand(time(NULL));
 
-    simulation = new Supervisor();
-	simulation->create_map();
+    supervisor = new Supervisor();
+	supervisor->create_map();
 
-    if(UD::print_to_cmd) simulation->print_map();
-		cout << "Time to generate: " << simulation->clk.last_run_epoch() << " sec" << endl;
+    if(UD::print_to_cmd) supervisor->print_map();
+		cout << "Time to generate: " << supervisor->clk.last_run_epoch() << " sec" << endl;
 
-	simulation->clk.reset_clock();
+	supervisor->clk.reset_clock();
 }
 
 int main(int argc, char **argv){
@@ -134,6 +132,6 @@ int main(int argc, char **argv){
 
 
 
-    delete simulation;
+    delete supervisor;
 	return EXIT_SUCCESS;
 }

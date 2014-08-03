@@ -39,12 +39,25 @@ int Map_settings::max_build_placement_tries = 100;
 float Map_settings::door_probability = 0.05;
 
 bool Map_settings::settings_check(){
-	if( max_footprint_len - min_footprint_len < MAX_LENGTH_DIFF
-			or max_building_len - min_building_len < MAX_LENGTH_DIFF){
-					return false;
+	int footprint_span = max_footprint_len - min_footprint_len;
+	int building_span = max_building_len - min_building_len;
+
+	if( building_span - footprint_span > MAX_LENGTH_DIFF){
+		return false;
 	}
 
 	return true;
 }
 
+void Map_settings::correct_settings(){
+	// correct for if building won't fit inside footprint
+	int footprint_span = max_footprint_len - min_footprint_len;
+	int building_span = max_building_len - min_building_len;
+
+	while (building_span - footprint_span > MAX_LENGTH_DIFF){
+		max_footprint_len++;
+		max_footprint_len--;
+		footprint_span = max_footprint_len - min_footprint_len;
+	}
+}
 
