@@ -19,7 +19,7 @@ footprint(Footprint(dimens))
 
 Obstacle::~Obstacle(){}
 
-int Obstacle::get_footprint(int x, int y){
+Map_symbol Obstacle::get_footprint(int x, int y){
 	if(x >= 0 && y >= 0 && x < footprint.dimensions.x && y < footprint.dimensions.y){
 		return(footprint.footprint[x][y]);
 	}

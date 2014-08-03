@@ -41,17 +41,13 @@ void Character::exec(){
 
 ///// TODO: THIS SHOULD ALL PROBABLY GO IN SEPARATE NAVIGATION/FINDING FILE LATER...
 
-Map_symbol Character::get_direction(Nav_symbol dir){
+Map_symbol Character::get_directional_block(Nav_symbol dir){
 	Pair<int> vis_index(stats.VIS_RAD);
 
 	if(!NAV::apply_direction(vis_index, dir))
 		return(INVALID);
 	else
 		return(vision_field[vis_index.x][vis_index.y]);
-}
-
-bool Character::block_is(Nav_symbol dir, Map_symbol sym){
-	return(get_direction(dir) == sym);
 }
 
 void Character::move_direction(Nav_symbol dir){
@@ -64,7 +60,7 @@ void Character::random_walk(){
 	for(int i = 0; i < NAV::NUM_POSS_DIR; i++){
 		Nav_symbol dir = NAV::get_poss_dir(i);
 
-		if(block_is(dir, EMPTY))
+		if(NAV::block_is(get_directional_block(dir), PASSABLE))
 			poss_dir.push_back(dir);
 	}
 
@@ -88,7 +84,7 @@ void Character::go_towards(Pair<int> pos){
 	// move to space if empty, otherwise search for empty spaces in surrounding area
 	Nav_symbol left_direc, right_direc, direc = NAV::get_direction(dir);
 
-	if(block_is(direc, EMPTY))
+	if( NAV::block_is(get_directional_block(direc), PASSABLE) )
 		MapServer::Instance()->move_character(this, direc);
 	else{
 		left_direc = right_direc = direc;
@@ -96,11 +92,11 @@ void Character::go_towards(Pair<int> pos){
 			left_direc = NAV::get_left(left_direc);
 			right_direc = NAV::get_right(right_direc);
 
-			if(block_is(left_direc, EMPTY)){
+			if( NAV::block_is(get_directional_block(left_direc), PASSABLE) ) {
 				MapServer::Instance()->move_character(this, left_direc);
 				return;
 			}
-			else if(block_is(right_direc, EMPTY)){
+			else if( NAV::block_is(get_directional_block(right_direc), PASSABLE) ){
 				MapServer::Instance()->move_character(this, right_direc);
 				return;
 			}

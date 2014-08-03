@@ -24,20 +24,23 @@ namespace GUI_settings{
 	static int pix_per_symbol = MAX_pix_per_symbol;
 
 	static map<Map_symbol, QRgb> init_map(){
-		// SET DEFAULT MAP SYMBOL COLOR MAPPINGS
-		// TODO: make this more elegant
+        // SET DEFAULT MAP SYMBOL COLOR MAPPINGS
 		map<Map_symbol, QRgb> color_map;
 
-		color_map[INVALID] 		= qRgb(0,0,0);			// BLACK
-		color_map[HUMAN]		= qRgb(0,128,0);		// GREEN
-		color_map[INFECTED]		= qRgb(255,255,0);		// YELLOW
-		color_map[ZOMBIE]		= qRgb(255,0,0);		// RED
-		color_map[CHARACTER]	= qRgb(0,0,0);
-		color_map[BUILDING]		= qRgb(255,255,255); 	// WHITE
-		color_map[OBJECT]		= qRgb(0,0,0);
-		color_map[OBSTACLE]		= qRgb(0,0,0);
-		color_map[OCCLUDED]		= qRgb(0,0,0);
-		color_map[EMPTY] 		= qRgb(0,0,0);
+        // yet another reason to have an enum class...
+        color_map[INVALID]          = qRgb(0,0,0);			// BLACK
+        color_map[HUMAN]            = qRgb(0,128,0);		// GREEN
+        color_map[INFECTED]         = qRgb(255,255,0);		// YELLOW
+        color_map[ZOMBIE]           = qRgb(255,0,0);		// RED
+        color_map[CHARACTER]        = qRgb(0,0,0);          // BLACK
+        color_map[BUILDING]         = qRgb(255,255,255); 	// WHITE
+        color_map[BUILDING_DOOR]    = qRgb(217,120,17);     // BROWINISH
+        color_map[BUILDING_WALL]    = qRgb(125, 120, 112);  // RUSTIC SILVER
+        color_map[BUILDING_INDOOR]  = qRgb(7,59,49);      // DARKISH TURQUOISE
+        color_map[OBJECT]           = qRgb(0,0,0);          // BLACK
+        color_map[OBSTACLE]     	= qRgb(0,0,0);          // BLACK
+        color_map[OCCLUDED]     	= qRgb(0,0,0);          // BLACK
+        color_map[EMPTY]        	= qRgb(0,0,0);          // BLACK
 
 		return color_map;
 	}

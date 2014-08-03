@@ -131,7 +131,7 @@ void MapServer::copy_field(Map_symbol** char_vision, Pair<int> coor, Pair<int> v
 
 
 			// mark out occluded blocks if current block is occluded
-			if(NAV::is_occluded(char_vision[x][y])){
+			if( NAV::block_is(char_vision[x][y], OCCLUDED) ){
 				for(vector<Pair<int> >::iterator it = BLOCKS_OCCLUDED[x + offset.x][y + offset.y].begin();
 												it != BLOCKS_OCCLUDED[x + offset.x][y + offset.y].end(); it++){
 

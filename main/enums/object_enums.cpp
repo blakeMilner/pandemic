@@ -12,6 +12,22 @@ const Nav_symbol NAV::POSS_DIR[NUM_POSS_DIR	] = {
 
 int sgn(float x){ return (x > 0) - (x < 0); }
 
+bool NAV::block_is(Map_symbol s, Map_symbol type_sym){
+	// change this to be a list full of occluded types, search list
+	switch(type_sym){
+	case OCCLUDED:
+		if(s == OCCLUDED or s == OBSTACLE or s == OBJECT or s == BUILDING or s == INVALID)
+			return true;
+		else
+			return false;
+	case PASSABLE:
+		if(s == EMPTY or s == BUILDING_DOOR or s == BUILDING_INDOOR	)
+			return true;
+		else
+			return false;
+	}
+}
+
 Nav_symbol NAV::get_poss_dir(int i){
 	if( i >= 0 && i < NUM_POSS_DIR)	return(POSS_DIR[i]);
 	else							return(NONE);
@@ -73,10 +89,3 @@ Nav_symbol NAV::get_direction(Pair<int> dir){
 	return NONE;
 }
 
-bool NAV::is_occluded(Map_symbol s){
-	// change this to be a list full of occluded types, search list
-	if(s == OCCLUDED or s == OBSTACLE or s == OBJECT or s == BUILDING or s == INVALID)
-		return true;
-	else
-		return false;
-}

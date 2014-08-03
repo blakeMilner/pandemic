@@ -5,6 +5,7 @@
 #include <list>
 #include <map>
 #include <vector>
+#include <stack>
 #include <iostream>
 
 #include "map_attributes.hpp"
@@ -22,6 +23,9 @@
 
 using namespace std;
 
+// definitions for the index layers of the blockmap
+#define TOP_LAYER 0
+#define BOTTOM_LAYER 1
 
 class Map{
 public:
@@ -39,18 +43,21 @@ public:
 
 private:
 	int xmap_len, ymap_len;
-	ObjectBlock*** blockmap;
+	mRegion*** regions;
+	int num_x_regions, num_y_regions;
+
+
+	ObjectBlock**** blockmap;
+	list<ObjectBlock*> all_object_blocks;
+
 	map<int, pObject*> IDhash;
 	list<Character*> characters;
 	int NEXT_EMPTY_ID;
-
 	pObject empty_object;
+	// EMPTY_BLOCK is our singleton block that convers all empty spaces (most of the map) to save memory
 	ObjectBlock EMPTY_BLOCK;
-	ObjectBlock* new_object_block(int, Map_symbol);
-	list<ObjectBlock*> all_object_blocks;
 
-	mRegion*** regions;
-	int num_x_regions, num_y_regions;
+	ObjectBlock* new_object_block(int, Map_symbol);
 
 	MapStats map_stats;
 
@@ -61,9 +68,11 @@ private:
 
 
 	void add_character(Map_symbol type, Pair<int> coor);
-	Character* new_character(Map_symbol type, Pair<int> coor);
+	Character* new_character_instance(Map_symbol type, Pair<int> coor);
 	void delete_character(pObject* c, int ID);
 	void add_obstacle(Obstacle*);
+	void add_block(ObjectBlock* block, Pair<int> coor);
+	void remove_block(Pair<int> coor);
 
 	Pair<int> find_region(Pair<int>);
 	bool regional_bounds_check(Pair<int>);

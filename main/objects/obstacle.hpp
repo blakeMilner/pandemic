@@ -15,7 +15,7 @@ public:
 	Obstacle(const Obstacle&);
 	Obstacle(Pair<int>, Pair<int>, Map_symbol = OBSTACLE);
 	virtual ~Obstacle();
-	int get_footprint(int, int);
+	Map_symbol get_footprint(int, int);
 	Pair<int> get_dimensions();
 private:
 	Footprint footprint;

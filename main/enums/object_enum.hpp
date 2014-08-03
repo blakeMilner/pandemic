@@ -4,16 +4,23 @@
 #include "../containers/containers.hpp"
 
 enum Map_symbol {
-	INVALID = 'I',
 	HUMAN = 'H',
 	INFECTED = 'N',
 	ZOMBIE = 'Z',
 	CHARACTER = 'C',
+
 	BUILDING = 'O',
+	BUILDING_DOOR = '$',
+	BUILDING_WALL = '|',
+	BUILDING_INDOOR = '^',
+
 	OBJECT = 'o',
 	OBSTACLE = '*',
+
+	PASSABLE = 'P',
 	OCCLUDED = '#',
-	EMPTY = ' '
+	EMPTY = ' ',
+	INVALID = 'I'
 };
 
 enum Nav_symbol {
@@ -38,6 +45,7 @@ int sgn(float);
 // navigation helpers
 class NAV{
 public:
+	static bool block_is(Map_symbol, Map_symbol);
 	static Nav_symbol get_poss_dir(int);
 	static const int NUM_POSS_DIR = 8;
 
@@ -46,7 +54,6 @@ public:
 	static Nav_symbol get_direction(Pair<int>);
 	static Nav_symbol get_left(Nav_symbol);
 	static Nav_symbol get_right(Nav_symbol);
-	static bool is_occluded(Map_symbol);
 private:
 	static const Nav_symbol POSS_DIR[NUM_POSS_DIR];
 };

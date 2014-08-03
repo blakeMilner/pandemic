@@ -34,7 +34,7 @@ int Map_settings::max_footprint_len = 32;
 int Map_settings::min_building_len = 10;
 int Map_settings::max_building_len = 28;
 
-int Map_settings::blocks_per_building = 3;
+int Map_settings::blocks_per_building = 12;
 int Map_settings::max_build_placement_tries = 100;
 float Map_settings::door_probability = 0.002;
 

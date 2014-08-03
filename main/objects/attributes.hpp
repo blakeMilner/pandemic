@@ -17,17 +17,21 @@ public:
 	Footprint(Pair<int>);
 	Footprint(const Footprint&);
 	virtual ~Footprint();
+
+	// TODO: perhaps make these private later??
+	Map_symbol** footprint;
+	Pair<int> dimensions;
+
 	void alloc_footprint(Pair<int> dims);
-	void copy_footprint(int**);
+	void copy_footprint(Map_symbol**);
 	void print();
 
-	bool has_adjacent_zero(int x, int y);
+	bool block_is_inside(int x, int y);
+private:
 	void turn_left(Pair<int>&, Pair<int>&);
 	void turn_right(Pair<int>&, Pair<int>&);
 
-	Pair<int> dimensions;
 	bool is_alloced;
-	int** footprint;
 };
 
 #endif

@@ -15,11 +15,17 @@ Map::Map(){
 	xmap_len = Map_settings::map_len.x;
 	ymap_len = Map_settings::map_len.y;
 
-	blockmap = new ObjectBlock**[xmap_len];
+	blockmap = new ObjectBlock***[xmap_len];
 	for(int i = 0; i < xmap_len; i++){
-		blockmap[i] = new ObjectBlock*[ymap_len];
+
+		blockmap[i] = new ObjectBlock**[ymap_len];
 		for(int j = 0; j < ymap_len; j++){
-			blockmap[i][j] = &EMPTY_BLOCK;
+
+			blockmap[i][j] = new ObjectBlock*[2];
+			for(int k = 0; k < 2; k++){
+				blockmap[i][j][k] = &EMPTY_BLOCK;
+
+			}
 		}
 	}
 
@@ -39,6 +45,9 @@ Map::~Map(){
 
 	// delete map
 	for(int i = 0; i < xmap_len; i++){
+		for(int j = 0; j < ymap_len; j++){
+			delete [] blockmap[i][j];
+		}
 		delete [] blockmap[i];
 	}
 	delete [] blockmap;
@@ -52,7 +61,7 @@ Map::~Map(){
 }
 
 // game is running only if there are more than 0 humans left
-bool Map::check_game(){ cout << map_stats.num_characters[HUMAN] << endl; return(  map_stats.num_characters[HUMAN] ); }
+bool Map::check_game(){ return(  map_stats.num_characters[HUMAN] ); }
 
 // play out an entire turn in the map
 void Map::iterate(){
@@ -74,16 +83,32 @@ void Map::iterate(){
 Map_symbol Map::get_symbol(Pair<int> coor){ return get_symbol(coor.x, coor.y); }
 Map_symbol Map::get_symbol(int xcoor, int ycoor){
 	if(overall_bounds_check(xcoor, ycoor)){
-		return(blockmap[xcoor][ycoor]->symbol);
+		return(blockmap[xcoor][ycoor][TOP_LAYER]->symbol);
 	}
 
 	return(INVALID);
 }
 
-int Map::get_ID(Pair<int> coor){ return (blockmap[coor.x][coor.y]->ID); }
-int Map::get_ID(int xcoor, int ycoor){ return (blockmap[xcoor][ycoor]->ID); }
+int Map::get_ID(Pair<int> coor){ return (blockmap[coor.x][coor.y][TOP_LAYER]->ID); }
+int Map::get_ID(int xcoor, int ycoor){ return (blockmap[xcoor][ycoor][TOP_LAYER]->ID); }
 
-Character* Map::new_character(Map_symbol sym, Pair<int> coor){
+
+void Map::add_block(ObjectBlock* block, Pair<int> new_loc){
+	blockmap[new_loc.x][new_loc.y][BOTTOM_LAYER] = blockmap[new_loc.x][new_loc.y][TOP_LAYER];
+	blockmap[new_loc.x][new_loc.y][TOP_LAYER] = block;
+}
+
+void Map::remove_block(Pair<int> coor){
+	if(blockmap[coor.x][coor.y][BOTTOM_LAYER] != &EMPTY_BLOCK){
+		blockmap[coor.x][coor.y][TOP_LAYER] = blockmap[coor.x][coor.y][BOTTOM_LAYER];
+		blockmap[coor.x][coor.y][BOTTOM_LAYER] = &EMPTY_BLOCK;
+	}
+	else{
+		blockmap[coor.x][coor.y][TOP_LAYER] = &EMPTY_BLOCK;
+	}
+}
+
+Character* Map::new_character_instance(Map_symbol sym, Pair<int> coor){
 		switch(sym){
 		case HUMAN:
 			return new Human(coor);
@@ -100,12 +125,12 @@ Character* Map::new_character(Map_symbol sym, Pair<int> coor){
 void Map::add_character(Map_symbol type, Pair<int> coor){
 	// perhaps put stats in char factory?
 	// TODO: change mapstats to its own charfactory class
-	Character* c = new_character(type, coor);
+	Character* c = new_character_instance(type, coor);
 
 	Pair<int> reg_coor = find_region(coor);
 
 	if(overall_bounds_check(coor) && regional_bounds_check(reg_coor)){
-		blockmap[coor.x][coor.y] = new_object_block(NEXT_EMPTY_ID, c->get_symbol());
+		add_block(new_object_block(NEXT_EMPTY_ID, c->get_symbol()), coor);
 		regions[reg_coor.x][reg_coor.y]->insert_character(c);
 	}
 	// else make a debug printout and print to this...
@@ -126,9 +151,7 @@ void Map::delete_character(pObject* c, int ID){
 	regions[reg_coor.x][reg_coor.y]->remove_character(dead_char);
 	IDhash.erase(ID);
 
-	all_object_blocks.remove(blockmap[coor.x][coor.y]);
-	delete blockmap[coor.x][coor.y];
-	blockmap[coor.x][coor.y] = &EMPTY_BLOCK;
+	remove_block(coor);
 
 	map_stats.num_characters[dead_char->get_symbol()]--;
 
@@ -139,14 +162,15 @@ void Map::add_obstacle(Obstacle *o){
 	Pair<int> coor = o->get_coor();
 	Pair<int> dimens = o->get_dimensions();
 	Pair<int> reg_coor = find_region(coor);
-	// newblock is a wall that refers to the parent obstacle, same newblock
-	// symbol at different places in the map
-	ObjectBlock* newblock = new_object_block(NEXT_EMPTY_ID, o->get_symbol());
+	Map_symbol next_sym = EMPTY;
 
 	for(int x = 0; x < dimens.x; x++){
 	for(int y = 0; y < dimens.y; y++){
-		if(o->get_footprint(x,y) && overall_bounds_check(coor + Pair<int>(x,y))){
-			blockmap[coor.x + x][coor.y + y] = newblock;
+		if(overall_bounds_check(coor + Pair<int>(x,y))){
+			next_sym = o->get_footprint(x, y);
+			if(next_sym != EMPTY){
+				blockmap[coor.x + x][coor.y + y][TOP_LAYER] = new_object_block(NEXT_EMPTY_ID, next_sym);
+			}
 		}
 	}}
 
@@ -196,7 +220,7 @@ void Map::print_map(){
 	for(int y = 0; y < Map_settings::map_len.x; y++){
 		cout << '|';
 		for(int x = 0; x < Map_settings::map_len.y; x++){
-			cout << (char) blockmap[x][y]->symbol;
+			cout << (char) blockmap[x][y][TOP_LAYER]->symbol;
 		}
 		cout << '|' << endl;
 	}
@@ -331,8 +355,11 @@ void Map::copy_ROI(Map_symbol** buf, Pair<int> start_coor, Pair<int> length){
 	if(overall_bounds_check(start_coor) and overall_bounds_check(end_coor)){
 		for(int x = start_coor.x; x < end_coor.x; x++){
 		for(int y = start_coor.y; y < end_coor.y; y++){
-			buf[x][y] = blockmap[x][y]->get_symbol();
+			buf[x][y] = blockmap[x][y][TOP_LAYER]->get_symbol();
 		}}
+	}
+	else{
+		cout << "ERROR: Overall bounds check failed." << endl;
 	}
 }
 
@@ -345,8 +372,8 @@ void Map::move_character(Character* this_ptr, Pair<int>& new_loc){
 	Pair<int> curr_reg = find_region(curr);
 	Pair<int> new_reg = find_region(new_loc);
 
-	if( overall_bounds_check(new_loc) && regional_bounds_check(new_reg)){
-	if(blockmap[new_loc.x][new_loc.y]->symbol == EMPTY){
+	if( overall_bounds_check(new_loc) && regional_bounds_check(new_reg)
+	and NAV::block_is(blockmap[new_loc.x][new_loc.y][TOP_LAYER]->symbol, PASSABLE) ){
 		this_ptr->set_coor(new_loc);
 
 		if(curr_reg != new_reg){ // if character has crossed regions, change region
@@ -354,9 +381,9 @@ void Map::move_character(Character* this_ptr, Pair<int>& new_loc){
 			regions[new_reg.x][new_reg.y]->insert_character(this_ptr);
 		}
 
-		blockmap[new_loc.x][new_loc.y] = blockmap[curr.x][curr.y];
-		blockmap[curr.x][curr.y] = &EMPTY_BLOCK;
-	}
+		add_block(blockmap[curr.x][curr.y][TOP_LAYER], new_loc);
+		remove_block(curr);
+
 	}
 }
 
@@ -375,8 +402,8 @@ void Map::infect_player(int ID){
 		// this takes O(n), can we make this better?
 		(*find(characters.begin(), characters.end(), inf_obj)) = new_obj ;
 
-		blockmap[coor.x][coor.y]->change_symbol(INFECTED);
-		IDhash[ blockmap[coor.x][coor.y]->ID ] = new_obj;
+		blockmap[coor.x][coor.y][TOP_LAYER]->change_symbol(INFECTED);
+		IDhash[ blockmap[coor.x][coor.y][TOP_LAYER]->ID ] = new_obj;
 		regions[reg_coor.x][reg_coor.y]->switch_character((Character*) inf_obj, (Character*) new_obj);
 
 		delete inf_obj;
