@@ -41,13 +41,12 @@ Map::~Map(){
 	}
 	delete [] blockmap;
 
-	// deleting all objects in hash map and characters
-	// is unnecessary, deleting regions does it
-
 	// delete object_blocks we made for the map
-	while(!all_object_blocks.empty()) {
-		delete all_object_blocks.front(), all_object_blocks.pop_front();
-	}
+	all_object_blocks.clear();
+
+	IDhash.clear();
+	characters.clear();
+	newID = 0;
 }
 
 // game is running only if there are more than 0 humans left

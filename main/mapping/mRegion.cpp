@@ -12,8 +12,8 @@ len(regionlen)
 }
 
 mRegion::~mRegion(){
-	while(!characters.empty()) delete characters.front(), characters.pop_front();
-	while(!obstacles.empty()) delete obstacles.front(), obstacles.pop_front();
+	characters.clear();
+	obstacles.clear();
 }
 
 void mRegion::insert_character(Character* c){

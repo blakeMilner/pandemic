@@ -15,7 +15,7 @@
 
 #include "map_settings.hpp"
 
-Pair<int> Map_settings::map_len = Pair<int>(1000, 1000); // put in condition to check that division is even
+Pair<int> Map_settings::map_len = Pair<int>(100, 100); // put in condition to check that division is even
 int Map_settings::region_len = 50;
 
 // CHARACTER GENERATION SETTINGS

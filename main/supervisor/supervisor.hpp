@@ -27,7 +27,7 @@ public:
 private:
 	Map* map;
 
-	bool game_is_running;
+	bool game_is_running, frame_is_running;
 };
 
 #endif
