@@ -9,12 +9,12 @@
 
 #include "map_attributes.hpp"
 #include "mRegion.hpp"
+#include "MapStats.hpp"
+#include "map_server.hpp"
 #include "../objects/objects.hpp"
 #include "../objects/obstacle.hpp"
 #include "../objects/character.hpp"
 #include "../objects/Building.hpp"
-#include "../objects/Human.hpp"
-#include "../objects/Zombie.hpp"
 #include "../settings/map_settings.hpp"
 #include "../helpers/rng.hpp"
 #include "../enums/object_enum.hpp"
@@ -23,24 +23,10 @@
 using namespace std;
 
 
-class Infected; // to resolve circular inclusion
-
-
-class MapStats{
-public:
-	int num_humans;
-	int num_zombies;
-	int num_bites;
-	int num_infected;
-
-	MapStats():
-		num_humans(0), num_zombies(0),
-		num_bites(0), num_infected(0) {}
-};
-
-
 class Map{
 public:
+	// MapServer accesses private methods directly to interact with code implemented
+	// in character classes
 	friend class MapServer;
 
 	Map();
@@ -72,12 +58,13 @@ private:
 	Map_symbol get_symbol(Pair<int>);
 	int get_ID(int, int);
 	int get_ID(Pair<int>);
-	void add_zombie(Pair<int>);
-	void add_human(Pair<int>);
-	void add_character(Character*);
-	void delete_human(pObject*, int);
-	void delete_character(Character*, int);
+
+
+	void add_character(Map_symbol type, Pair<int> coor);
+	Character* new_character(Map_symbol type, Pair<int> coor);
+	void delete_character(pObject* c, int ID);
 	void add_obstacle(Obstacle*);
+
 	Pair<int> find_region(Pair<int>);
 	bool regional_bounds_check(Pair<int>);
 	bool regional_bounds_check(int, int);
@@ -94,34 +81,8 @@ private:
 	// functions meant for MapServer
 	void move_character(Character*, Pair<int>&);
 	void infect_player(int ID);
-	void convert_infected(Infected*);
+	void convert_infected(Character*);
 };
 
-// singleton class
-class MapServer{
-public:
-	friend class Map;
-
-	static MapServer* Instance(); // returns singleton pointer
-
-	Map_symbol get_symbol(int, int);
-	int get_ID(int, int);
-
-
-	void empty_field(Map_symbol**, Pair<int>);
-	void copy_field(Map_symbol**, Pair<int>, Pair<int>);
-
-	void move_character(Character*, Nav_symbol);
-	void bite_player(Pair<int>);
-	void convert_infected(Infected*);
-private:
-	MapServer();
-	~MapServer();
-
-	static MapServer* p_Instance; // singleton pointer
-
-	static Map* currmap;
-	vector<Pair<int> >** BLOCKS_OCCLUDED; // LUT FOR OCCLUSIONS
-};
 
 #endif

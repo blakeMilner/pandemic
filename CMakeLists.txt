@@ -54,6 +54,7 @@ main/helpers/rng.cpp
 main/helpers/clock.cpp
 
 main/mapping/map.cpp
+main/mapping/MapStats.cpp
 main/mapping/map_attributes.cpp
 main/mapping/mRegion.cpp
 main/mapping/map_server.cpp
@@ -62,11 +63,12 @@ main/networking/networking.cpp
 
 main/objects/character.cpp
 main/objects/obstacle.cpp
+main/objects/objects.cpp
+main/objects/attributes.cpp
 main/objects/Building.cpp
 main/objects/Human.cpp
 main/objects/Zombie.cpp
-main/objects/objects.cpp
-main/objects/attributes.cpp
+main/objects/Infected.cpp
 
 main/settings/character_stats.cpp
 main/settings/map_settings.cpp

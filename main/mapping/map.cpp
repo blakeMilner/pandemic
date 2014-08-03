@@ -1,7 +1,12 @@
 #include "map.hpp"
 
+#include "../objects/Human.hpp"
+#include "../objects/Zombie.hpp"
+#include "../objects/Infected.hpp"
+
 Map::Map(){
-	MapServer::currmap = this;
+	MapServer::currmap = this; // TODO: take care of this in mainfile since we may
+	// be connecting/disconnecting different maps to servers
 
 	newID = 0;
 
@@ -50,7 +55,7 @@ Map::~Map(){
 }
 
 // game is running only if there are more than 0 humans left
-bool Map::check_game(){ return( map_stats.num_humans); }
+bool Map::check_game(){ cout << map_stats.num_characters[HUMAN] << endl; return(  map_stats.num_characters[HUMAN] ); }
 
 // play out an entire turn in the map
 void Map::iterate(){
@@ -63,8 +68,8 @@ void Map::iterate(){
 			Pair<int> coor = (*it)->get_coor();
 			int ID = get_ID(coor);
 
-			delete_human(*(it++), ID); // have to ++ here because we're iterating over the list we're altering
-			add_zombie(coor);
+			delete_character(*(it++), ID); // have to ++ here because we're iterating over the list we're altering
+			add_character(ZOMBIE, coor);
 		}
 	}
 }
@@ -81,53 +86,54 @@ Map_symbol Map::get_symbol(int xcoor, int ycoor){
 int Map::get_ID(Pair<int> coor){ return (blockmap[coor.x][coor.y]->ID); }
 int Map::get_ID(int xcoor, int ycoor){ return (blockmap[xcoor][ycoor]->ID); }
 
-void Map::add_zombie(Pair<int> coor){
-	add_character(new Zombie(coor));
-	map_stats.num_zombies++;
+Character* Map::new_character(Map_symbol sym, Pair<int> coor){
+		switch(sym){
+		case HUMAN:
+			return new Human(coor);
+			break;
+		case ZOMBIE:
+			return new Zombie(coor);
+			break;
+
+		return(NULL);
+		}
 }
 
-void Map::add_human(Pair<int> coor){
-	add_character(new Human(coor));
-	map_stats.num_humans++;
-}
+// TODO: map_symbols to char symbols
+void Map::add_character(Map_symbol type, Pair<int> coor){
+	// perhaps put stats in char factory?
+	// TODO: change mapstats to its own charfactory class
+	Character* c = new_character(type, coor);
 
-void Map::add_character(Character *c){
-	Pair<int> coor = c->get_coor();
 	Pair<int> reg_coor = find_region(coor);
 
 	if(overall_bounds_check(coor) && regional_bounds_check(reg_coor)){
 		blockmap[coor.x][coor.y] = new_object_block(newID, c->get_symbol());
 		regions[reg_coor.x][reg_coor.y]->insert_character(c);
 	}
+	// else make a debug printout and print to this...
 
 	IDhash[newID++] = c;
 	characters.push_front(c);
+	map_stats.num_characters[type]++;
 }
 
-// TODO: combine add human/zombie
-
-void Map::delete_human(pObject* dead_obj, int ID){
-	delete_character(static_cast<Character*>(dead_obj), ID);
-
-	if(dead_obj->get_symbol() == INFECTED)
-		map_stats.num_infected--;
-	else
-		map_stats.num_humans--;
-}
-
-void Map::delete_character(Character* c, int ID){
+void Map::delete_character(pObject* c, int ID){
+	Character* dead_char = static_cast<Character*>(c);
 	Pair<int> coor = c->get_coor();
 	Pair<int> reg_coor = find_region(coor);
 
 	// this remove takes O(n), can we make this better?
-	characters.remove(c);
+	characters.remove(dead_char);
 
-	regions[reg_coor.x][reg_coor.y]->remove_character(c);
+	regions[reg_coor.x][reg_coor.y]->remove_character(dead_char);
 	IDhash.erase(ID);
 
 	all_object_blocks.remove(blockmap[coor.x][coor.y]);
 	delete blockmap[coor.x][coor.y];
 	blockmap[coor.x][coor.y] = &EMPTY_BLOCK;
+
+	map_stats.num_characters[dead_char->get_symbol()]--;
 
 	delete c;
 }
@@ -160,6 +166,7 @@ ObjectBlock* Map::new_object_block(int ID, Map_symbol sym){
 	return(newobj);
 }
 
+// TODO: change this to inline
 Pair<int> Map::find_region(Pair<int> coor){
 	return Pair<int>(coor.x / Map_settings::region_len, coor.y / Map_settings::region_len);
 }
@@ -292,18 +299,18 @@ void Map::make_characters(){
 				for(int y = -3; y < 3; y++){ // find nearby locations that may be empty
 					if(get_symbol(ran_coor + Pair<int>(x,y)) == EMPTY)
 					if(i < num_zom){
-						add_zombie(ran_coor + Pair<int>(x,y)); // change this to input only character name
+						add_character(ZOMBIE, ran_coor + Pair<int>(x,y)); // change this to input only character name
 					}else{
-						add_human(ran_coor + Pair<int>(x,y));
+						add_character(HUMAN, ran_coor + Pair<int>(x,y));
 					}
 					x = y = 3; // end both for loops
 					}
 				}
 			}
 			else if(i < num_zom){
-				add_zombie(ran_coor);
+				add_character(ZOMBIE, ran_coor);
 			}else{
-				add_human(ran_coor);
+				add_character(HUMAN, ran_coor);
 			}
 		}
 	}}
@@ -378,15 +385,18 @@ void Map::infect_player(int ID){
 		delete inf_obj;
 
 		map_stats.num_bites++;
-		map_stats.num_infected++;
+		map_stats.num_characters[INFECTED]++;
+		map_stats.num_characters[HUMAN]--;
 	}
 }
 
 
-void Map::convert_infected(Infected* infected){
+void Map::convert_infected(Character* infected){
+	// need type checking somewhere along the line for this...
 	Pair<int> coor = infected->get_coor();
 	int ID = get_ID(coor);
 
-	delete_human(infected, ID);
-	add_zombie(coor);
+	delete_character(infected, ID);
+	add_character(ZOMBIE, coor);
 }
+

@@ -18,19 +18,4 @@ private:
 };
 
 
-
-class Infected: public Human{
-public:
-	Infected(Pair<int> = Pair<int>(-1,-1), Map_symbol = INFECTED, Stats = Char_stats::DEFAULT_INFECTED);
-	Infected(Human*);
-
-	virtual void exec();
-	bool infected_time_over();
-private:
-	virtual void init_stats(Stats);
-
-	int infected_time;
-};
-
-
 #endif

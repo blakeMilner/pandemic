@@ -40,8 +40,10 @@ void Supervisor::iterate(int frames){
 			Map_settings::settings_check();
 			map->iterate();
 		}
-		else
+		else{
+			// send "game is over" to command window and reset gui state
 			break;
+		}
 	}
 
 	clk.tock();

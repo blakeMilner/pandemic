@@ -157,5 +157,5 @@ void MapServer::bite_player(Pair<int> pos){
 }
 
 void MapServer::convert_infected(Infected* infected){
-	currmap->convert_infected(infected);
+	currmap->convert_infected((Character *) infected);
 }
