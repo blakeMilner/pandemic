@@ -10,6 +10,7 @@
 
 #include "../main/supervisor/supervisor.hpp"
 #include "gui_settings.hpp"
+#include "../main/settings/map_settings.hpp"
 #include "../main/enums/object_enum.hpp"
 #include "../main/helpers/clock.hpp"
 
@@ -47,7 +48,44 @@ private slots:
     void on_user_edit_fps_box_textChanged(const QString &arg1);
     void on_user_edit_fps_box_lostFocus();
 
+    void adjust_ROI(Nav_symbol dir, int pps);
+    void update_pan();
+
+    void on_pan_east_clicked();
+    void on_pan_west_clicked();
+    void on_pan_north_clicked();
+    void on_pan_south_clicked();
+    void on_pan_southwest_clicked();
+    void on_pan_northwest_clicked();
+    void on_pan_northeast_clicked();
+    void on_pan_southeast_clicked();
+
+    void on_pan_east_pressed();
+    void on_pan_east_released();
+    void on_pan_west_pressed();
+    void on_pan_west_released();
+    void on_pan_north_pressed();
+    void on_pan_north_released();
+    void on_pan_southwest_pressed();
+    void on_pan_southwest_released();
+    void on_pan_northwest_pressed();
+    void on_pan_northwest_released();
+    void on_pan_northeast_pressed();
+    void on_pan_northeast_released();
+    void on_pan_southeast_pressed();
+    void on_pan_southeast_released();
+    void on_pan_south_pressed();
+    void on_pan_south_released();
+
 private:
+    bool pan_east_pressed;
+
+    QTimer* pan_timer;
+    Nav_symbol pan_direction;
+
+
+
+
     Ui::MainWindow *ui;
     QGraphicsScene* scene;
     QGraphicsItem *scene_item;
@@ -60,7 +98,7 @@ private:
     QTimer* frame_timer;
     Clock frame_clk;
 
-    bool lineEdit_userset;
+    bool user_edit_fps_box;
 
     Map_symbol** symbol_buffer;
     QImage* frame_buffer;

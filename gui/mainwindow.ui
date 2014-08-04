@@ -52,7 +52,7 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>291</width>
+          <width>414</width>
           <height>551</height>
          </rect>
         </property>
@@ -163,6 +163,136 @@
           <property name="text">
            <string/>
           </property>
+         </widget>
+         <widget class="QGroupBox" name="groupBox_2">
+          <property name="geometry">
+           <rect>
+            <x>20</x>
+            <y>140</y>
+            <width>91</width>
+            <height>101</height>
+           </rect>
+          </property>
+          <property name="title">
+           <string/>
+          </property>
+          <widget class="QLabel" name="label_7">
+           <property name="geometry">
+            <rect>
+             <x>45</x>
+             <y>20</y>
+             <width>71</width>
+             <height>21</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Pan</string>
+           </property>
+          </widget>
+          <widget class="QPushButton" name="pan_southeast">
+           <property name="geometry">
+            <rect>
+             <x>69</x>
+             <y>78</y>
+             <width>21</width>
+             <height>21</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+          <widget class="QPushButton" name="pan_south">
+           <property name="geometry">
+            <rect>
+             <x>50</x>
+             <y>78</y>
+             <width>21</width>
+             <height>21</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+          <widget class="QPushButton" name="pan_east">
+           <property name="geometry">
+            <rect>
+             <x>69</x>
+             <y>60</y>
+             <width>21</width>
+             <height>21</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+          <widget class="QPushButton" name="pan_north">
+           <property name="geometry">
+            <rect>
+             <x>50</x>
+             <y>41</y>
+             <width>21</width>
+             <height>21</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+          <widget class="QPushButton" name="pan_southwest">
+           <property name="geometry">
+            <rect>
+             <x>31</x>
+             <y>78</y>
+             <width>21</width>
+             <height>21</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+          <widget class="QPushButton" name="pan_west">
+           <property name="geometry">
+            <rect>
+             <x>31</x>
+             <y>60</y>
+             <width>21</width>
+             <height>21</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+          <widget class="QPushButton" name="pan_northeast">
+           <property name="geometry">
+            <rect>
+             <x>69</x>
+             <y>41</y>
+             <width>21</width>
+             <height>21</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+          <widget class="QPushButton" name="pan_northwest">
+           <property name="geometry">
+            <rect>
+             <x>31</x>
+             <y>41</y>
+             <width>21</width>
+             <height>21</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
          </widget>
         </widget>
         <widget class="QWidget" name="settings_tab">

@@ -31,9 +31,14 @@ public:
 
 	Pair operator++(int){
 		Pair p = *this;
+		(*this).x++, (*this).y++;
 
-		(*this).x++;
-		(*this).y++;
+		return p;
+	}
+
+	Pair operator--(int){
+		Pair p = *this;
+		(*this).x--, (*this).y--;
 
 		return p;
 	}
@@ -94,19 +99,29 @@ public:
 	bool operator<= (const Pair& p){
 		return((this->x <= p.x) and (this->y <= p.y));
 	}
+
 	bool operator< (const Pair& p){
 		return((this->x < p.x) and (this->y < p.y));
 	}
+	bool is_lt(const Pair& p){
+		return((this->x < p.x) or (this->y < p.y));
+	}
+
 	bool operator> (const Pair& p){
 		return((this->x > p.x) and (this->y > p.y));
 	}
+	bool is_gt(const Pair& p){
+		return((this->x > p.x) or (this->y > p.y));
+	}
+
 	bool operator>= (const Pair& p){
 		return((this->x >= p.x) and (this->y >= p.y));
 	}
 
 	Pair operator% (const int i){
-		return Pair(this->x, this->y);
+		return Pair(this->x  % i, this->y % i);
 	}
+
 
 	// set elements
 	void set(T nx, T ny){

@@ -9,7 +9,7 @@
 using namespace std;
 
 namespace GUI_settings{
-	static Pair<int> ROI_coors = Pair<int>(0,0);
+    static Pair<int> ROI_coors = Pair<int>(0,0);
 	static const Pair<int> MIN_ROI_DIMS = Pair<int>(0,0);
 	static const Pair<int> MAX_ROI_DIMS = Pair<int>(5000,5000); // need to put in check that this isn't over actual dims
 	static Pair<int> ROI_dims = MIN_ROI_DIMS;
@@ -22,6 +22,8 @@ namespace GUI_settings{
 	static const int MIN_pix_per_symbol = 1;
     static const int MAX_pix_per_symbol = 10;
 	static int pix_per_symbol = MAX_pix_per_symbol;
+
+    static int ms_per_pan = 30;
 
 	static map<Map_symbol, QRgb> init_map(){
         // SET DEFAULT MAP SYMBOL COLOR MAPPINGS

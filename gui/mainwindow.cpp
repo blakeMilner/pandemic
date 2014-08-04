@@ -23,12 +23,15 @@ MainWindow::MainWindow(Supervisor* s, QWidget *parent) :
     frame_timer(new QTimer(this)),
     frame_clk(Clock()),
 
+    pan_timer(new QTimer(this)),
+    pan_direction(EAST),
+
     reset_icon(QIcon(GS::reset_icon_path)),
     pause_icon(QIcon(GS::pause_icon_path)),
     play_icon(QIcon(GS::play_icon_path)),
     next_icon(QIcon(GS::next_icon_path)),
 
-    lineEdit_userset(true),
+    user_edit_fps_box(true),
     scene_item(0)
 {
     frame_buffer = new QImage(GS::MAX_ROI_DIMS.x, GS::MAX_ROI_DIMS.y, QImage::Format_RGB32);
@@ -42,6 +45,8 @@ MainWindow::MainWindow(Supervisor* s, QWidget *parent) :
 
     // connect timer in order to update ROI continuously
     connect(frame_timer, SIGNAL(timeout()), this, SLOT(update_ROI()));
+    // connect timer in order to time panning movements
+    connect(pan_timer, SIGNAL(timeout()), this, SLOT(update_pan()));
 
     // make buffer for raw symbols from map
 	symbol_buffer = new Map_symbol*[GS::MAX_ROI_DIMS.x];
@@ -154,7 +159,8 @@ void MainWindow::colorize_ROI(){
     xoffset = x * GS::pix_per_symbol;
 
     for(y = 0; y < GS::ROI_dims.y / GS::pix_per_symbol; y++){
-        next_pix = GS::color_map[symbol_buffer[x][y]];
+        // offset to get new location
+        next_pix = GS::color_map[symbol_buffer[x + GS::ROI_coors.x][y + GS::ROI_coors.y]];
 
         yoffset = y * GS::pix_per_symbol;
 
@@ -176,7 +182,7 @@ void MainWindow::colorize_ROI(){
         yoffset = y * GS::pix_per_symbol;
 
         for(x = 0; x < GS::ROI_dims.x / GS::pix_per_symbol; x++){
-            next_pix = GS::color_map[symbol_buffer[x][y]];
+            next_pix = GS::color_map[symbol_buffer[x + GS::ROI_coors.x][y + GS::ROI_coors.y]];
             xoffset = x * GS::pix_per_symbol;
 
             for(int px = 0; px < GS::pix_per_symbol; px++){
@@ -191,7 +197,7 @@ void MainWindow::colorize_ROI(){
         xoffset = x * GS::pix_per_symbol;
 
         for(y = 0; y < GS::ROI_dims.y / GS::pix_per_symbol; y++){
-            next_pix = GS::color_map[symbol_buffer[x][y]];
+            next_pix = GS::color_map[symbol_buffer[x + GS::ROI_coors.x][y + GS::ROI_coors.y]];
             yoffset = y * GS::pix_per_symbol;
 
             for(int px = 0; px < x_pix_left; px++){
@@ -204,7 +210,7 @@ void MainWindow::colorize_ROI(){
     // bottom right pixel
     x = 1 + (GS::ROI_dims.x / GS::pix_per_symbol);
     y = 1 + (GS::ROI_dims.y / GS::pix_per_symbol);
-    next_pix = GS::color_map[symbol_buffer[x][y]];
+    next_pix = GS::color_map[symbol_buffer[x + GS::ROI_coors.x][y + GS::ROI_coors.y]];
     for(int px = 0; px < x_pix_left; px++){
     for(int py = 0; py < y_pix_left; py++){
         frame_buffer->setPixel(xoffset + px, yoffset + py, next_pix);
@@ -238,6 +244,7 @@ void MainWindow::update_ROI(){
     frame_clk.tick();
     paint_ROI();
 
+
     supervisor->iterate();
     double last_frm_time = frame_clk.tock();
 
@@ -270,9 +277,9 @@ void MainWindow::update_fps(int value){
 
     // tell on_user_edit_fps_box_textChanged to not iterate
 
-    lineEdit_userset = false;
+    user_edit_fps_box = false;
     ui->user_edit_fps_box->setText(QString::number(GS::fps));
-    lineEdit_userset = true;
+    user_edit_fps_box = true;
 }
 
 void MainWindow::on_frame_slider_valueChanged(int value)
@@ -282,7 +289,7 @@ void MainWindow::on_frame_slider_valueChanged(int value)
 
 void MainWindow::on_user_edit_fps_box_textChanged(const QString &arg1)
 {
-    if(lineEdit_userset){
+    if(user_edit_fps_box){
         static bool conversion_good = false;
         static int user_int = arg1.toInt(&conversion_good); // convert to int, check if conversion worked
 
@@ -321,3 +328,67 @@ void MainWindow::on_next_button_clicked()
     if(!paused) pause_game();
    update_ROI();
 }
+
+// methods for changing ROI position when panning
+void MainWindow::adjust_ROI(Nav_symbol dir, int pps){
+    Pair<int> move_vector = NAV::get_direction(dir);
+
+    Pair<int> new_coor = GS::ROI_coors + (pps * move_vector);
+
+    while( new_coor.x > (Map_settings::map_len.x - (GS::ROI_dims.x / GS::pix_per_symbol) - 2) ){
+        new_coor.x--;
+        if (new_coor.x == GS::ROI_coors.x ){
+            break;
+        }
+    }
+    while( new_coor.y < 0 ){
+        new_coor.y++;
+        if (new_coor.y == GS::ROI_coors.y ){
+            break;
+        }
+    }
+    while( new_coor.y > (Map_settings::map_len.y - (GS::ROI_dims.y / GS::pix_per_symbol) - 2) ){
+        new_coor.y--;
+        if (new_coor.y == GS::ROI_coors.y ){
+            break;
+        }
+    }
+    while( new_coor.x < 0 ){
+        new_coor.x++;
+        if (new_coor.x == GS::ROI_coors.x ){
+            break;
+        }
+    }
+
+    GS::ROI_coors = new_coor;
+
+    paint_ROI();
+}
+
+void MainWindow::update_pan(){                  adjust_ROI(pan_direction, GS::pix_per_symbol);   }
+
+void MainWindow::on_pan_east_clicked(){         adjust_ROI(EAST, GS::pix_per_symbol);  }
+void MainWindow::on_pan_west_clicked(){         adjust_ROI(WEST, GS::pix_per_symbol);  }
+void MainWindow::on_pan_north_clicked(){        adjust_ROI(NORTH, GS::pix_per_symbol);  }
+void MainWindow::on_pan_south_clicked(){        adjust_ROI(SOUTH, GS::pix_per_symbol);  }
+void MainWindow::on_pan_southwest_clicked(){    adjust_ROI(SOUTHW, GS::pix_per_symbol);  }
+void MainWindow::on_pan_northwest_clicked(){    adjust_ROI(NORTHW, GS::pix_per_symbol);  }
+void MainWindow::on_pan_northeast_clicked() {   adjust_ROI(NORTHE, GS::pix_per_symbol);  }
+void MainWindow::on_pan_southeast_clicked(){    adjust_ROI(SOUTHE, GS::pix_per_symbol);  }
+
+void MainWindow::on_pan_east_pressed(){    pan_timer->start(GS::ms_per_pan);  pan_direction = EAST; }
+void MainWindow::on_pan_east_released(){   pan_timer->stop();  }
+void MainWindow::on_pan_west_pressed(){     pan_timer->start(GS::ms_per_pan);  pan_direction = WEST; }
+void MainWindow::on_pan_west_released(){   pan_timer->stop();  }
+void MainWindow::on_pan_north_pressed(){pan_timer->start(GS::ms_per_pan);  pan_direction = NORTH; }
+void MainWindow::on_pan_north_released(){   pan_timer->stop();  }
+void MainWindow::on_pan_south_pressed(){pan_timer->start(GS::ms_per_pan);  pan_direction = SOUTH; }
+void MainWindow::on_pan_south_released(){   pan_timer->stop();  }
+void MainWindow::on_pan_southwest_pressed(){pan_timer->start(GS::ms_per_pan);  pan_direction = SOUTHW; }
+void MainWindow::on_pan_southwest_released(){   pan_timer->stop();  }
+void MainWindow::on_pan_northwest_pressed(){pan_timer->start(GS::ms_per_pan);  pan_direction = NORTHW; }
+void MainWindow::on_pan_northwest_released(){   pan_timer->stop();  }
+void MainWindow::on_pan_northeast_pressed(){pan_timer->start(GS::ms_per_pan);  pan_direction = NORTHE; }
+void MainWindow::on_pan_northeast_released(){   pan_timer->stop();  }
+void MainWindow::on_pan_southeast_pressed(){pan_timer->start(GS::ms_per_pan);  pan_direction = SOUTHE; }
+void MainWindow::on_pan_southeast_released() {   pan_timer->stop();  }
