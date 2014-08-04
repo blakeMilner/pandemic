@@ -83,9 +83,6 @@ private:
     QTimer* pan_timer;
     Nav_symbol pan_direction;
 
-
-
-
     Ui::MainWindow *ui;
     QGraphicsScene* scene;
     QGraphicsItem *scene_item;

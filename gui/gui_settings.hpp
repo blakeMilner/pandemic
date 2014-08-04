@@ -21,8 +21,9 @@ namespace GUI_settings{
 
 	static const int MIN_pix_per_symbol = 1;
     static const int MAX_pix_per_symbol = 10;
-	static int pix_per_symbol = MAX_pix_per_symbol;
+    static int pps = MAX_pix_per_symbol; // pix per symbol
 
+    static int pan_pps = 3; // pix per symbol per pan
     static int ms_per_pan = 30;
 
 	static map<Map_symbol, QRgb> init_map(){
