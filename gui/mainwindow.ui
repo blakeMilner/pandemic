@@ -66,8 +66,8 @@
          <widget class="QLabel" name="label">
           <property name="geometry">
            <rect>
-            <x>50</x>
-            <y>10</y>
+            <x>10</x>
+            <y>190</y>
             <width>41</width>
             <height>31</height>
            </rect>
@@ -76,24 +76,11 @@
            <string>Zoom</string>
           </property>
          </widget>
-         <widget class="QPushButton" name="play_button">
-          <property name="geometry">
-           <rect>
-            <x>90</x>
-            <y>90</y>
-            <width>31</width>
-            <height>31</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
          <widget class="QLabel" name="label_2">
           <property name="geometry">
            <rect>
-            <x>30</x>
-            <y>50</y>
+            <x>120</x>
+            <y>180</y>
             <width>71</width>
             <height>31</height>
            </rect>
@@ -102,37 +89,11 @@
            <string>Framerate</string>
           </property>
          </widget>
-         <widget class="QSlider" name="zoom_slider">
-          <property name="geometry">
-           <rect>
-            <x>110</x>
-            <y>10</y>
-            <width>121</width>
-            <height>29</height>
-           </rect>
-          </property>
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-         </widget>
-         <widget class="QPushButton" name="reset_button">
-          <property name="geometry">
-           <rect>
-            <x>130</x>
-            <y>90</y>
-            <width>31</width>
-            <height>31</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
          <widget class="QLineEdit" name="user_edit_fps_box">
           <property name="geometry">
            <rect>
-            <x>240</x>
-            <y>50</y>
+            <x>210</x>
+            <y>220</y>
             <width>31</width>
             <height>27</height>
            </rect>
@@ -141,8 +102,8 @@
          <widget class="QSlider" name="frame_slider">
           <property name="geometry">
            <rect>
-            <x>110</x>
-            <y>50</y>
+            <x>80</x>
+            <y>220</y>
             <width>121</width>
             <height>29</height>
            </rect>
@@ -151,49 +112,23 @@
            <enum>Qt::Horizontal</enum>
           </property>
          </widget>
-         <widget class="QPushButton" name="next_button">
-          <property name="geometry">
-           <rect>
-            <x>170</x>
-            <y>90</y>
-            <width>31</width>
-            <height>31</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string/>
-          </property>
-         </widget>
          <widget class="QGroupBox" name="groupBox_2">
           <property name="geometry">
            <rect>
-            <x>20</x>
-            <y>140</y>
-            <width>91</width>
-            <height>101</height>
+            <x>100</x>
+            <y>60</y>
+            <width>61</width>
+            <height>61</height>
            </rect>
           </property>
           <property name="title">
            <string/>
           </property>
-          <widget class="QLabel" name="label_7">
-           <property name="geometry">
-            <rect>
-             <x>45</x>
-             <y>20</y>
-             <width>71</width>
-             <height>21</height>
-            </rect>
-           </property>
-           <property name="text">
-            <string>Pan</string>
-           </property>
-          </widget>
           <widget class="QPushButton" name="pan_southeast">
            <property name="geometry">
             <rect>
-             <x>69</x>
-             <y>78</y>
+             <x>40</x>
+             <y>40</y>
              <width>21</width>
              <height>21</height>
             </rect>
@@ -205,8 +140,8 @@
           <widget class="QPushButton" name="pan_south">
            <property name="geometry">
             <rect>
-             <x>50</x>
-             <y>78</y>
+             <x>21</x>
+             <y>40</y>
              <width>21</width>
              <height>21</height>
             </rect>
@@ -218,8 +153,8 @@
           <widget class="QPushButton" name="pan_east">
            <property name="geometry">
             <rect>
-             <x>69</x>
-             <y>60</y>
+             <x>40</x>
+             <y>22</y>
              <width>21</width>
              <height>21</height>
             </rect>
@@ -231,8 +166,8 @@
           <widget class="QPushButton" name="pan_north">
            <property name="geometry">
             <rect>
-             <x>50</x>
-             <y>41</y>
+             <x>21</x>
+             <y>3</y>
              <width>21</width>
              <height>21</height>
             </rect>
@@ -244,8 +179,8 @@
           <widget class="QPushButton" name="pan_southwest">
            <property name="geometry">
             <rect>
-             <x>31</x>
-             <y>78</y>
+             <x>2</x>
+             <y>40</y>
              <width>21</width>
              <height>21</height>
             </rect>
@@ -257,8 +192,8 @@
           <widget class="QPushButton" name="pan_west">
            <property name="geometry">
             <rect>
-             <x>31</x>
-             <y>60</y>
+             <x>2</x>
+             <y>22</y>
              <width>21</width>
              <height>21</height>
             </rect>
@@ -270,8 +205,8 @@
           <widget class="QPushButton" name="pan_northeast">
            <property name="geometry">
             <rect>
-             <x>69</x>
-             <y>41</y>
+             <x>40</x>
+             <y>3</y>
              <width>21</width>
              <height>21</height>
             </rect>
@@ -283,8 +218,8 @@
           <widget class="QPushButton" name="pan_northwest">
            <property name="geometry">
             <rect>
-             <x>31</x>
-             <y>41</y>
+             <x>2</x>
+             <y>3</y>
              <width>21</width>
              <height>21</height>
             </rect>
@@ -293,6 +228,93 @@
             <string/>
            </property>
           </widget>
+          <zorder>pan_southeast</zorder>
+          <zorder>pan_south</zorder>
+          <zorder>pan_east</zorder>
+          <zorder>pan_north</zorder>
+          <zorder>pan_southwest</zorder>
+          <zorder>pan_west</zorder>
+          <zorder>pan_northeast</zorder>
+          <zorder>pan_northwest</zorder>
+          <zorder>label_7</zorder>
+         </widget>
+         <widget class="QSlider" name="zoom_slider">
+          <property name="geometry">
+           <rect>
+            <x>10</x>
+            <y>20</y>
+            <width>29</width>
+            <height>160</height>
+           </rect>
+          </property>
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+         </widget>
+         <widget class="QGroupBox" name="groupBox_3">
+          <property name="geometry">
+           <rect>
+            <x>100</x>
+            <y>250</y>
+            <width>120</width>
+            <height>31</height>
+           </rect>
+          </property>
+          <property name="title">
+           <string/>
+          </property>
+          <widget class="QPushButton" name="next_button">
+           <property name="geometry">
+            <rect>
+             <x>80</x>
+             <y>0</y>
+             <width>31</width>
+             <height>31</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+          <widget class="QPushButton" name="play_button">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>31</width>
+             <height>31</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+          <widget class="QPushButton" name="reset_button">
+           <property name="geometry">
+            <rect>
+             <x>40</x>
+             <y>0</y>
+             <width>31</width>
+             <height>31</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+          </widget>
+         </widget>
+         <widget class="QLabel" name="label_7">
+          <property name="geometry">
+           <rect>
+            <x>120</x>
+            <y>120</y>
+            <width>31</width>
+            <height>21</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Pan</string>
+          </property>
          </widget>
         </widget>
         <widget class="QWidget" name="settings_tab">
