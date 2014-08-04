@@ -16,7 +16,7 @@ void Zombie::exec(){
 			Zombie::bite(pos);
 		}
 		else{
-			Character::go_towards(pos);
+			Character::go_towards_state(pos, HUMAN);
 		}
 	}
 	else{

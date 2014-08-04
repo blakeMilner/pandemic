@@ -69,11 +69,11 @@ void Character::random_walk(){
 	}
 }
 
-void Character::go_away_from(Pair<int> pos){
-	go_towards(-pos);
+void Character::go_away_from(Pair<int> pos, Map_symbol state){
+	go_towards_state(-pos, state);
 }
 
-void Character::go_towards(Pair<int> pos){
+void Character::go_towards_state(Pair<int> pos, Map_symbol state){
 	Pair<float> unit = pos.unit_v();
 	Pair<int> dir(0,0);
 
@@ -84,7 +84,7 @@ void Character::go_towards(Pair<int> pos){
 	// move to space if empty, otherwise search for empty spaces in surrounding area
 	Nav_symbol left_direc, right_direc, direc = NAV::get_direction(dir);
 
-	if( NAV::block_is(get_directional_block(direc), PASSABLE) )
+	if( NAV::block_is(get_directional_block(direc), state) )
 		MapServer::Instance()->move_character(this, direc);
 	else{
 		left_direc = right_direc = direc;
@@ -92,11 +92,11 @@ void Character::go_towards(Pair<int> pos){
 			left_direc = NAV::get_left(left_direc);
 			right_direc = NAV::get_right(right_direc);
 
-			if( NAV::block_is(get_directional_block(left_direc), PASSABLE) ) {
+			if( NAV::block_is(get_directional_block(left_direc), state) ) {
 				MapServer::Instance()->move_character(this, left_direc);
 				return;
 			}
-			else if( NAV::block_is(get_directional_block(right_direc), PASSABLE) ){
+			else if( NAV::block_is(get_directional_block(right_direc), state) ){
 				MapServer::Instance()->move_character(this, right_direc);
 				return;
 			}
@@ -104,7 +104,8 @@ void Character::go_towards(Pair<int> pos){
 	}
 }
 
-bool Character::find_nearest(Pair<int>& pos, Map_symbol sym){
+
+int Character::find_nearest(Pair<int>& pos, Map_symbol sym){
 	float dist = vision_len;
 	float min_dist = vision_len;
 	bool found = false;
@@ -121,7 +122,7 @@ bool Character::find_nearest(Pair<int>& pos, Map_symbol sym){
 			}
 	}}
 
-	return(found);
+	return(min_dist);
 }
 
 bool Character::is_adjacent(Pair<int>& pos){
