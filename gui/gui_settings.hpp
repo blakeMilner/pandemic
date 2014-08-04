@@ -39,7 +39,7 @@ namespace GUI_settings{
         color_map[BUILDING]         = qRgb(255,255,255); 	// WHITE
         color_map[BUILDING_DOOR]    = qRgb(217,120,17);     // BROWINISH
         color_map[BUILDING_WALL]    = qRgb(125, 120, 112);  // RUSTIC SILVER
-        color_map[BUILDING_INDOOR]  = qRgb(7,59,49);      // DARKISH TURQUOISE
+        color_map[BUILDING_INDOOR]  = qRgb(7,59,49);      	// DARKISH TURQUOISE
         color_map[OBJECT]           = qRgb(0,0,0);          // BLACK
         color_map[OBSTACLE]     	= qRgb(0,0,0);          // BLACK
         color_map[OCCLUDED]     	= qRgb(0,0,0);          // BLACK
