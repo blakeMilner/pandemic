@@ -25,9 +25,9 @@ protected:
 	Map_symbol get_directional_block(Nav_symbol);
 	void move_direction(Nav_symbol);
 
-	void go_towards_state(Pair<int> pos, Map_symbol state);
-	void go_away_from(Pair<int> pos, Map_symbol state);
-	int find_nearest(Pair<int>&, Map_symbol);
+	void go_towards(Pair<int>);
+	void go_away_from(Pair<int>);
+	bool find_nearest(Pair<int>&, Map_symbol);
 	void random_walk();
 	bool is_adjacent(Pair<int>&);
 	void print_vision();

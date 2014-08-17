@@ -8,21 +8,11 @@ Character(newcoor, sym, stats)
 
 void Human::exec(){
 	Pair<int> pos;
-	int distance;
-
 
 	Character::exec();
 
 	if(Character::find_nearest(pos, ZOMBIE)){
-		Character::go_away_from(pos, ZOMBIE);
-	}
-	else if(distance = Character::find_nearest(pos, BUILDING_DOOR)){
-		if(distance > 1){
-			Character::go_towards_state(pos, BUILDING_DOOR);
-		}
-		else{
-			Character::go_towards_state(pos, BUILDING_DOOR);
-		}
+		Character::go_away_from(pos);
 	}
 	else
 		Character::random_walk();
