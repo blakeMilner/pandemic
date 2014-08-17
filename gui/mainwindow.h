@@ -6,6 +6,7 @@
 #include <QGraphicsScene>
 #include <QTimer>
 #include <QGraphicsItem>
+
 #include "delegate.h"
 
 #include "../main/supervisor/supervisor.hpp"
@@ -118,6 +119,7 @@ private:
     void colorize_ROI();
 
     void update_fps(int value);
+
 };
 
 

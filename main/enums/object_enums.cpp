@@ -16,8 +16,10 @@ bool NAV::block_is(Map_symbol s, Map_symbol type_sym){
 	// change this to be a list full of occluded types, search list
 	switch(type_sym){
 	case OCCLUDED:
-		if(s == OCCLUDED or s == OBSTACLE or s == OBJECT or s == BUILDING or s == INVALID)
+		if(s == OCCLUDED or s == OBSTACLE or s == OBJECT or s == BUILDING
+						or s == BUILDING_DOOR or s == BUILDING_WALL or s == BUILDING_INDOOR or s == INVALID){
 			return true;
+		}
 		else
 			return false;
 	case PASSABLE:

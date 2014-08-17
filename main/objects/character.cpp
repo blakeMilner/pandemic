@@ -37,6 +37,7 @@ void Character::exec(){
 	int vision_len = 2*vision_rad + 1;
 
 	MapServer::Instance()->copy_field(vision_field, coor - vision_rad, Pair<int>(stats.VIS_RAD));
+//	this->print_vision();
 }
 
 ///// TODO: THIS SHOULD ALL PROBABLY GO IN SEPARATE NAVIGATION/FINDING FILE LATER...
