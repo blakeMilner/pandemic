@@ -26,24 +26,33 @@ namespace GUI_settings{
     static int pan_pps = 3; // pix per symbol per pan
     static int ms_per_pan = 30;
 
+#define QT_BLACK 			qRgb(0,0,0)
+#define QT_GREEN 			qRgb(0,128,0)
+#define QT_YELLOW 			qRgb(255,255,0)
+#define QT_RED 				qRgb(255,0,0)
+#define QT_WHITE 			qRgb(255,255,255)
+#define QT_BURNT_BROWN 		qRgb(217,120,17)
+#define QT_RUSTIC_SILVER 	qRgb(125, 120, 112)
+#define QT_DARK_TURQUOISE 	qRgb(7,59,49)
+
 	static map<Map_symbol, QRgb> init_map(){
         // SET DEFAULT MAP SYMBOL COLOR MAPPINGS
 		map<Map_symbol, QRgb> color_map;
 
         // yet another reason to have an enum class...
-        color_map[INVALID]          = qRgb(0,0,0);			// BLACK
-        color_map[HUMAN]            = qRgb(0,128,0);		// GREEN
-        color_map[INFECTED]         = qRgb(255,255,0);		// YELLOW
-        color_map[ZOMBIE]           = qRgb(255,0,0);		// RED
-        color_map[CHARACTER]        = qRgb(0,0,0);          // BLACK
-        color_map[BUILDING]         = qRgb(255,255,255); 	// WHITE
-        color_map[BUILDING_DOOR]    = qRgb(217,120,17);     // BROWINISH
-        color_map[BUILDING_WALL]    = qRgb(125, 120, 112);  // RUSTIC SILVER
-        color_map[BUILDING_INDOOR]  = qRgb(7,59,49);      	// DARKISH TURQUOISE
-        color_map[OBJECT]           = qRgb(0,0,0);          // BLACK
-        color_map[OBSTACLE]     	= qRgb(0,0,0);          // BLACK
-        color_map[OCCLUDED]     	= qRgb(0,0,0);          // BLACK
-        color_map[EMPTY]        	= qRgb(0,0,0);          // BLACK
+        color_map[INVALID]          = QT_BLACK;
+        color_map[HUMAN]            = QT_GREEN;
+        color_map[INFECTED]         = QT_YELLOW;
+        color_map[ZOMBIE]           = QT_RED;
+        color_map[CHARACTER]        = QT_BLACK;
+        color_map[BUILDING]         = QT_WHITE;
+        color_map[BUILDING_DOOR]    = QT_BURNT_BROWN;
+        color_map[BUILDING_WALL]    = QT_RUSTIC_SILVER;
+        color_map[BUILDING_INDOOR]  = QT_DARK_TURQUOISE;
+        color_map[OBJECT]           = QT_BLACK;
+        color_map[OBSTACLE]     	= QT_BLACK;
+        color_map[OCCLUDED]     	= QT_BLACK;
+        color_map[EMPTY]        	= QT_BLACK;
 
 		return color_map;
 	}
