@@ -79,6 +79,14 @@ public:
 	    return(v);
 	}
 
+	Pair operator/(Pair p)
+	{
+		Pair p2 = *this;
+		p2.x /= p.x;
+		p2.y /= p.y;
+	    return(p2);
+	}
+
 	Pair operator/ (float a)
 	{
 		Pair p = *this;
@@ -121,7 +129,7 @@ public:
 	Pair operator% (const int i){
 		return Pair(this->x  % i, this->y % i);
 	}
-
+	////////////////////////
 
 	// set elements
 	void set(T nx, T ny){
@@ -166,6 +174,7 @@ public:
 		return (p1.cross(*this) * p1.cross(p2) > 0) and (p2.cross(*this) * p2.cross(p1) > 0);
 	}
 
+	// test if elements are equal
 	bool elements_equal(){
 		if (this->x == this->y) 	return true;
 		else 						return false;
@@ -179,6 +188,9 @@ public:
 
 	// round to int
 	Pair<int> round(){ return Pair(static_cast<int>(floor(x + 0.5f)), static_cast<int>(floor(y + 0.5f))); }
+
+	// convert to float
+	Pair<float> to_float(){ return Pair<float>(this->x, this->y); }
 };
 
 
@@ -218,7 +230,7 @@ struct Rect_area_cmp {
     }
 };
 
-// to sort by maximum magnitude of elements
+// to sort by maximum magnitude of elements - used in building generation
 template<typename T>
 struct Max_mag_cmp {
     bool operator()(Pair<T> a, Pair<T> b) const {
@@ -228,5 +240,6 @@ struct Max_mag_cmp {
         return max_a < max_b;
     }
 };
+
 #endif
 

@@ -23,7 +23,7 @@
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
-      <widget class="QGraphicsView" name="graphicsView" native="true">
+      <widget class="QGraphicsView" name="mainView">
        <property name="maximumSize">
         <size>
          <width>5000</width>
@@ -307,22 +307,26 @@
            <string>Pan</string>
           </property>
          </widget>
-         <widget class="QGraphicsView" name="regionView" native="true">
+         <widget class="QGraphicsView" name="regionView">
           <property name="geometry">
            <rect>
-            <x>50</x>
+            <x>20</x>
             <y>310</y>
-            <width>191</width>
-            <height>151</height>
+            <width>256</width>
+            <height>192</height>
            </rect>
           </property>
-          <property name="maximumSize">
-           <size>
-            <width>5000</width>
-            <height>5000</height>
-           </size>
-          </property>
          </widget>
+         <zorder>label</zorder>
+         <zorder>label_2</zorder>
+         <zorder>user_edit_fps_box</zorder>
+         <zorder>frame_slider</zorder>
+         <zorder>groupBox_2</zorder>
+         <zorder>zoom_slider</zorder>
+         <zorder>groupBox_3</zorder>
+         <zorder>label_7</zorder>
+         <zorder>regionView</zorder>
+         <zorder>regionView</zorder>
         </widget>
         <widget class="QWidget" name="settings_tab">
          <attribute name="title">
@@ -379,13 +383,6 @@
   <widget class="QStatusBar" name="statusBar"/>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <customwidgets>
-  <customwidget>
-   <class>MyQGraphicsView</class>
-   <extends>QWidget</extends>
-   <header>myqgraphicsview.h</header>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections/>
 </ui>

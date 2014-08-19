@@ -21,7 +21,7 @@ namespace GUI_settings{
 
 	static const int MIN_pix_per_symbol = 1;
     static const int MAX_pix_per_symbol = 10;
-    static int pps = MAX_pix_per_symbol; // pix per symbol
+    static int mainView_pps = MIN_pix_per_symbol; // pix per symbol
 
     static int pan_pps = 3; // pix per symbol per pan
     static int ms_per_pan = 30;

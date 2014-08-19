@@ -3,9 +3,11 @@
 
 #include <QtGui>
 #include <QMainWindow>
-#include <QGraphicsScene>
-#include <QTimer>
 #include <QGraphicsItem>
+#include <QGraphicsScene>
+#include <QPixmap>
+#include <QTimer>
+
 #include "delegate.h"
 
 #include "../main/supervisor/supervisor.hpp"
@@ -84,8 +86,12 @@ private:
     Nav_symbol pan_direction;
 
     Ui::MainWindow *ui;
-    QGraphicsScene* scene;
-    QGraphicsItem *scene_item;
+    QGraphicsScene* mainScene;
+    QGraphicsScene* regionScene;
+    QGraphicsItem *mainScene_item;
+    QGraphicsItem *regionScene_item;
+    Pair<int> regionView_dims;
+    QImage* regionView_original_buffer;
 
     QStandardItemModel *settings_table;
     Delegate* settings_delegate;
@@ -99,6 +105,7 @@ private:
 
     Map_symbol** symbol_buffer;
     QImage* frame_buffer;
+    QImage* regionView_buffer;
     bool buffer_allocated;
 
     const QIcon pause_icon, play_icon, reset_icon, next_icon;
@@ -116,8 +123,10 @@ private:
 
     void paint_ROI();
     void colorize_ROI();
+    void paint_regionView();
 
     void update_fps(int value);
+    void update_regionScene();
 };
 
 

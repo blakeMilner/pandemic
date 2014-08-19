@@ -4,16 +4,11 @@
 
 namespace GS = GUI_settings;
 
-// map lenghts are skewed in places
-
-
-// TODO: change linedit back to fps
-
+// TODO: making panning/moving automatic pause??
 
 MainWindow::MainWindow(Supervisor* s, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    scene(new QGraphicsScene(this)),
 
     settings_table(new QStandardItemModel(10,1,this)),
     settings_delegate(new Delegate(this)),
@@ -25,7 +20,7 @@ MainWindow::MainWindow(Supervisor* s, QWidget *parent) :
     frame_clk(Clock()),
 
     pan_timer(new QTimer(this)),
-    pan_direction(EAST),
+    pan_direction(NONE),
 
     reset_icon(QIcon(GS::reset_icon_path)),
     pause_icon(QIcon(GS::pause_icon_path)),
@@ -33,16 +28,24 @@ MainWindow::MainWindow(Supervisor* s, QWidget *parent) :
     next_icon(QIcon(GS::next_icon_path)),
 
     user_edit_fps_box(true),
-    scene_item(0)
+
+    mainScene(new QGraphicsScene(this)),
+    regionScene(new QGraphicsScene(this)),
+    mainScene_item(0),
+    regionScene_item(0)
 {
+    ui->setupUi(this);
+
+    // set mainView scenes for main view and zoomed out view
+    ui->mainView->setScene(mainScene);
+    ui->regionView->setScene(regionScene);
     frame_buffer = new QImage(GS::MAX_ROI_DIMS.x, GS::MAX_ROI_DIMS.y, QImage::Format_RGB32);
 
-    ui->setupUi(this);
-    ui->graphicsView->setScene(scene);
-
     // set these so that when we go from larger FOV to smaller, the view doesn't have scrollbars
-    ui->graphicsView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    ui->graphicsView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    ui->mainView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    ui->mainView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    ui->regionView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    ui->regionView->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     // connect timer in order to update ROI continuously
     connect(frame_timer, SIGNAL(timeout()), this, SLOT(update_ROI()));
@@ -51,7 +54,7 @@ MainWindow::MainWindow(Supervisor* s, QWidget *parent) :
 
     // make buffer for raw symbols from map
 	symbol_buffer = new Map_symbol*[GS::MAX_ROI_DIMS.x];
-	for(int i = 0; i < GS::MAX_ROI_DIMS.x; i++){
+    for(int i = 0; i < GS::MAX_ROI_DIMS.x; i++){
 		symbol_buffer[i] = new Map_symbol[GS::MAX_ROI_DIMS.y];
     }
 
@@ -81,6 +84,7 @@ MainWindow::MainWindow(Supervisor* s, QWidget *parent) :
         }
     }
 
+    // setup settings table on other tab
     ui->tableView->setModel(settings_table);
     ui->tableView->setItemDelegate(settings_delegate);
 }
@@ -88,13 +92,15 @@ MainWindow::MainWindow(Supervisor* s, QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
-    delete scene;
     delete frame_buffer;
 
 	for(int i = 0; i < GS::MAX_ROI_DIMS.x; i++){
 		delete symbol_buffer[i];
 	}
 	delete symbol_buffer;
+
+    delete regionScene;
+    delete mainScene;
 }
 
 // show window, make buffer, and initialize screen
@@ -105,23 +111,26 @@ void MainWindow::start(){
     bound_zoom();
 
     paint_ROI();
+    // only paint region view once...
+    paint_regionView();
+    update_regionScene();
 }
 
 void MainWindow::get_window_size(){
     // minus 2 to fit within margins
-    GS::ROI_dims.x = ui->graphicsView->width() - 2;
-    GS::ROI_dims.y = ui->graphicsView->height() - 2;
+    GS::ROI_dims.x = ui->mainView->width() - 2;
+    GS::ROI_dims.y = ui->mainView->height() - 2;
 }
 
 // correct zoom level such that every sized map would cover the monitor
 void MainWindow::bound_zoom(){
-    while((GS::pps <= GS::MAX_pix_per_symbol)
-          and (GS::ROI_dims / GS::pps).not_within(Map_settings::map_len - 2))
+    while((GS::mainView_pps <= GS::MAX_pix_per_symbol)
+          and (GS::ROI_dims / GS::mainView_pps).not_within(Map_settings::map_len - 2))
     {
-        GS::pps++;
+        GS::mainView_pps++;
     }
 
-    ui->zoom_slider->setValue(GS::pps);
+    ui->zoom_slider->setValue(GS::mainView_pps);
 }
 
 // correct fps slider if we're capping out
@@ -138,6 +147,7 @@ void MainWindow::resizeEvent ( QResizeEvent * event ){
     paint_ROI();
 }
 
+// pausing functionality
 bool MainWindow::is_paused(){ return paused; }
 void MainWindow::unpause_game(){
     ui->play_button->setIcon(pause_icon);
@@ -156,17 +166,17 @@ void MainWindow::colorize_ROI(){
     int xoffset, yoffset;
     QRgb next_pix;
 
-    for(x = 0; x < GS::ROI_dims.x / GS::pps; x++){
-    xoffset = x * GS::pps;
+    for(x = 0; x < GS::ROI_dims.x / GS::mainView_pps; x++){
+    xoffset = x * GS::mainView_pps;
 
-    for(y = 0; y < GS::ROI_dims.y / GS::pps; y++){
+    for(y = 0; y < GS::ROI_dims.y / GS::mainView_pps; y++){
         // offset to get new location
         next_pix = GS::color_map[symbol_buffer[x + GS::ROI_coors.x][y + GS::ROI_coors.y]];
 
-        yoffset = y * GS::pps;
+        yoffset = y * GS::mainView_pps;
 
-        for(int px = 0; px < GS::pps; px++){
-        for(int py = 0; py < GS::pps; py++){
+        for(int px = 0; px < GS::mainView_pps; px++){
+        for(int py = 0; py < GS::mainView_pps; py++){
             frame_buffer->setPixel(xoffset + px, yoffset + py, next_pix);
         }}
     }}
@@ -175,18 +185,18 @@ void MainWindow::colorize_ROI(){
     // do symbols that are partially off the screen
     //
 
-    int y_pix_left = GS::ROI_dims.y % GS::pps;
-    int x_pix_left = GS::ROI_dims.x % GS::pps;
+    int y_pix_left = GS::ROI_dims.y % GS::mainView_pps;
+    int x_pix_left = GS::ROI_dims.x % GS::mainView_pps;
 
     // bottom row
     if(y_pix_left != 0){
-        yoffset = y * GS::pps;
+        yoffset = y * GS::mainView_pps;
 
-        for(x = 0; x < GS::ROI_dims.x / GS::pps; x++){
+        for(x = 0; x < GS::ROI_dims.x / GS::mainView_pps; x++){
             next_pix = GS::color_map[symbol_buffer[x + GS::ROI_coors.x][y + GS::ROI_coors.y]];
-            xoffset = x * GS::pps;
+            xoffset = x * GS::mainView_pps;
 
-            for(int px = 0; px < GS::pps; px++){
+            for(int px = 0; px < GS::mainView_pps; px++){
             for(int py = 0; py < y_pix_left; py++){
                 frame_buffer->setPixel(xoffset + px, yoffset + py, next_pix);
             }}
@@ -195,22 +205,22 @@ void MainWindow::colorize_ROI(){
 
     // rightmost column
     if(x_pix_left != 0){
-        xoffset = x * GS::pps;
+        xoffset = x * GS::mainView_pps;
 
-        for(y = 0; y < GS::ROI_dims.y / GS::pps; y++){
+        for(y = 0; y < GS::ROI_dims.y / GS::mainView_pps; y++){
             next_pix = GS::color_map[symbol_buffer[x + GS::ROI_coors.x][y + GS::ROI_coors.y]];
-            yoffset = y * GS::pps;
+            yoffset = y * GS::mainView_pps;
 
             for(int px = 0; px < x_pix_left; px++){
-            for(int py = 0; py < GS::pps; py++){
+            for(int py = 0; py < GS::mainView_pps; py++){
                 frame_buffer->setPixel(xoffset + px, yoffset + py, next_pix);
             }}
         }
     }
 
     // bottom right pixel
-    x = 1 + (GS::ROI_dims.x / GS::pps);
-    y = 1 + (GS::ROI_dims.y / GS::pps);
+    x = 1 + (GS::ROI_dims.x / GS::mainView_pps);
+    y = 1 + (GS::ROI_dims.y / GS::mainView_pps);
     next_pix = GS::color_map[symbol_buffer[x + GS::ROI_coors.x][y + GS::ROI_coors.y]];
     for(int px = 0; px < x_pix_left; px++){
     for(int py = 0; py < y_pix_left; py++){
@@ -219,34 +229,79 @@ void MainWindow::colorize_ROI(){
 
 }
 
-// GREAT IDEA: ADD CLICK FUNCTIONALITY TO MAIN GRAPHICS VIEW, SHOW POP UP WINDOW ABOUT STATS, INFO ON BLOCK
-
-// use qtabwidget for tabs
-
-// can simply edit xml ui and h file for custom view class
-
-// add command line functionality? - textbrowser
-
-// option to focus on character of choice?
-
-
 void MainWindow::paint_ROI(){
-    if(scene_item) delete scene_item; // why delete sceneitem? reuse it..
+    if(mainScene_item) delete mainScene_item; // why delete sceneitem? reuse it..
 
-    supervisor->copy_ROI(symbol_buffer, GS::ROI_coors, (GS::ROI_dims / GS::pps) + 1);
+    supervisor->copy_ROI(symbol_buffer, GS::ROI_coors, (GS::ROI_dims / GS::mainView_pps) + 1);
     colorize_ROI(); // transfer symbol_buffer to frame_buffer
 
     QPixmap im = QPixmap::fromImage(*frame_buffer);
 
-    scene_item = scene->addPixmap(im);
+    mainScene_item = mainScene->addPixmap(im);
+}
+
+// zoom out regional view as far as we can
+void MainWindow::paint_regionView(){
+    // TODO: make sampling better... maybe do a running gaussian filter?
+
+    // get entire map in working buffer
+    supervisor->copy_ROI(symbol_buffer, Pair<int>(0,0), Map_settings::map_len - 1);
+
+    // get dimensions of zoomed out view region, make buffer
+    regionView_dims = Pair<int>(ui->regionView->width(), ui->regionView->height());
+
+    // need to fix these....
+    regionView_buffer = new QImage(regionView_dims.x, regionView_dims.y, QImage::Format_RGB32);
+    regionView_original_buffer = new QImage(regionView_dims.x, regionView_dims.y, QImage::Format_RGB32);
+
+    // calculate sampling interval, to fill in zoomed out view exactly
+    Pair<float> ds = Pair<float>( Map_settings::map_len.x / (float) regionView_dims.x, Map_settings::map_len.y / (float) regionView_dims.y );
+
+    for(int x = 0; x < regionView_dims.x; x++){
+    for(int y = 0; y < regionView_dims.y; y++){
+        regionView_buffer->setPixel(x, y, GS::color_map[ symbol_buffer[(int) (x * ds.x)][(int) (y * ds.y)] ]);
+    }
+    }
+
+    // make original pixmap to draw from and highlighted pixmap
+    QPainter painter(regionView_original_buffer);
+    painter.drawImage(QPoint(1, 1), *regionView_buffer);
+    QPixmap im = QPixmap::fromImage(*regionView_buffer);
+
+    // add pixmap to region scene -> display image
+    regionScene_item = regionScene->addPixmap(im);
+}
+
+// update highlighting box on zoomed out view for new area
+void MainWindow::update_regionScene(){
+    // MAKE SURE TO ADD PAUSE AFTER PAN CLICK... WILL MAKE THIS FASTER!
+    QPainter painter(regionView_buffer);
+    painter.drawImage(QPoint(0, 0), *regionView_original_buffer);
+
+    Pair<float> ds = Pair<float>( Map_settings::map_len.x / (float) regionView_dims.x, Map_settings::map_len.y / (float) regionView_dims.y );
+
+    for(int x = GS::ROI_coors.x / ds.x; x < ((GS::ROI_dims.x/GS::mainView_pps) + GS::ROI_coors.x) / ds.x; x++){
+        regionView_buffer->setPixel(x, GS::ROI_coors.y / ds.y, qRgb(255,255,0));
+        regionView_buffer->setPixel(x, (GS::ROI_coors.y + (GS::ROI_dims.y/GS::mainView_pps)) / ds.y, qRgb(255,255,0));
+        // replace these with def for yellow...
+    }
+    for(int y = GS::ROI_coors.y / ds.y; y < ((GS::ROI_dims.y/GS::mainView_pps) + GS::ROI_coors.y) / ds.y; y++){
+        regionView_buffer->setPixel( GS::ROI_coors.x / ds.x, y, qRgb(255,255,0));
+        regionView_buffer->setPixel( (GS::ROI_coors.x + (GS::ROI_dims.x/GS::mainView_pps)) / ds.x, y, qRgb(255,255,0));
+    }
+
+    QPixmap im = QPixmap::fromImage(*regionView_buffer);
+
+    // add pixmap to region scene -> display image
+    regionScene_item = regionScene->addPixmap(im);
 }
 
 void MainWindow::update_ROI(){
     frame_clk.tick();
+
     paint_ROI();
-
-
     supervisor->iterate();
+
     double last_frm_time = frame_clk.tock();
 
     // check that the internal fps reflects what fps w'ere actually getting
@@ -257,11 +312,11 @@ void MainWindow::on_zoom_slider_valueChanged(int value)
 {
     // update ROI view if we're not zoomed to the max
     if((GS::ROI_dims / value) <= (Map_settings::map_len - 2)){
-        GS::pps = value;
+        GS::mainView_pps = value;
         paint_ROI();
     }
     else{      // reset value otherwise
-        ui->zoom_slider->setValue(GS::pps);
+        ui->zoom_slider->setValue(GS::mainView_pps);
     }
 }
 
@@ -336,7 +391,8 @@ void MainWindow::adjust_ROI(Nav_symbol dir, int pps){
 
     Pair<int> new_coor = GS::ROI_coors + (pps * move_vector);
 
-    while( new_coor.x > (Map_settings::map_len.x - (GS::ROI_dims.x / GS::pps) - 2) ){
+    // these 4 while loops basically dial the new coordinates back down if they don't fit
+    while( new_coor.x > (Map_settings::map_len.x - (GS::ROI_dims.x / GS::mainView_pps) - 2) ){
         new_coor.x--;
         if (new_coor.x == GS::ROI_coors.x ){
             break;
@@ -348,7 +404,7 @@ void MainWindow::adjust_ROI(Nav_symbol dir, int pps){
             break;
         }
     }
-    while( new_coor.y > (Map_settings::map_len.y - (GS::ROI_dims.y / GS::pps) - 2) ){
+    while( new_coor.y > (Map_settings::map_len.y - (GS::ROI_dims.y / GS::mainView_pps) - 2) ){
         new_coor.y--;
         if (new_coor.y == GS::ROI_coors.y ){
             break;
@@ -364,10 +420,12 @@ void MainWindow::adjust_ROI(Nav_symbol dir, int pps){
     GS::ROI_coors = new_coor;
 
     paint_ROI();
+    update_regionScene();
 }
 
 void MainWindow::update_pan(){
     // bit of trickery here: do modulo as pps gets bigger so we never go above certain speed
+    // fine tuned for your liking...
     adjust_ROI( pan_direction, ((GS::pan_pps - 2) % (GS::pan_pps + 10))  );
     GS::pan_pps++;
 }
