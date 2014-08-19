@@ -281,13 +281,13 @@ void MainWindow::update_regionScene(){
     Pair<float> ds = Pair<float>( Map_settings::map_len.x / (float) regionView_dims.x, Map_settings::map_len.y / (float) regionView_dims.y );
 
     for(int x = GS::ROI_coors.x / ds.x; x < ((GS::ROI_dims.x/GS::mainView_pps) + GS::ROI_coors.x) / ds.x; x++){
-        regionView_buffer->setPixel(x, GS::ROI_coors.y / ds.y, qRgb(255,255,0));
-        regionView_buffer->setPixel(x, (GS::ROI_coors.y + (GS::ROI_dims.y/GS::mainView_pps)) / ds.y, qRgb(255,255,0));
+        regionView_buffer->setPixel(x, GS::ROI_coors.y / ds.y, QT_YELLOW);
+        regionView_buffer->setPixel(x, (GS::ROI_coors.y + (GS::ROI_dims.y/GS::mainView_pps)) / ds.y, QT_YELLOW);
         // replace these with def for yellow...
     }
     for(int y = GS::ROI_coors.y / ds.y; y < ((GS::ROI_dims.y/GS::mainView_pps) + GS::ROI_coors.y) / ds.y; y++){
-        regionView_buffer->setPixel( GS::ROI_coors.x / ds.x, y, qRgb(255,255,0));
-        regionView_buffer->setPixel( (GS::ROI_coors.x + (GS::ROI_dims.x/GS::mainView_pps)) / ds.x, y, qRgb(255,255,0));
+        regionView_buffer->setPixel( GS::ROI_coors.x / ds.x, y, QT_YELLOW);
+        regionView_buffer->setPixel( (GS::ROI_coors.x + (GS::ROI_dims.x/GS::mainView_pps)) / ds.x, y, QT_YELLOW);
     }
 
     QPixmap im = QPixmap::fromImage(*regionView_buffer);
@@ -426,7 +426,11 @@ void MainWindow::adjust_ROI(Nav_symbol dir, int pps){
 void MainWindow::update_pan(){
     // bit of trickery here: do modulo as pps gets bigger so we never go above certain speed
     // fine tuned for your liking...
+    // We're pausing so that we don't experience lag from the game updating
+    pause_game();
     adjust_ROI( pan_direction, ((GS::pan_pps - 2) % (GS::pan_pps + 10))  );
+    unpause_game();
+
     GS::pan_pps++;
 }
 
