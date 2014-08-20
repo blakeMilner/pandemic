@@ -122,6 +122,7 @@ private:
     void bound_zoom();
     void bound_fps(double);
 
+    void shift_ROI_in();
     void paint_ROI();
     void colorize_ROI();
     void paint_regionView();

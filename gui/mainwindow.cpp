@@ -320,11 +320,23 @@ void MainWindow::update_ROI(){
     bound_fps(last_frm_time);
 }
 
+// when the ROI is on the bottom side(s) and a zoom out occurs, we'll push them back in
+// instead of going out of bounds
+void MainWindow::shift_ROI_in(){
+    while( GS::ROI_dims.x/GS::mainView_pps + GS::ROI_coors.x > Map_settings::map_len.x - 2)
+        GS::ROI_coors.x -- ;
+    while( GS::ROI_dims.y/GS::mainView_pps + GS::ROI_coors.y > Map_settings::map_len.y - 2)
+        GS::ROI_coors.y -- ;
+}
+
 void MainWindow::on_zoom_slider_valueChanged(int value)
 {
     // update ROI view if we're not zoomed to the max
     if((GS::ROI_dims / value) <= (Map_settings::map_len - 2)){
         GS::mainView_pps = value;
+
+        if(started)
+            shift_ROI_in();
         paint_ROI();
     }
     else{      // reset value otherwise
