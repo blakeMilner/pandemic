@@ -32,7 +32,9 @@ MainWindow::MainWindow(Supervisor* s, QWidget *parent) :
     mainScene(new QGraphicsScene(this)),
     regionScene(new QGraphicsScene(this)),
     mainScene_item(0),
-    regionScene_item(0)
+    regionScene_item(0),
+
+    started(false)
 {
     ui->setupUi(this);
 
@@ -111,9 +113,13 @@ void MainWindow::start(){
     bound_zoom();
 
     paint_ROI();
+
     // only paint region view once...
     paint_regionView();
+    // to display yellow box
     update_regionScene();
+
+    started = true;
 }
 
 void MainWindow::get_window_size(){
@@ -141,10 +147,16 @@ void MainWindow::bound_fps(double frm_time){
     }
 }
 
+// Is called immediately upon startup too... some things don't exist at this time. Pretty annoying
 void MainWindow::resizeEvent ( QResizeEvent * event ){
     get_window_size();
     bound_zoom();
     paint_ROI();
+
+    // do this to avoid updating the region scene before it is created (at startup before we have a view)
+    if( started ){
+        update_regionScene();
+    }
 }
 
 // pausing functionality
@@ -318,6 +330,11 @@ void MainWindow::on_zoom_slider_valueChanged(int value)
     else{      // reset value otherwise
         ui->zoom_slider->setValue(GS::mainView_pps);
     }
+
+    // this gets called on startup, resulting in segfault. not too elegant...
+    if(started){
+        update_regionScene();
+    }
 }
 
 void MainWindow::update_fps(int value){
@@ -443,7 +460,7 @@ void MainWindow::on_pan_northwest_clicked(){    adjust_ROI(NORTHW, GS::pan_pps);
 void MainWindow::on_pan_northeast_clicked() {   adjust_ROI(NORTHE, GS::pan_pps);  }
 void MainWindow::on_pan_southeast_clicked(){    adjust_ROI(SOUTHE, GS::pan_pps);  }
 
-void MainWindow::on_pan_east_pressed(){        pan_timer->start(GS::ms_per_pan);  pan_direction = EAST; }
+void MainWindow::on_pan_east_pressed(){        pan_timer->start(GS::pan_pps);  pan_direction = EAST; }
 void MainWindow::on_pan_east_released(){       pan_timer->stop(); GS::pan_pps = 3;  }
 void MainWindow::on_pan_west_pressed(){        pan_timer->start(GS::ms_per_pan);  pan_direction = WEST; }
 void MainWindow::on_pan_west_released(){       pan_timer->stop(); GS::pan_pps = 3; }

@@ -81,6 +81,7 @@ private slots:
 
 private:
     bool pan_east_pressed;
+    bool started;
 
     QTimer* pan_timer;
     Nav_symbol pan_direction;

@@ -11,7 +11,7 @@ using namespace std;
 namespace GUI_settings{
     static Pair<int> ROI_coors = Pair<int>(0,0);
 	static const Pair<int> MIN_ROI_DIMS = Pair<int>(0,0);
-	static const Pair<int> MAX_ROI_DIMS = Pair<int>(5000,5000); // need to put in check that this isn't over actual dims
+	static const Pair<int> MAX_ROI_DIMS = Pair<int>(5000,5000); // TODO: need to put in check that this isn't over actual dims
 	static Pair<int> ROI_dims = MIN_ROI_DIMS;
 
 	static int fps = 1;
