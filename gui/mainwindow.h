@@ -7,6 +7,9 @@
 #include <QGraphicsScene>
 #include <QPixmap>
 #include <QTimer>
+#include <QTreeWidget>
+
+#include <list>
 
 #include "../main/supervisor/supervisor.hpp"
 #include "gui_settings.hpp"
@@ -109,6 +112,11 @@ private:
     const QIcon pause_icon, play_icon, reset_icon, next_icon;
 
     void resizeEvent ( QResizeEvent * event );
+
+    void add_settings_categories();
+    void addRoot(QString name, QString Description);
+    void addChild(QTreeWidgetItem* parent, QString name, QString Description);
+    list<QTreeWidgetItem*> stats_items;
 
     void update_map_settings();
     void update_statistics();

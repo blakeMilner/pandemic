@@ -60,6 +60,9 @@ Map::~Map(){
 	NEXT_EMPTY_ID = 0;
 }
 
+// return current stats, e.g. for GUI
+MapStats Map::get_map_stats(){	return map_stats;  }
+
 // game is running only if there are more than 0 humans left
 bool Map::check_game(){ return(  map_stats.num_characters[HUMAN] ); }
 
@@ -78,6 +81,8 @@ void Map::iterate(){
 			add_character(ZOMBIE, coor);
 		}
 	}
+
+	map_stats.num_iter++;
 }
 
 Map_symbol Map::get_symbol(Pair<int> coor){ return get_symbol(coor.x, coor.y); }

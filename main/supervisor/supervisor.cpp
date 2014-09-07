@@ -32,6 +32,8 @@ void Supervisor::create_map(){
 	MapServer::Instance()->set_map(map);
 }
 
+MapStats Supervisor::get_map_stats(){	return map->get_map_stats(); }
+
 void Supervisor::print_map(){
 	map->print_map();
 }

@@ -78,9 +78,6 @@ MainWindow::MainWindow(Supervisor* s, QWidget *parent) :
     ui->user_edit_fps_box->setValidator(new QIntValidator(GS::MIN_FPS, GS::MAX_FPS, this)); // only accept numbers
     ui->user_edit_fps_box->setText(QString::number(GS::fps)); // set initial fps in text box
 
-    /* initialize settings table (will also be called every iteration) */
-    update_statistics();
-
     // setup box for region size - this will be the increment for the entire world size since
     // we want to slice evenly
     ui->grid_size_spinBox->setRange(Map_settings::MIN_REGION_LEN, Map_settings::MAX_REGION_LEN);
@@ -95,6 +92,10 @@ MainWindow::MainWindow(Supervisor* s, QWidget *parent) :
     ui->world_size_spinBox_X->setSingleStep(Map_settings::region_len);
     ui->world_size_spinBox_Y->setSingleStep(Map_settings::region_len);
 
+    // initialize statistics viewer
+    ui->settings_widget->setColumnCount(2);
+    ui->settings_widget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    ui->settings_widget->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 }
 
 MainWindow::~MainWindow()
@@ -127,7 +128,26 @@ void MainWindow::start(){
     // to display yellow box
     update_regionScene();
 
+
+    // make columns fixed width
+    ui->settings_widget->header()->resizeSection(0 /*column index*/, 160 /*width*/);
+
+    // Add settings categories
+    add_settings_categories();
+
+    /* initialize settings table (will also be called every iteration) */
+    update_statistics();
+
     started = true;
+}
+
+// TODO:: add in graph that shows infected over time!
+void MainWindow::add_settings_categories(){
+    addRoot("Number of Humans", "0");
+    addRoot("Number of Zombies", "0");
+    addRoot("Number of Infected", "0");
+    addRoot("Number of Bites", "0");
+    addRoot("Number of iterations", "0");
 }
 
 void MainWindow::get_window_size(){
@@ -141,6 +161,48 @@ void MainWindow::update_map_settings(){
     Map_settings::region_len = Map_settings::next_game_region_len;
 }
 
+/*
+ * SETTINGS TABLE FUNCTIONALITY
+ */
+
+void MainWindow::addRoot(QString name, QString Description){
+    QTreeWidgetItem *item = new QTreeWidgetItem(ui->settings_widget);
+    item->setText(0, name);
+    item->setText(1, Description);
+    ui->settings_widget->addTopLevelItem(item);
+
+    stats_items.push_back(item);
+}
+
+void MainWindow::addChild(QTreeWidgetItem* parent, QString name, QString Description){
+    QTreeWidgetItem *item = new QTreeWidgetItem(ui->settings_widget);
+    item->setText(0, name);
+    item->setText(1, Description);
+    parent->addChild(item);
+}
+
+// get updated statistics from map supervisor
+// TODO: add in children for things like characters...
+void MainWindow::update_statistics(){
+    MapStats current_stats = supervisor->get_map_stats();
+
+    // make a list to map all of our statistics from the MapStats class
+    list<int> stat_str = list<int>();
+
+    stat_str.push_back(current_stats.num_characters[HUMAN] );
+    stat_str.push_back(current_stats.num_characters[ZOMBIE] );
+    stat_str.push_back(current_stats.num_characters[INFECTED] );
+    stat_str.push_back(current_stats.num_bites );
+    stat_str.push_back(current_stats.num_iter );
+
+    // iterate through each item and convert mapStat int to string
+    for (auto it = stats_items.begin(); it != stats_items.end(); it++) {
+        QString stat_string = QString::number( stat_str.front() );
+        (*it)->setText( 1, stat_string );
+        stat_str.pop_front();
+    }
+}
+
 // correct zoom level such that every sized map would cover the monitor
 void MainWindow::bound_zoom(){
     while((GS::mainView_pps <= GS::MAX_pix_per_symbol)
@@ -150,12 +212,6 @@ void MainWindow::bound_zoom(){
     }
 
     ui->zoom_slider->setValue(GS::mainView_pps);
-}
-
-// get updated statistics from map supervisor
-void MainWindow::update_statistics(){
-    //upervisor.
-
 }
 
 // correct fps slider if we're capping out
@@ -332,6 +388,7 @@ void MainWindow::update_ROI(){
 
     paint_ROI();
     supervisor->iterate();
+    update_statistics();
 
     double last_frm_time = frame_clk.tock();
 

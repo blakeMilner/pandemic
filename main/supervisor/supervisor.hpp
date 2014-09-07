@@ -18,6 +18,7 @@ public:
 
 	void create_map();
 	void reset_game();
+	MapStats get_map_stats();
 
 	bool is_running();
 	void iterate(int = 1);

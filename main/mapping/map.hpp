@@ -7,6 +7,7 @@
 #include <vector>
 #include <stack>
 #include <iostream>
+#include <string>
 
 #include "map_attributes.hpp"
 #include "mRegion.hpp"
@@ -39,6 +40,7 @@ public:
 	void print_map();
 	bool check_game();
 	void copy_ROI(Map_symbol**, Pair<int>, Pair<int>);
+	MapStats get_map_stats();
 
 
 private:

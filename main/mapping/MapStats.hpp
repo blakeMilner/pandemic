@@ -18,6 +18,8 @@ public:
 	int num_bites;
 	std::map<Map_symbol, int> num_characters;
 
+	int num_iter;
+
 	MapStats();
 	~MapStats();
 };

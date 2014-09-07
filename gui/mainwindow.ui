@@ -309,19 +309,6 @@
          <attribute name="title">
           <string>Settings</string>
          </attribute>
-         <widget class="QLabel" name="label_3">
-          <property name="geometry">
-           <rect>
-            <x>40</x>
-            <y>210</y>
-            <width>101</width>
-            <height>31</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>Game Settings</string>
-          </property>
-         </widget>
          <widget class="QPushButton" name="reset_button">
           <property name="geometry">
            <rect>
@@ -404,14 +391,62 @@
            </property>
           </widget>
          </widget>
-         <zorder>reset_button</zorder>
-         <zorder>label_3</zorder>
-         <zorder>settings_groupBox</zorder>
         </widget>
         <widget class="QWidget" name="tab">
          <attribute name="title">
           <string>Statistics</string>
          </attribute>
+         <widget class="QTreeWidget" name="settings_widget">
+          <property name="geometry">
+           <rect>
+            <x>20</x>
+            <y>20</y>
+            <width>256</width>
+            <height>192</height>
+           </rect>
+          </property>
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>9</pointsize>
+            <weight>75</weight>
+            <bold>true</bold>
+           </font>
+          </property>
+          <property name="verticalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOff</enum>
+          </property>
+          <property name="horizontalScrollBarPolicy">
+           <enum>Qt::ScrollBarAlwaysOff</enum>
+          </property>
+          <property name="autoScroll">
+           <bool>false</bool>
+          </property>
+          <property name="columnCount">
+           <number>2</number>
+          </property>
+          <attribute name="headerVisible">
+           <bool>false</bool>
+          </attribute>
+          <attribute name="headerStretchLastSection">
+           <bool>false</bool>
+          </attribute>
+          <column>
+           <property name="text">
+            <string notr="true">1</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string notr="true">2</string>
+           </property>
+          </column>
+         </widget>
         </widget>
        </widget>
       </widget>
