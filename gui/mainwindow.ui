@@ -313,7 +313,6 @@
          <zorder>frameCtrl_groupBox</zorder>
          <zorder>label_Pan</zorder>
          <zorder>regionView</zorder>
-         <zorder>reset_button</zorder>
         </widget>
         <widget class="QWidget" name="settings_tab">
          <attribute name="title">
@@ -426,8 +425,6 @@
          </widget>
          <zorder>label_3</zorder>
          <zorder>settings_viewer</zorder>
-         <zorder>reset_button</zorder>
-         <zorder>reset_button</zorder>
          <zorder>settings_groupBox</zorder>
         </widget>
        </widget>

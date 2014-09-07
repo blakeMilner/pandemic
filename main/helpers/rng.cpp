@@ -3,7 +3,7 @@
 Pair<int> RNG::random_pair(int xstart, int xend, int ystart, int yend){
 	if(xstart >= xend or ystart >= yend){
 		cout << "WARNING: invalid random number range specified" << endl;
-		return(NULL);
+		return Pair<int>() ;
 	}
 	else{
 		int xran = xstart + (int) (rand() % (xend - xstart));
