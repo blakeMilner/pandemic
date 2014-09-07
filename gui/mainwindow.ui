@@ -57,7 +57,7 @@
          </rect>
         </property>
         <property name="currentIndex">
-         <number>2</number>
+         <number>1</number>
         </property>
         <widget class="QWidget" name="main_tab">
          <attribute name="title">
@@ -309,19 +309,6 @@
          <attribute name="title">
           <string>Settings</string>
          </attribute>
-         <widget class="QPushButton" name="reset_button">
-          <property name="geometry">
-           <rect>
-            <x>90</x>
-            <y>90</y>
-            <width>141</width>
-            <height>27</height>
-           </rect>
-          </property>
-          <property name="text">
-           <string>Create new world</string>
-          </property>
-         </widget>
          <widget class="QGroupBox" name="settings_groupBox">
           <property name="geometry">
            <rect>
@@ -388,6 +375,19 @@
              <width>61</width>
              <height>27</height>
             </rect>
+           </property>
+          </widget>
+          <widget class="QPushButton" name="reset_button">
+           <property name="geometry">
+            <rect>
+             <x>70</x>
+             <y>70</y>
+             <width>141</width>
+             <height>27</height>
+            </rect>
+           </property>
+           <property name="text">
+            <string>Create new world</string>
            </property>
           </widget>
          </widget>

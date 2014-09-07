@@ -47,10 +47,6 @@ int Map_settings::max_build_placement_tries = 100;
 float Map_settings::door_probability = 0.002;
 
 bool Map_settings::settings_check(){
-	if (!Map_settings::map_len.elements_equal()){
-		return false;
-	}
-
 	int footprint_span = max_footprint_len - min_footprint_len;
 	int building_span = max_building_len - min_building_len;
 
@@ -75,14 +71,6 @@ void Map_settings::correct_settings(){
 		max_footprint_len++;
 
 		footprint_span = max_footprint_len - min_footprint_len;
-	}
-
-	// make field square
-	while(Map_settings::map_len.x > Map_settings::map_len.y){
-		Map_settings::map_len.y;
-	}
-	while(Map_settings::map_len.y > Map_settings::map_len.x){
-		Map_settings::map_len.x;
 	}
 
 	// keep increasing the region length until it tiles the map

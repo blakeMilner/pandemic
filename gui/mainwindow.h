@@ -81,6 +81,8 @@ private slots:
     void on_pan_south_released();
 
     void on_grid_size_spinBox_valueChanged(int arg1);
+    void on_world_size_spinBox_X_valueChanged(int arg1);
+    void on_world_size_spinBox_Y_valueChanged(int arg1);
 
 private:
     bool pan_east_pressed;

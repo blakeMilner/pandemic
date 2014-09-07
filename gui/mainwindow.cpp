@@ -486,7 +486,12 @@ void MainWindow::on_reset_button_clicked()
 
     supervisor->reset_game();
 
+    delete regionView_buffer;
+    delete regionView_original_buffer;
+    paint_regionView();
+
     update_ROI();
+
 }
 
 // advance forward one frame and then pause
@@ -543,7 +548,6 @@ void MainWindow::update_pan(){
     // We're pausing so that we don't experience lag from the game updating
     pause_game();
     adjust_ROI( pan_direction, ((GS::pan_pps - 2) % (GS::pan_pps + 10))  );
-    unpause_game();
 
     GS::pan_pps++;
 }
@@ -598,5 +602,39 @@ void MainWindow::on_grid_size_spinBox_valueChanged(int newval)
            ui->world_size_spinBox_X->setValue(Map_settings::next_game_world_size.x);
            ui->world_size_spinBox_Y->setValue(Map_settings::next_game_world_size.y);
         }
+    }
+}
+
+void MainWindow::on_world_size_spinBox_X_valueChanged(int newvalue)
+{
+    // if the user entered a number by hand that doesn't work, disregard it
+    if( (newvalue % Map_settings::next_game_region_len) != 0){
+        ui->world_size_spinBox_X->setValue( Map_settings::next_game_world_size.x );
+        return;
+    }
+
+    if( (newvalue < Map_settings::MIN_ROI_DIMS.x) || (newvalue > Map_settings::MAX_ROI_DIMS.x) ){
+        // reset settings if we went too far
+        ui->world_size_spinBox_X->setValue( Map_settings::next_game_world_size.x );
+    }
+    else{
+        Map_settings::next_game_world_size.x = newvalue;
+    }
+}
+
+void MainWindow::on_world_size_spinBox_Y_valueChanged(int newvalue)
+{
+    // if the user entered a number by hand that doesn't work, disregard it
+    if( (newvalue % Map_settings::next_game_region_len) != 0){
+        ui->world_size_spinBox_Y->setValue( Map_settings::next_game_world_size.y );
+        return;
+    }
+
+    if( (newvalue < Map_settings::MIN_ROI_DIMS.y) || (newvalue > Map_settings::MAX_ROI_DIMS.y) ){
+        // reset settings if we went too far
+        ui->world_size_spinBox_Y->setValue( Map_settings::next_game_world_size.y );
+    }
+    else{
+        Map_settings::next_game_world_size.y = newvalue;
     }
 }
