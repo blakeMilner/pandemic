@@ -18,6 +18,8 @@ static const int MIN_REGION_LEN;
 static const int REGION_LEN_INCREMENT;
 static int region_len;
 static const int MAX_REGION_LEN;
+static Pair<int> next_game_world_size;
+static int next_game_region_len;
 
 // CHARACTER GENERATION SETTINGS
 static int min_human_density;

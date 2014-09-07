@@ -79,9 +79,13 @@ private slots:
     void on_pan_south_pressed();
     void on_pan_south_released();
 
+    void on_grid_size_spinBox_valueChanged(int arg1);
+
 private:
     bool pan_east_pressed;
     bool started;
+
+    bool changed_by_user;
 
     QTimer* pan_timer;
     Nav_symbol pan_direction;
@@ -112,6 +116,8 @@ private:
     const QIcon pause_icon, play_icon, reset_icon, next_icon;
 
     void resizeEvent ( QResizeEvent * event );
+
+    void update_map_settings();
 
     bool paused;
     void unpause_game();

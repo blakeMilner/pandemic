@@ -26,7 +26,9 @@ void Supervisor::create_map(){
 	if(UD::print_to_cmd)
 		cout << "Total time to generate: " << clk.last_run_epoch() << " sec" << endl;
 
-	// CRITICAL: connect mapserver to our new map so out characters can access it.
+	/*
+	 * CRITICAL: connect mapserver to our new map so out characters can access it.
+	 */
 	MapServer::Instance()->set_map(map);
 }
 
@@ -65,7 +67,7 @@ void Supervisor::reset_game(){
 		cout << "Game reset. Total runtime: " << clk.last_run_epoch() << " sec" << endl;
 
 	clk.reset_clock();
-	game_is_running = 0;
+	game_is_running = false;
 
 	delete map;
 	create_map();

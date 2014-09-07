@@ -23,6 +23,8 @@ const int Map_settings::MIN_REGION_LEN = 50;
 int Map_settings::region_len = 100;
 const int Map_settings::REGION_LEN_INCREMENT = 10;
 const int Map_settings::MAX_REGION_LEN = 5000;
+Pair<int> Map_settings::next_game_world_size = Map_settings::map_len;
+int Map_settings::next_game_region_len = Map_settings::region_len;
 
 // CHARACTER GENERATION SETTINGS
 int Map_settings::min_human_density = 6;
