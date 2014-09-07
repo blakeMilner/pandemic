@@ -11,7 +11,13 @@ class Map_settings{
 public:
 
 static Pair<int> map_len; // put in condition to check that division is even
+static const Pair<int> MIN_ROI_DIMS;
+static const Pair<int> MAX_ROI_DIMS;
+
+static const int MIN_REGION_LEN;
+static const int REGION_LEN_INCREMENT;
 static int region_len;
+static const int MAX_REGION_LEN;
 
 // CHARACTER GENERATION SETTINGS
 static int min_human_density;

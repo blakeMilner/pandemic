@@ -2,26 +2,31 @@
 #include "ui_mainwindow.h"
 #include <unistd.h>
 
-namespace GS = GUI_settings;
+namespace  GS = GUI_settings;
 
-// TODO: making panning/moving automatic pause??
+// GENIUS IDEA: Don't just copy in map pixel by picel, but have supervisor place all obejects and assume blank
 
 MainWindow::MainWindow(Supervisor* s, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
 
-    settings_table(new QStandardItemModel(10,1,this)),
+    // make settings table - using item base model
+    settings_table(new QStandardItemModel(GS::NUM_SETTINGS, 1, this)),
     settings_delegate(new Delegate(this)),
 
+    // connect gui to the supervisor - which contains the running simulation
     supervisor(s),
 
+    // create a timer that fires whenever we want a new frame
     paused(true),
     frame_timer(new QTimer(this)),
     frame_clk(Clock()),
 
+    // timer that controls how fast we pan
     pan_timer(new QTimer(this)),
     pan_direction(NONE),
 
+    // button icons
     reset_icon(QIcon(GS::reset_icon_path)),
     pause_icon(QIcon(GS::pause_icon_path)),
     play_icon(QIcon(GS::play_icon_path)),
@@ -29,6 +34,7 @@ MainWindow::MainWindow(Supervisor* s, QWidget *parent) :
 
     user_edit_fps_box(true),
 
+    // make scene items for the main view screen and zoomed out region viewer
     mainScene(new QGraphicsScene(this)),
     regionScene(new QGraphicsScene(this)),
     mainScene_item(0),
@@ -41,7 +47,7 @@ MainWindow::MainWindow(Supervisor* s, QWidget *parent) :
     // set mainView scenes for main view and zoomed out view
     ui->mainView->setScene(mainScene);
     ui->regionView->setScene(regionScene);
-    frame_buffer = new QImage(GS::MAX_ROI_DIMS.x, GS::MAX_ROI_DIMS.y, QImage::Format_RGB32);
+    frame_buffer = new QImage(Map_settings::MAX_ROI_DIMS.x, Map_settings::MAX_ROI_DIMS.y, QImage::Format_RGB32);
 
     // set these so that when we go from larger FOV to smaller, the view doesn't have scrollbars
     ui->mainView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -55,9 +61,9 @@ MainWindow::MainWindow(Supervisor* s, QWidget *parent) :
     connect(pan_timer, SIGNAL(timeout()), this, SLOT(update_pan()));
 
     // make buffer for raw symbols from map
-	symbol_buffer = new Map_symbol*[GS::MAX_ROI_DIMS.x];
-    for(int i = 0; i < GS::MAX_ROI_DIMS.x; i++){
-		symbol_buffer[i] = new Map_symbol[GS::MAX_ROI_DIMS.y];
+	symbol_buffer = new Map_symbol*[Map_settings::MAX_ROI_DIMS.x];
+    for(int i = 0; i < Map_settings::MAX_ROI_DIMS.x; i++){
+		symbol_buffer[i] = new Map_symbol[Map_settings::MAX_ROI_DIMS.y];
     }
 
     // initialize button icons
@@ -79,16 +85,27 @@ MainWindow::MainWindow(Supervisor* s, QWidget *parent) :
     ui->user_edit_fps_box->setText(QString::number(GS::fps)); // set initial fps in text box
 
     // initialize settings table
-    for(int row = 0; row < 4; row++){
-        for(int col = 0; col < 2; col++){
+    for(int row = 0; row < GS::NUM_SETTINGS; row++){
+        for(int col = 0; col < 1; col++){
             QModelIndex index = settings_table->index(row,col,QModelIndex());
             settings_table->setData(index, 0);
         }
     }
 
+    // add labels for settings table
+    settings_table->setVerticalHeaderLabels(GS::settings_label_list);
+
     // setup settings table on other tab
-    ui->tableView->setModel(settings_table);
-    ui->tableView->setItemDelegate(settings_delegate);
+    ui->settings_viewer->setModel(settings_table);
+    ui->settings_viewer->setItemDelegate(settings_delegate);
+
+    ui->world_size_spinBox_X->setRange(Map_settings::MIN_ROI_DIMS.x, Map_settings::MAX_ROI_DIMS.x);
+    ui->world_size_spinBox_X->setValue(Map_settings::map_len.x);
+    ui->world_size_spinBox_Y->setRange(Map_settings::MIN_ROI_DIMS.y, Map_settings::MAX_ROI_DIMS.y);
+    ui->world_size_spinBox_Y->setValue(Map_settings::map_len.y);
+
+    ui->grid_size_spinBox->setRange(Map_settings::MIN_REGION_LEN, Map_settings::MAX_REGION_LEN);
+    ui->grid_size_spinBox->setValue(Map_settings::region_len);
 }
 
 MainWindow::~MainWindow()
@@ -96,7 +113,7 @@ MainWindow::~MainWindow()
     delete ui;
     delete frame_buffer;
 
-	for(int i = 0; i < GS::MAX_ROI_DIMS.x; i++){
+	for(int i = 0; i < Map_settings::MAX_ROI_DIMS.x; i++){
 		delete symbol_buffer[i];
 	}
 	delete symbol_buffer;
@@ -405,6 +422,7 @@ void MainWindow::on_reset_button_clicked()
 {
     pause_game();
     supervisor->reset_game();
+
     update_ROI();
 }
 
@@ -463,6 +481,7 @@ void MainWindow::update_pan(){
     GS::pan_pps++;
 }
 
+/* a bunch of ugly functions for each of the panning buttons - can this be improved? */
 void MainWindow::on_pan_east_clicked(){         adjust_ROI(EAST, GS::pan_pps);  }
 void MainWindow::on_pan_west_clicked(){         adjust_ROI(WEST, GS::pan_pps);  }
 void MainWindow::on_pan_north_clicked(){        adjust_ROI(NORTH, GS::pan_pps);  }

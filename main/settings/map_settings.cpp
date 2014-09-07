@@ -16,7 +16,13 @@
 #include "map_settings.hpp"
 
 Pair<int> Map_settings::map_len = Pair<int>(300, 300); // put in condition to check that division is even
-int Map_settings::region_len = 50;
+const Pair<int> Map_settings::MIN_ROI_DIMS = Pair<int>(200,200);
+const Pair<int> Map_settings::MAX_ROI_DIMS = Pair<int>(5000,5000); // TODO: need to put in check that this isn't over actual dims
+
+const int Map_settings::MIN_REGION_LEN = 50;
+int Map_settings::region_len = 100;
+const int Map_settings::REGION_LEN_INCREMENT = 10;
+const int Map_settings::MAX_REGION_LEN = 5000;
 
 // CHARACTER GENERATION SETTINGS
 int Map_settings::min_human_density = 6;
@@ -65,7 +71,7 @@ void Map_settings::correct_settings(){
 
 	while (building_span - footprint_span > MAX_LENGTH_DIFF){
 		max_footprint_len++;
-		max_footprint_len--;
+
 		footprint_span = max_footprint_len - min_footprint_len;
 	}
 
