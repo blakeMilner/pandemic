@@ -1,7 +1,7 @@
 #ifndef OBJECT_ENUM
 #define OBJECT_ENUM
 
-#include "../containers/containers.hpp"
+#include "../helpers/containers.hpp"
 
 enum Map_symbol {
 	HUMAN = 'H',

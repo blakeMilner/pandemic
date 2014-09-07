@@ -5,7 +5,7 @@ using namespace std;
 
 #include "objects.hpp"
 #include "obstacle.hpp"
-#include "../containers/containers.hpp"
+#include "../helpers/containers.hpp"
 
 class Building : public Obstacle {
 public:

@@ -1,7 +1,7 @@
 #ifndef MAP_SETTINGS_HPP
 #define MAP_SETTINGS_HPP
 
-#include "../containers/containers.hpp"
+#include "../helpers/containers.hpp"
 
 // TODO: put these in XML file to quickly change without recompiling
 class Map_settings{

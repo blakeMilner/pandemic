@@ -9,9 +9,9 @@ MARK_AS_ADVANCED(CLEAR CMAKE_VERBOSE_MAKEFILE DEBUG)
 
 OPTION(DEBUG "Add debug symbols to executable" OFF)
 
-## GUI ##
-OPTION(ENABLE_GUI "enable GUI build" ON)
 
+## if we want the gui then do all the fancy cmake stuff required
+OPTION(ENABLE_GUI "enable GUI build" ON)
 IF(ENABLE_GUI)
 	FIND_PACKAGE(Qt4 REQUIRED)
 	SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DGUI ")
@@ -39,45 +39,60 @@ IF(ENABLE_GUI)
 	SET(GUI_LIBRARIES ${GUI_LIBRARIES} ${QT_LIBRARIES})
 ENDIF()
 
+
+## if we want debugging
 IF(DEBUG)
 	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_DEBUG}")
 ENDIF()
 
+
+
+## Add any other flags that we may need
+SET(CMAKE_CPP_VERSION_FLAGS " -std=c++11 ")
+
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CPP_VERSION_FLAGS}")
+
+
+
+## List main source files
 SET(PANDEMIC_SOURCES 
 
+	main/main.cpp 
 
-main/main.cpp 
+	main/enums/object_enums.cpp
 
-main/enums/object_enums.cpp
+	main/helpers/rng.cpp
+	main/helpers/clock.cpp
 
-main/helpers/rng.cpp
-main/helpers/clock.cpp
+	main/mapping/map.cpp
+	main/mapping/MapStats.cpp
+	main/mapping/map_attributes.cpp
+	main/mapping/mRegion.cpp
+	main/mapping/map_server.cpp
 
-main/mapping/map.cpp
-main/mapping/MapStats.cpp
-main/mapping/map_attributes.cpp
-main/mapping/mRegion.cpp
-main/mapping/map_server.cpp
+	#main/navigation/path_finding.cpp
+	#main/navigation/path_finding.hpp
 
-main/networking/networking.cpp
+	main/networking/networking.cpp
 
-main/objects/character.cpp
-main/objects/obstacle.cpp
-main/objects/objects.cpp
-main/objects/attributes.cpp
-main/objects/Building.cpp
-main/objects/Human.cpp
-main/objects/Zombie.cpp
-main/objects/Infected.cpp
+	main/objects/character.cpp
+	main/objects/obstacle.cpp
+	main/objects/objects.cpp
+	main/objects/attributes.cpp
+	main/objects/Building.cpp
+	main/objects/Human.cpp
+	main/objects/Zombie.cpp
+	main/objects/Infected.cpp
 
-main/settings/character_stats.cpp
-main/settings/map_settings.cpp
+	main/settings/character_stats.cpp
+	main/settings/map_settings.cpp
 
-main/supervisor/supervisor.cpp
+	main/supervisor/supervisor.cpp
 
 
 )
 
+## Time to pile everything together
 ADD_EXECUTABLE(pandemic ${PANDEMIC_SOURCES} ${GUI_SOURCES} ${GUI_EXEC})
 TARGET_LINK_LIBRARIES(pandemic ${GUI_LIBRARIES})
 SET_TARGET_PROPERTIES(pandemic PROPERTIES LINKER_LANGUAGE CXX)

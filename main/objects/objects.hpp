@@ -2,7 +2,7 @@
 #define OBJECTS_HPP
 
 #include "../mapping/map_attributes.hpp"
-#include "../containers/containers.hpp"
+#include "../helpers/containers.hpp"
 #include "../enums/object_enum.hpp"
 #include "../settings/character_stats.hpp"
 #include "attributes.hpp"
