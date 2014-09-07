@@ -18,12 +18,10 @@ IF(ENABLE_GUI)
 	
 	SET(GUI_SOURCES 
 	    gui/mainwindow.cpp
-	    gui/delegate.cpp
 	    )
 	    
 	SET(GUI_HEADERS 
 	    gui/mainwindow.h
-	    gui/delegate.h
 	    )
 	    
 	QT4_WRAP_CPP(HEADERS_MOC ${GUI_HEADERS})

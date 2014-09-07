@@ -8,8 +8,6 @@
 #include <QPixmap>
 #include <QTimer>
 
-#include "delegate.h"
-
 #include "../main/supervisor/supervisor.hpp"
 #include "gui_settings.hpp"
 #include "../main/settings/map_settings.hpp"
@@ -85,8 +83,6 @@ private:
     bool pan_east_pressed;
     bool started;
 
-    bool changed_by_user;
-
     QTimer* pan_timer;
     Nav_symbol pan_direction;
 
@@ -97,9 +93,6 @@ private:
     QGraphicsItem *regionScene_item;
     Pair<int> regionView_dims;
     QImage* regionView_original_buffer;
-
-    QStandardItemModel *settings_table;
-    Delegate* settings_delegate;
 
     Supervisor* supervisor;
 
@@ -118,6 +111,7 @@ private:
     void resizeEvent ( QResizeEvent * event );
 
     void update_map_settings();
+    void update_statistics();
 
     bool paused;
     void unpause_game();

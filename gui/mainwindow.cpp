@@ -11,10 +11,6 @@ MainWindow::MainWindow(Supervisor* s, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
 
-    // make settings table - using item base model
-    settings_table(new QStandardItemModel(GS::NUM_SETTINGS, 1, this)),
-    settings_delegate(new Delegate(this)),
-
     // connect gui to the supervisor - which contains the running simulation
     supervisor(s),
 
@@ -39,8 +35,6 @@ MainWindow::MainWindow(Supervisor* s, QWidget *parent) :
     regionScene(new QGraphicsScene(this)),
     mainScene_item(0),
     regionScene_item(0),
-
-    changed_by_user(false),
 
     started(false)
 {
@@ -84,20 +78,8 @@ MainWindow::MainWindow(Supervisor* s, QWidget *parent) :
     ui->user_edit_fps_box->setValidator(new QIntValidator(GS::MIN_FPS, GS::MAX_FPS, this)); // only accept numbers
     ui->user_edit_fps_box->setText(QString::number(GS::fps)); // set initial fps in text box
 
-    // initialize settings table
-    for(int row = 0; row < GS::NUM_SETTINGS; row++){
-        for(int col = 0; col < 1; col++){
-            QModelIndex index = settings_table->index(row,col,QModelIndex());
-            settings_table->setData(index, 0);
-        }
-    }
-
-    // add labels for settings table
-    settings_table->setVerticalHeaderLabels(GS::settings_label_list);
-
-    // setup settings table on other tab
-    ui->settings_viewer->setModel(settings_table);
-    ui->settings_viewer->setItemDelegate(settings_delegate);
+    /* initialize settings table (will also be called every iteration) */
+    update_statistics();
 
     // setup box for region size - this will be the increment for the entire world size since
     // we want to slice evenly
@@ -112,6 +94,7 @@ MainWindow::MainWindow(Supervisor* s, QWidget *parent) :
     ui->world_size_spinBox_Y->setValue(Map_settings::map_len.y);
     ui->world_size_spinBox_X->setSingleStep(Map_settings::region_len);
     ui->world_size_spinBox_Y->setSingleStep(Map_settings::region_len);
+
 }
 
 MainWindow::~MainWindow()
@@ -167,6 +150,12 @@ void MainWindow::bound_zoom(){
     }
 
     ui->zoom_slider->setValue(GS::mainView_pps);
+}
+
+// get updated statistics from map supervisor
+void MainWindow::update_statistics(){
+    //upervisor.
+
 }
 
 // correct fps slider if we're capping out
