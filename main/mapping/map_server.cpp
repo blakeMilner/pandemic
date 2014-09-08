@@ -73,6 +73,12 @@ MapServer::~MapServer(){
 	delete BLOCKS_OCCLUDED;
 }
 
+void MapServer::delete_instance(){
+	if(this->p_Instance){
+		delete this->p_Instance;
+	}
+}
+
 // singleton method for this class - call to get lone pointer
 MapServer* MapServer::Instance(){
 	if(!p_Instance){

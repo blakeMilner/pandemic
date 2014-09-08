@@ -24,6 +24,7 @@ class MapServer{
 public:
 	friend class Map;
 
+	void delete_instance();
 	static MapServer* Instance(); // returns singleton pointer
 
 	Map_symbol get_symbol(int, int);

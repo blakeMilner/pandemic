@@ -53,10 +53,20 @@ Map::~Map(){
 	delete [] blockmap;
 
 	// delete object_blocks we made for the map
+	for(auto it = all_object_blocks.begin(); it != all_object_blocks.end(); it++){
+		delete *it;
+	}
 	all_object_blocks.clear();
 
-	IDhash.clear();
+	// delete all alloc'd characters
+	for(auto it = characters.begin(); it != characters.end(); it++){
+		delete *it;
+	}
 	characters.clear();
+
+
+	IDhash.clear();
+
 	NEXT_EMPTY_ID = 0;
 }
 

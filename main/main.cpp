@@ -133,5 +133,7 @@ int main(int argc, char **argv){
 
 
     delete supervisor;
+    MapServer::Instance()->delete_instance();
+
 	return EXIT_SUCCESS;
 }
