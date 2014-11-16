@@ -11,7 +11,7 @@ Infected::Infected(Human* human):
 Human(human->get_coor(), INFECTED, human->stats),
 infected_time(0)
 {
-	Infected::init_stats(Char_stats::DEFAULT_INFECTED);
+	Infected::init_stats(Char_stats::RANDOM_CHARACTER(INFECTED));
 }
 
 void Infected::exec(){

@@ -16,8 +16,8 @@
 #include "map_settings.hpp"
 
 Pair<int> Map_settings::map_len = Pair<int>(300, 300); // put in condition to check that division is even
-const Pair<int> Map_settings::MIN_ROI_DIMS = Pair<int>(200,200);
-const Pair<int> Map_settings::MAX_ROI_DIMS = Pair<int>(5000,5000); // TODO: need to put in check that this isn't over actual dims
+const Pair<int> Map_settings::MIN_WORLD_DIMS = Pair<int>(50,50);
+const Pair<int> Map_settings::MAX_WORLD_DIMS = Pair<int>(5000,5000); // TODO: need to put in check that this isn't over actual dims
 
 const int Map_settings::MIN_REGION_LEN = 50;
 int Map_settings::region_len = 100;

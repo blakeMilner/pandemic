@@ -30,11 +30,24 @@ Character::~Character(){
 
 void Character::init_stats(Stats stats){
 	this->stats.VIS_RAD = stats.VIS_RAD;
+	this->stats.num_iter_since_last_move = 0;
+}
+
+bool Character::ready_to_move(){
+	// return false to tell derived class that we can't move
+	if( this->stats.num_iter_since_last_move >= this->stats.SPEED_EQUIVALENT_ITER ){
+		this->stats.num_iter_since_last_move = 0;
+		return true;
+	}
+
+	return false;
 }
 
 void Character::exec(){
 	int vision_rad = stats.VIS_RAD;
 	int vision_len = 2*vision_rad + 1;
+
+	this->stats.num_iter_since_last_move ++ ;
 
 	MapServer::Instance()->copy_field(vision_field, coor - vision_rad, Pair<int>(stats.VIS_RAD));
 //	this->print_vision();

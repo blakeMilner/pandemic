@@ -7,9 +7,10 @@
 // Abstract class
 class Character : public pObject{
 public:
-	Character(Pair<int>, Map_symbol = CHARACTER, Stats = Char_stats::DEFAULT_CHARACTER);
+	Character(Pair<int>, Map_symbol = CHARACTER, Stats = Char_stats::RANDOM_CHARACTER(CHARACTER));
 	virtual ~Character();
 	virtual void exec();
+	bool ready_to_move();
 
 	//TODO: change to getter/setters, make this private
 	Stats stats;
@@ -31,7 +32,6 @@ protected:
 	void random_walk();
 	bool is_adjacent(Pair<int>&);
 	void print_vision();
-
 };
 
 

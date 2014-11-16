@@ -22,7 +22,7 @@ namespace GUI_settings{
 
     // settings for game resolution
 	static const int MIN_pix_per_symbol = 1;
-    static const int MAX_pix_per_symbol = 10;
+    static const int MAX_pix_per_symbol = 100;
     static int mainView_pps = MIN_pix_per_symbol; // pix per symbol
 
     // settings for panning through map

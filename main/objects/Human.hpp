@@ -10,7 +10,7 @@ using namespace std;
 class Human : public Character{
 public:
 	// TODO: remove automatic pair setting for all objects - it's unsafe
-	Human(Pair<int> = Pair<int>(-1,-1), Map_symbol = HUMAN, Stats = Char_stats::DEFAULT_HUMAN);
+	Human(Pair<int> = Pair<int>(-1,-1), Map_symbol = HUMAN, Stats = Char_stats::RANDOM_CHARACTER(HUMAN));
 
 	virtual void exec();
 private:

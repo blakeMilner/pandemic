@@ -17,7 +17,10 @@ using namespace std;
 
 class Infected: public Human{
 public:
-	Infected(Pair<int> = Pair<int>(-1,-1), Map_symbol = INFECTED, Stats = Char_stats::DEFAULT_INFECTED);
+	Infected(Pair<int> = Pair<int>(-1,-1),
+			Map_symbol = INFECTED,
+			Stats 		= Char_stats::RANDOM_CHARACTER(INFECTED));
+
 	Infected(Human*);
 
 	virtual void exec();

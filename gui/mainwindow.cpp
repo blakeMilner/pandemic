@@ -43,7 +43,7 @@ MainWindow::MainWindow(Supervisor* s, QWidget *parent) :
     // set mainView scenes for main view and zoomed out view
     ui->mainView->setScene(mainScene);
     ui->regionView->setScene(regionScene);
-    frame_buffer = new QImage(Map_settings::MAX_ROI_DIMS.x, Map_settings::MAX_ROI_DIMS.y, QImage::Format_RGB32);
+    frame_buffer = new QImage(Map_settings::MAX_WORLD_DIMS.x, Map_settings::MAX_WORLD_DIMS.y, QImage::Format_RGB32);
 
     // set these so that when we go from larger FOV to smaller, the view doesn't have scrollbars
     ui->mainView->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -57,9 +57,9 @@ MainWindow::MainWindow(Supervisor* s, QWidget *parent) :
     connect(pan_timer, SIGNAL(timeout()), this, SLOT(update_pan()));
 
     // make buffer for raw symbols from map
-    symbol_buffer = new Map_symbol*[Map_settings::MAX_ROI_DIMS.x];
-    for(int i = 0; i < Map_settings::MAX_ROI_DIMS.x; i++){
-        symbol_buffer[i] = new Map_symbol[Map_settings::MAX_ROI_DIMS.y];
+    symbol_buffer = new Map_symbol*[Map_settings::MAX_WORLD_DIMS.x];
+    for(int i = 0; i < Map_settings::MAX_WORLD_DIMS.x; i++){
+        symbol_buffer[i] = new Map_symbol[Map_settings::MAX_WORLD_DIMS.y];
     }
 
     // initialize button icons
@@ -85,8 +85,8 @@ MainWindow::MainWindow(Supervisor* s, QWidget *parent) :
     ui->grid_size_spinBox->setSingleStep(Map_settings::REGION_LEN_INCREMENT);
 
     // setup max/min and initial values for world size select
-    ui->world_size_spinBox_X->setRange(Map_settings::MIN_ROI_DIMS.x, Map_settings::MAX_ROI_DIMS.x);
-    ui->world_size_spinBox_Y->setRange(Map_settings::MIN_ROI_DIMS.y, Map_settings::MAX_ROI_DIMS.y);
+    ui->world_size_spinBox_X->setRange(Map_settings::MIN_WORLD_DIMS.x, Map_settings::MAX_WORLD_DIMS.x);
+    ui->world_size_spinBox_Y->setRange(Map_settings::MIN_WORLD_DIMS.y, Map_settings::MAX_WORLD_DIMS.y);
     ui->world_size_spinBox_X->setValue(Map_settings::map_len.x);
     ui->world_size_spinBox_Y->setValue(Map_settings::map_len.y);
     ui->world_size_spinBox_X->setSingleStep(Map_settings::region_len);
@@ -103,7 +103,7 @@ MainWindow::~MainWindow()
     delete ui;
     delete frame_buffer;
 
-    for(int i = 0; i < Map_settings::MAX_ROI_DIMS.x; i++){
+    for(int i = 0; i < Map_settings::MAX_WORLD_DIMS.x; i++){
 		delete symbol_buffer[i];
 	}
 	delete symbol_buffer;
@@ -157,8 +157,12 @@ void MainWindow::get_window_size(){
 }
 
 void MainWindow::update_map_settings(){
+//    cout << Map_settings::next_game_world_size << endl;
+
     Map_settings::map_len = Map_settings::next_game_world_size;
     Map_settings::region_len = Map_settings::next_game_region_len;
+
+    bound_zoom();
 }
 
 /*
@@ -319,6 +323,8 @@ void MainWindow::colorize_ROI(){
 void MainWindow::paint_ROI(){
     if(mainScene_item) delete mainScene_item; // why delete sceneitem? reuse it..
 
+//    cout << GS::ROI_coors << " " << GS::ROI_dims  << " " << GS::mainView_pps << endl;
+
     supervisor->copy_ROI(symbol_buffer, GS::ROI_coors, (GS::ROI_dims / GS::mainView_pps) + 1);
     colorize_ROI(); // transfer symbol_buffer to frame_buffer
 
@@ -388,6 +394,7 @@ void MainWindow::update_ROI(){
 
     paint_ROI();
     supervisor->iterate();
+
     update_statistics();
 
     double last_frm_time = frame_clk.tock();
@@ -488,6 +495,7 @@ void MainWindow::on_reset_button_clicked()
 
     delete regionView_buffer;
     delete regionView_original_buffer;
+
     paint_regionView();
 
     update_ROI();
@@ -545,8 +553,6 @@ void MainWindow::adjust_ROI(Nav_symbol dir, int pps){
 void MainWindow::update_pan(){
     // bit of trickery here: do modulo as pps gets bigger so we never go above certain speed
     // fine tuned for your liking...
-    // We're pausing so that we don't experience lag from the game updating
-    pause_game();
     adjust_ROI( pan_direction, ((GS::pan_pps - 2) % (GS::pan_pps + 10))  );
 
     GS::pan_pps++;
@@ -582,27 +588,32 @@ void MainWindow::on_pan_southeast_released(){  pan_timer->stop(); GS::pan_pps = 
 // the grid size is the internal slicing of the game map into grids - for parallel and performance reasons
 void MainWindow::on_grid_size_spinBox_valueChanged(int newval)
 {
-    if( (newval > Map_settings::MIN_REGION_LEN) && (newval < Map_settings::MAX_REGION_LEN)){
-        Map_settings::next_game_region_len = newval;
+	if(newval < Map_settings::MIN_REGION_LEN){
+		newval = Map_settings::MIN_REGION_LEN;
+	}
+	else if(newval > Map_settings::MAX_REGION_LEN){
+		newval = Map_settings::MAX_REGION_LEN;
+	}
 
-        // set new step size of world size boxes
-        ui->world_size_spinBox_X->setSingleStep(newval);
-        ui->world_size_spinBox_Y->setSingleStep(newval);
+	Map_settings::next_game_region_len = newval;
 
-        /* do a round world size up or down to match new region size */
-        Pair<int> leftover = (Map_settings::next_game_world_size % newval);
+	// set new step size of world size boxes
+	ui->world_size_spinBox_X->setSingleStep(newval);
+	ui->world_size_spinBox_Y->setSingleStep(newval);
 
-        if( (Map_settings::next_game_world_size - leftover) > Map_settings::MIN_ROI_DIMS ){
-            Map_settings::next_game_world_size -= leftover;
-            ui->world_size_spinBox_X->setValue(Map_settings::next_game_world_size.x);
-            ui->world_size_spinBox_Y->setValue(Map_settings::next_game_world_size.y);
-        }
-        else if( (Map_settings::next_game_world_size + newval - leftover) < Map_settings::MAX_ROI_DIMS ){
-           Map_settings::next_game_world_size += (newval - leftover);
-           ui->world_size_spinBox_X->setValue(Map_settings::next_game_world_size.x);
-           ui->world_size_spinBox_Y->setValue(Map_settings::next_game_world_size.y);
-        }
-    }
+	/* do a round world size up or down to match new region size */
+	Pair<int> leftover = (Map_settings::next_game_world_size % newval);
+
+	if( (Map_settings::next_game_world_size - leftover) > Map_settings::MIN_WORLD_DIMS ){
+		Map_settings::next_game_world_size -= leftover;
+		ui->world_size_spinBox_X->setValue(Map_settings::next_game_world_size.x);
+		ui->world_size_spinBox_Y->setValue(Map_settings::next_game_world_size.y);
+	}
+	else if( (Map_settings::next_game_world_size + newval - leftover) < Map_settings::MAX_WORLD_DIMS ){
+	   Map_settings::next_game_world_size += (newval - leftover);
+	   ui->world_size_spinBox_X->setValue(Map_settings::next_game_world_size.x);
+	   ui->world_size_spinBox_Y->setValue(Map_settings::next_game_world_size.y);
+	}
 }
 
 void MainWindow::on_world_size_spinBox_X_valueChanged(int newvalue)
@@ -613,7 +624,7 @@ void MainWindow::on_world_size_spinBox_X_valueChanged(int newvalue)
         return;
     }
 
-    if( (newvalue < Map_settings::MIN_ROI_DIMS.x) || (newvalue > Map_settings::MAX_ROI_DIMS.x) ){
+    if( (newvalue < Map_settings::MIN_WORLD_DIMS.x) || (newvalue > Map_settings::MAX_WORLD_DIMS.x) ){
         // reset settings if we went too far
         ui->world_size_spinBox_X->setValue( Map_settings::next_game_world_size.x );
     }
@@ -630,8 +641,8 @@ void MainWindow::on_world_size_spinBox_Y_valueChanged(int newvalue)
         return;
     }
 
-    if( (newvalue < Map_settings::MIN_ROI_DIMS.y) || (newvalue > Map_settings::MAX_ROI_DIMS.y) ){
-        // reset settings if we went too far
+    if( (newvalue < Map_settings::MIN_WORLD_DIMS.y) || (newvalue > Map_settings::MAX_WORLD_DIMS.y) ){
+        //  settings if we went too far
         ui->world_size_spinBox_Y->setValue( Map_settings::next_game_world_size.y );
     }
     else{

@@ -80,7 +80,10 @@ bool Map::check_game(){ return(  map_stats.num_characters[HUMAN] ); }
 void Map::iterate(){
 	// loop through characters and execute turn actions
 	for(list<Character*>::iterator it = characters.begin(); it != characters.end(); it++){
-		(*it)->exec();
+		// account for speed of individual character - they won't move some turns
+//		if( (*it)->ready_to_move() ){
+			(*it)->exec();
+//		}
 
 		// convert infected
 		if((*it)->get_symbol() == INFECTED and ((Infected*) *it)->infected_time_over()){
@@ -148,7 +151,7 @@ void Map::add_character(Map_symbol type, Pair<int> coor){
 		add_block(new_object_block(NEXT_EMPTY_ID, c->get_symbol()), coor);
 		regions[reg_coor.x][reg_coor.y]->insert_character(c);
 	}
-	// else make a debug printout and print to this...
+	// TODO: else make a debug printout and print to this...
 
 	IDhash[NEXT_EMPTY_ID++] = c;
 	characters.push_front(c);
